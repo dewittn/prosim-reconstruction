@@ -10,6 +10,13 @@ Values marked with (estimated) are reasonable assumptions that should be
 validated and may need calibration.
 Values marked with (derived-2024) were discovered through forensic analysis
 of multiple REPT files in December 2024.
+
+IMPORTANT CALIBRATION NOTE:
+The original spreadsheet was tuned for ~Week 20 of a 24-week simulation.
+Early weeks (1-4) reflect "blind" decision-making with no understanding of
+the game mechanics, so data from those weeks may show artifacts of poor
+decisions rather than true simulation behavior. Week 12+ data is more
+reliable for algorithm calibration as it reflects informed, optimized play.
 """
 
 from typing import Any
@@ -205,10 +212,11 @@ def calculate_repair_probability(maintenance_budget: float) -> float:
         $1000 budget -> ~5% repair probability
         $1500 budget -> ~0% repair probability
     """
-    prob = MACHINE_REPAIR_CONFIG["base_probability"] - (
-        (maintenance_budget - MACHINE_REPAIR_CONFIG["base_maintenance_budget"])
-        * MACHINE_REPAIR_CONFIG["probability_reduction_per_dollar"]
-    )
+    base_prob = float(MACHINE_REPAIR_CONFIG["base_probability"])
+    base_budget = float(MACHINE_REPAIR_CONFIG["base_maintenance_budget"])
+    reduction_rate = float(MACHINE_REPAIR_CONFIG["probability_reduction_per_dollar"])
+
+    prob = base_prob - ((maintenance_budget - base_budget) * reduction_rate)
     return max(0.0, min(1.0, prob))
 
 

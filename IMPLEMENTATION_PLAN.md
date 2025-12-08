@@ -256,7 +256,7 @@ prosim-reconstruction/
 
 #### Tasks
 
-- [ ] **2.1** Implement inventory management
+- [x] **2.1** Implement inventory management
   - Raw material tracking
   - Parts inventory (X', Y', Z')
   - Products inventory (X, Y, Z)
@@ -592,6 +592,37 @@ Implemented comprehensive configuration system in `prosim/config/schema.py`:
 Legacy `DEFAULT_CONFIG` dict preserved for compatibility.
 15 tests covering creation, validation, file I/O, and merging.
 Phase 1 complete with 79 tests passing and 79% coverage.
+
+### 2024-12-08 - Phase 2.1 - Implement Inventory Management
+_Status: Complete_
+
+Implemented inventory management module in `prosim/engine/inventory.py`:
+- `InventoryManager` class coordinating all inventory operations
+- Order receiving (raw materials regular/expedited, purchased parts)
+- Order placement with lead time tracking
+- Raw material consumption based on configurable BOM
+- Parts consumption for assembly with BOM lookup
+- Parts and products production tracking
+- Demand fulfillment with shortage/carryover handling
+- Available inventory queries for all inventory types
+
+Key features:
+- Full integration with existing `Inventory`, `OrderBook` models from Phase 1
+- Configurable via `ProsimConfig` (raw materials per part, BOM ratios)
+- Consumption calculations support custom rates per part/product type
+- Shortage tracking when insufficient materials available
+
+Created comprehensive test suite (`tests/test_inventory_manager.py`) with 26 tests:
+- Order receiving (regular RM, expedited RM, purchased parts, mixed)
+- Order placement validation
+- Raw material consumption (sufficient/insufficient)
+- Parts production and consumption
+- Products production and assembly
+- Demand fulfillment (sufficient/insufficient/with production)
+- Available inventory queries
+- Integration test for full week flow
+
+All 111 tests pass with 82% coverage.
 
 ### [Date] - Phase X.X - Task Description
 _Status: Not Started | In Progress | Complete | Blocked_
