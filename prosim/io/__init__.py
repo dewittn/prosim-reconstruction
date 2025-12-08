@@ -13,14 +13,27 @@ from prosim.io.decs_parser import (
     parse_decs,
     write_decs,
 )
+from prosim.io.rept_parser import (
+    REPTParseError,
+    REPTParser,
+    parse_rept,
+    write_rept,
+    write_rept_human_readable,
+)
 
 __all__ = [
+    # DECS
     "DECSParseError",
     "DECSParser",
     "parse_decs",
     "write_decs",
+    # REPT
+    "REPTParseError",
+    "REPTParser",
+    "parse_rept",
+    "write_rept",
+    "write_rept_human_readable",
 ]
 
 # I/O components will be imported here as they are implemented
-# from prosim.io.rept_writer import write_rept, REPTWriter
 # from prosim.io.state_io import save_state, load_state
