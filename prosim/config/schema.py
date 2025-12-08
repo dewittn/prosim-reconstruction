@@ -194,9 +194,9 @@ class LaborRatesConfig(BaseModel):
     """Labor cost rates."""
 
     regular_hourly: float = Field(
-        default=20.0,
+        default=10.0,
         ge=0.0,
-        description="Regular hourly labor rate (estimated)",
+        description="Regular hourly labor rate (verified from PPT: $10/hour)",
     )
     overtime_multiplier: float = Field(
         default=1.5,

@@ -10,6 +10,10 @@ from prosim.config import (
     ProsimConfig,
     get_default_config,
 )
+from prosim.config.defaults import (
+    calculate_reject_rate,
+    calculate_repair_probability,
+)
 
 
 class TestProsimConfig:
@@ -215,6 +219,53 @@ class TestLegacyConfig:
             DEFAULT_CONFIG["workforce"]["costs"]["hiring_cost"]
             == pydantic_config.workforce.costs.hiring_cost
         )
+
+
+class TestDerivedCalculations:
+    """Tests for derived calculation functions from forensic analysis."""
+
+    def test_calculate_reject_rate_base(self) -> None:
+        """Reject rate at base budget ($750) should be 17.8%."""
+        rate = calculate_reject_rate(750.0)
+        assert rate == pytest.approx(0.178, abs=0.001)
+
+    def test_calculate_reject_rate_higher_budget(self) -> None:
+        """Higher quality budget should reduce reject rate."""
+        rate_750 = calculate_reject_rate(750.0)
+        rate_1000 = calculate_reject_rate(1000.0)
+        rate_1500 = calculate_reject_rate(1500.0)
+
+        assert rate_1000 < rate_750
+        assert rate_1500 < rate_1000
+        # At $1000: ~10.6% (verified from forensic analysis)
+        assert rate_1000 == pytest.approx(0.106, abs=0.01)
+
+    def test_calculate_reject_rate_minimum(self) -> None:
+        """Reject rate should not go below 5% floor."""
+        rate = calculate_reject_rate(5000.0)  # Very high budget
+        assert rate == 0.05  # Should hit the floor
+
+    def test_calculate_repair_probability_base(self) -> None:
+        """Repair probability at base budget ($500) should be ~15%."""
+        prob = calculate_repair_probability(500.0)
+        assert prob == pytest.approx(0.15, abs=0.01)
+
+    def test_calculate_repair_probability_higher_budget(self) -> None:
+        """Higher maintenance budget should reduce repair probability."""
+        prob_500 = calculate_repair_probability(500.0)
+        prob_1000 = calculate_repair_probability(1000.0)
+
+        assert prob_1000 < prob_500
+
+    def test_calculate_repair_probability_bounds(self) -> None:
+        """Repair probability should stay in [0, 1] range."""
+        # Very low budget - should not exceed 1.0
+        prob_low = calculate_repair_probability(0.0)
+        assert 0.0 <= prob_low <= 1.0
+
+        # Very high budget - should hit floor of 0.0
+        prob_high = calculate_repair_probability(10000.0)
+        assert prob_high == 0.0
 
 
 class TestConfigDocumentation:
