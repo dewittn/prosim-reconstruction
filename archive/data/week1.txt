@@ -1,0 +1,139 @@
+[Cost Information]
+
+Costs for Week:                X          Y          Z         Total
+
+Labor                       1200.0      800.0     1600.0       3600.0
+Machine Set-Up                 0.0        0.0       80.0         80.0
+Machine Repair                 0.0      400.0        0.0        400.0
+Raw Materials               3726.0     2639.0     6086.0      12451.0
+Purchased Finished Parts    2550.0     3101.0     3225.0       8876.0
+Equipment Usage             2400.0     1600.0     4000.0       8000.0
+Parts Carrying Cost           57.0       44.0      197.0        298.0
+Products Carrying Cost       147.0      237.0      553.0        938.0
+Demand Penalty                 0.0        0.0        0.0          0.0
+
+Sub-Total                  10080.0     8822.0    15741.0      34643.0
+
+Quality Planning                                                750.0
+Plant Maintenance                                               500.0
+Training Cost                                                  1000.0
+Hiring Cost                                                    2700.0
+Layoff and Firing Cost                                            0.0
+Raw Materials Carrying Cost                                       0.0
+Ordering Cost                                                  3600.0
+Fixed Expense                                                  1500.0
+
+Sub-Total                                                     10050.0
+
+Total Costs                                                   44693.0
+
+
+Cumulative Cost:               X          Y          Z         Total
+
+Labor                       1200.0      800.0     1600.0       3600.0
+Machine Set-Up                 0.0        0.0       80.0         80.0
+Machine Repair                 0.0      400.0        0.0        400.0
+Raw Materials               3726.0     2639.0     6086.0      12451.0
+Purchased Finished Parts    2550.0     3101.0     3225.0       8876.0
+Equipment Usage             2400.0     1600.0     4000.0       8000.0
+Parts Carrying Cost           57.0       44.0      197.0        298.0
+Products Carrying Cost       147.0      237.0      553.0        938.0
+Demand Penalty                 0.0        0.0        0.0          0.0
+
+Sub-Total                  10080.0     8822.0    15741.0      34643.0
+
+Quality Planning                                                750.0
+Plant Maintenance                                               500.0
+Training Cost                                                  1000.0
+Hiring Cost                                                    2700.0
+Layoff and Firing Cost                                            0.0
+Raw Materials Carrying Cost                                       0.0
+Ordering Cost                                                  3600.0
+Fixed Expense                                                  1500.0
+
+Sub-Total                                                     10050.0
+
+Total Costs                                                   44693.0
+
+
+[Order Information]
+
+Types of Order                 Week Due             Amounts
+
+Raw Materials (Exp)               2.                 10000.
+Raw Materials (Reg)               4.                 10000.
+Raw Materials (Reg)               2.                 12000.
+Finished Part X'                  2.                   600.
+Finished Part Y'                  2.                   500.
+Finished Part Z'                  2.                   400.
+
+* * No (More) Scheduled Receipt * *
+
+
+[Production Information]
+
+Part Department:
+                             Sched.  Productive
+Machine  Operator    Part    Hours     Hours     Production   Rejects
+
+   1         1        X'      40.0      37.0        1556.       278.
+   2         2        Y'      40.0      33.3         998.       178.
+   3         3        Z'      40.0      37.0        1535.       274.
+   4         4        X'      40.0      37.0        1263.       225.
+
+Assembly Department:
+                             Sched.  Productive
+Machine  Operator  Product   Hours     Hours     Production   Rejects
+
+   1         5        Z       40.0      40.0         442.        79.
+   2         6        Y       40.0      40.0         927.       165.
+   3         7        X       40.0      40.0        1407.       251.
+   4         8        Z       40.0      40.0         412.        73.
+   5         9        Z       40.0      36.0         394.        70.
+
+
+[Inventory Information]
+
+Raw Materials:
+     Beginning      Orders       Used in         Ending
+     Inventory     Received    Production      Inventory
+       9999.         1100.       11099.              0.
+
+Parts:
+     Beginning      Orders       Used in      Production      Ending
+     Inventory     Received    Production     This  Week    Inventory
+  X'   1541.         1000.        4220.          2819.        1139.
+  Y'   1356.          700.        2562.           998.         492.
+  Z'    952.          500.        1470.          1535.        1517.
+
+Products:
+     Beginning    Production      Demand        Ending
+     Inventory    This  Week    This Week     Inventory
+  X      65.         1407.           0.          1472.
+  Y     105.          927.           0.          1032.
+  Z      70.         1247.           0.          1317.
+
+
+[Demand Information]
+
+     Estimated     Carry Over      Estimated
+       Demand         From       Total Demand
+    This Month     Last Month     This Month
+  X    8467.           0.            8467.
+  Y    6973.           0.            6973.
+  Z    5475.           0.            5475.
+
+
+[Performance Measures]
+
+Current Week:
+
+     Total         Total       Percent of    $ Variance   % On-Time
+   Std. Costs    Act. Costs    Efficiency     Per Unit     Delivery
+     28913.0       44693.0        64.7          -4.4          NA
+
+Cumulative:
+
+     Total         Total       Percent of    $ Variance   % On-Time
+   Std. Costs    Act. Costs    Efficiency     Per Unit     Delivery
+     28913.0       44693.0        64.7          -4.4          NA

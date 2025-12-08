@@ -1,0 +1,128 @@
+{
+  "app": {
+    "name": "PROSIM",
+    "tagline": "Production Management Simulation",
+    "version": "Version {version}"
+  },
+  "menu": {
+    "new_game": "New Game",
+    "load_game": "Load Game",
+    "save_game": "Save Game",
+    "settings": "Settings",
+    "quit": "Quit",
+    "help": "Help"
+  },
+  "game": {
+    "week": "Week {week}",
+    "company": "Company {company}",
+    "current_state": "Current State",
+    "decisions": "Decisions",
+    "results": "Results"
+  },
+  "departments": {
+    "parts": "Parts Department",
+    "assembly": "Assembly Department"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "raw_materials": "Raw Materials",
+    "parts": "Parts",
+    "products": "Products",
+    "beginning": "Beginning",
+    "ending": "Ending",
+    "orders_received": "Orders Received",
+    "production": "Production",
+    "used": "Used",
+    "demand": "Demand"
+  },
+  "production": {
+    "title": "Production",
+    "machine": "Machine",
+    "operator": "Operator",
+    "part": "Part",
+    "product": "Product",
+    "scheduled_hours": "Scheduled Hours",
+    "productive_hours": "Productive Hours",
+    "units_produced": "Units Produced",
+    "rejects": "Rejects"
+  },
+  "costs": {
+    "title": "Costs",
+    "labor": "Labor",
+    "machine_setup": "Machine Set-Up",
+    "machine_repair": "Machine Repair",
+    "raw_materials": "Raw Materials",
+    "purchased_parts": "Purchased Finished Parts",
+    "equipment_usage": "Equipment Usage",
+    "parts_carrying": "Parts Carrying Cost",
+    "products_carrying": "Products Carrying Cost",
+    "demand_penalty": "Demand Penalty",
+    "quality_planning": "Quality Planning",
+    "plant_maintenance": "Plant Maintenance",
+    "training": "Training Cost",
+    "hiring": "Hiring Cost",
+    "layoff": "Layoff and Firing Cost",
+    "rm_carrying": "Raw Materials Carrying Cost",
+    "ordering": "Ordering Cost",
+    "fixed_expense": "Fixed Expense",
+    "subtotal": "Sub-Total",
+    "total": "Total Costs",
+    "weekly": "This Week",
+    "cumulative": "Cumulative"
+  },
+  "orders": {
+    "title": "Orders",
+    "type": "Type",
+    "week_due": "Week Due",
+    "amount": "Amount",
+    "raw_materials_regular": "Raw Materials (Regular)",
+    "raw_materials_expedited": "Raw Materials (Expedited)",
+    "finished_part": "Finished Part {part}"
+  },
+  "demand": {
+    "title": "Demand",
+    "estimated": "Estimated Demand",
+    "carryover": "Carry Over From Last Month",
+    "total": "Estimated Total Demand"
+  },
+  "performance": {
+    "title": "Performance Measures",
+    "standard_cost": "Total Std. Costs",
+    "actual_cost": "Total Act. Costs",
+    "efficiency": "Percent of Efficiency",
+    "variance": "$ Variance Per Unit",
+    "on_time": "% On-Time Delivery",
+    "weekly": "Current Week",
+    "cumulative": "Cumulative"
+  },
+  "operators": {
+    "title": "Operators",
+    "id": "Operator ID",
+    "trained": "Trained",
+    "not_trained": "Not Trained",
+    "efficiency": "Efficiency"
+  },
+  "decisions": {
+    "title": "Weekly Decisions",
+    "quality_budget": "Quality Planning Budget",
+    "maintenance_budget": "Plant Maintenance Budget",
+    "rm_order_regular": "Raw Materials Order (Regular)",
+    "rm_order_expedited": "Raw Materials Order (Expedited)",
+    "parts_order": "Parts Order",
+    "machine_assignments": "Machine Assignments",
+    "train_operator": "Train Operator",
+    "hours": "Hours"
+  },
+  "messages": {
+    "game_saved": "Game saved successfully.",
+    "game_loaded": "Game loaded successfully.",
+    "invalid_input": "Invalid input. Please try again.",
+    "week_processed": "Week {week} processed.",
+    "no_more_scheduled": "* * No (More) Scheduled Receipt * *"
+  },
+  "errors": {
+    "file_not_found": "File not found: {file}",
+    "invalid_decs": "Invalid DECS file format.",
+    "invalid_state": "Invalid game state."
+  }
+}
