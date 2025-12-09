@@ -432,9 +432,12 @@ prosim-reconstruction/
 #### Tasks
 
 - [ ] **6.1** Write player documentation
-  - Game rules and objectives
-  - Decision guide
+  - In-game tutorial/introduction for new players
+  - Game rules and objectives explanation
+  - Decision guide with recommended starting values
+  - Production flow and mechanics overview
   - Strategy tips (from original course materials)
+  - CLI quick-start guide
 
 - [ ] **6.2** Write technical documentation
   - Algorithm documentation
