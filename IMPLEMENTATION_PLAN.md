@@ -313,28 +313,28 @@ prosim-reconstruction/
   - Compare to original REPT files
   - Calculate accuracy metrics
 
-- [ ] **3.2** Calibrate production parameters
+- [x] **3.2** Calibrate production parameters
   - Verify production rates
   - Calibrate reject rate
   - Adjust if needed
 
-- [ ] **3.3** Calibrate operator efficiency
+- [x] **3.3** Calibrate operator efficiency
   - Model untrained efficiency curve
   - Verify trained efficiency
   - Document findings
 
-- [ ] **3.4** Calibrate cost parameters
+- [x] **3.4** Calibrate cost parameters
   - Derive labor rates
   - Derive equipment rates
   - Derive carrying cost rates
   - Document all derived values
 
-- [ ] **3.5** Handle stochastic elements
+- [x] **3.5** Handle stochastic elements
   - Implement machine repair randomness
   - Implement demand variation
   - Make random seed configurable for reproducibility
 
-- [ ] **3.6** Document accuracy
+- [x] **3.6** Document accuracy
   - Calculate overall accuracy vs original
   - Document known discrepancies
   - Explain sources of variance
@@ -815,10 +815,37 @@ Key findings:
 
 All 302 tests pass with 89% coverage.
 
-### [Date] - Phase X.X - Task Description
-_Status: Not Started | In Progress | Complete | Blocked_
+### 2024-12-09 - Phase 3.2-3.6 - Calibration Complete
+_Status: Complete_
 
-Notes and findings will be logged here as work progresses.
+Implemented comprehensive calibration module (`prosim/engine/calibration.py`):
+
+**Phase 3.2 - Production Parameters:**
+- Verified production rates: Parts (60/50/40), Assembly (40/30/20)
+- Documented reject rate variation: 11.85% (wk12) to 17.8% (wk14)
+- Implemented quality budget → reject rate calibration model
+
+**Phase 3.3 - Operator Efficiency:**
+- Documented trained efficiency: 95-100%
+- Documented untrained efficiency: 58-90% (lower than documented 60%)
+- Created efficiency analysis functions
+
+**Phase 3.4 - Cost Parameters:**
+- Verified all cost constants from week1.txt
+- Labor: $10/hr, Equipment: $20/hr, Repair: $400, etc.
+- Created cost derivation functions for analysis
+
+**Phase 3.5 - Stochastic Elements:**
+- Machine repair probability: ~10-15% per machine/week
+- Demand variance by weeks until shipping
+- Full random seed support for reproducibility
+
+**Phase 3.6 - Documentation:**
+- Created `docs/calibration_report.md` with complete findings
+- 343 tests pass with 89% coverage
+- All calibration data stored in `CALIBRATION_DATA` dict
+
+Phase 3 complete. Ready for Phase 4 (CLI & Single-Player Mode).
 
 ---
 
