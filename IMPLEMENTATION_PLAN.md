@@ -269,7 +269,7 @@ prosim-reconstruction/
   - Consecutive scheduling tracking (layoff/termination)
   - Hiring logic
 
-- [ ] **2.3** Implement production engine
+- [x] **2.3** Implement production engine
   - Parts Department production
   - Assembly Department production
   - Setup time calculations
@@ -653,6 +653,45 @@ Created comprehensive test suite (`tests/test_workforce_manager.py`) with 34 tes
 - Integration tests for full week and layoff→termination flows
 
 All 145 tests pass with 83% coverage. Type checking passes with mypy.
+
+### 2024-12-09 - Phase 2.3 - Implement Production Engine
+_Status: Complete_
+
+Implemented production calculation module in `prosim/engine/production.py`:
+- `ProductionEngine` class for all production calculations
+- Setup time calculations when part type changes from previous week
+- Production rate lookups (Parts: X'=60, Y'=50, Z'=40; Assembly: X=40, Y=30, Z=20)
+- Machine-level production calculations with efficiency integration
+- Department-level aggregation (Parts and Assembly)
+- Verified 17.8% reject rate application
+- Raw material and parts consumption calculations based on BOM
+- Machine floor update helpers for tracking last_part_type
+
+Production formula (from case study):
+```
+Productive Hours = (Scheduled Hours - Setup Time) * Operator Efficiency
+Gross Production = Productive Hours * Production Rate
+Rejects = Gross Production * Reject Rate (17.8%)
+Net Production = Gross Production - Rejects
+```
+
+Key data classes:
+- `ProductionInput`: Machine + efficiency result pairing
+- `MachineProductionResult`: Per-machine production metrics
+- `DepartmentProductionResult`: Department aggregates with type breakdowns
+- `ProductionResult`: Complete week production summary
+
+Created comprehensive test suite (`tests/test_production_engine.py`) with 26 tests:
+- Setup time calculations (first production, same type, type change, custom)
+- Production rate lookups (parts, assembly, custom rates)
+- Machine production calculations (basic, efficiency, setup time, rejects)
+- Department aggregation and filtering
+- Full production workflow
+- Material consumption calculations
+- Machine floor updates
+- Integration tests verifying formulas match case study
+
+All 171 tests pass with 85% coverage. Type checking passes with mypy.
 
 ### [Date] - Phase X.X - Task Description
 _Status: Not Started | In Progress | Complete | Blocked_

@@ -15,7 +15,13 @@ from prosim.engine.inventory import (
     DemandFulfillmentResult,
     InventoryManager,
     OrderReceiptResult,
+)
+from prosim.engine.production import (
+    DepartmentProductionResult,
+    MachineProductionResult,
+    ProductionEngine,
     ProductionInput,
+    ProductionResult,
 )
 from prosim.engine.workforce import (
     OperatorEfficiencyResult,
@@ -30,8 +36,13 @@ __all__ = [
     "InventoryManager",
     "OrderReceiptResult",
     "ConsumptionResult",
-    "ProductionInput",
     "DemandFulfillmentResult",
+    # Production
+    "ProductionEngine",
+    "ProductionInput",
+    "ProductionResult",
+    "DepartmentProductionResult",
+    "MachineProductionResult",
     # Workforce
     "OperatorManager",
     "OperatorEfficiencyResult",
@@ -42,6 +53,5 @@ __all__ = [
 
 # Additional engine components will be imported here as they are implemented
 # from prosim.engine.simulation import Simulation
-# from prosim.engine.production import calculate_production
 # from prosim.engine.costs import calculate_costs
 # from prosim.engine.demand import generate_demand
