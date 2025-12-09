@@ -287,12 +287,12 @@ prosim-reconstruction/
   - Demand penalty calculations
   - Carryover tracking
 
-- [ ] **2.6** Implement main simulation loop
+- [x] **2.6** Implement main simulation loop
   - Week-by-week processing
   - State transitions
   - Report generation
 
-- [ ] **2.7** Implement REPT file writer
+- [x] **2.7** Implement REPT file writer
   - Match original format exactly
   - Support human-readable format (like week1.txt)
 
@@ -741,6 +741,48 @@ Created comprehensive test suite (`tests/test_demand_manager.py`) with 37 tests:
 - Integration tests for full shipping cycles
 
 All 232 tests pass with 87% coverage. Type checking passes with mypy.
+
+### 2024-12-09 - Phase 2.6 - Implement Main Simulation Loop
+_Status: Complete_
+
+Implemented main simulation engine in `prosim/engine/simulation.py`:
+- `Simulation` class orchestrating all component engines
+- `SimulationWeekResult` dataclass for week processing results
+- `run_simulation()` convenience function for multi-week simulation
+
+Key features:
+- Applies DECS decisions to machine floor with department-aware part types
+- Coordinates workforce operations (training, scheduling, hiring/termination)
+- Order receiving and placement with lead time tracking
+- Production calculations for Parts and Assembly departments
+- Inventory management (raw material consumption, parts production, assembly, shipping)
+- Cost calculations (per-product and overhead categories)
+- Demand processing at shipping weeks with carryover tracking
+- Random machine repairs with configurable probability
+- Weekly report generation with all sections
+- Cumulative cost tracking across simulation
+- Random seed support for reproducible simulations
+
+Created comprehensive test suite (`tests/test_simulation.py`) with 27 tests:
+- Initialization tests
+- Decision application tests
+- Machine repair probability tests
+- Week processing tests (advances company, calculates production/costs, generates report)
+- Shipping week tests
+- Multi-week simulation tests (accumulation, reproducibility)
+- Report building tests
+- Integration tests (full production flow, training flow, order flow)
+
+All 259 tests pass with 89% coverage. Phase 2 complete.
+
+### 2024-12-09 - Phase 2.7 - REPT File Writer
+_Status: Complete (Previously Implemented)_
+
+REPT file writer was already implemented in Phase 1.5 as part of `prosim/io/rept_parser.py`:
+- `write_rept()`: Write WeeklyReport to REPT format
+- `write_rept_human_readable()`: Generate formatted reports like week1.txt
+
+No additional work needed. Phase 2 deliverables complete.
 
 ### [Date] - Phase X.X - Task Description
 _Status: Not Started | In Progress | Complete | Blocked_

@@ -75,7 +75,14 @@ __all__ = [
     "WorkforceSchedulingResult",
     "WorkforceCostResult",
     "TrainingResult",
+    # Simulation
+    "Simulation",
+    "SimulationWeekResult",
+    "run_simulation",
 ]
 
-# Additional engine components will be imported here as they are implemented
-# from prosim.engine.simulation import Simulation
+from prosim.engine.simulation import (
+    Simulation,
+    SimulationWeekResult,
+    run_simulation,
+)
