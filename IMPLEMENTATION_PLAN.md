@@ -276,7 +276,7 @@ prosim-reconstruction/
   - Reject calculations
   - Raw material consumption
 
-- [ ] **2.4** Implement cost calculations
+- [x] **2.4** Implement cost calculations
   - Per-product costs (all 9 categories)
   - Overhead costs (all 8 categories)
   - Weekly vs cumulative tracking

@@ -10,6 +10,14 @@ This module contains the core simulation logic:
 - Main simulation loop
 """
 
+from prosim.engine.costs import (
+    CostCalculationInput,
+    CostCalculator,
+    CumulativeCostReport,
+    OverheadCosts,
+    ProductCosts,
+    WeeklyCostReport,
+)
 from prosim.engine.inventory import (
     ConsumptionResult,
     DemandFulfillmentResult,
@@ -32,6 +40,13 @@ from prosim.engine.workforce import (
 )
 
 __all__ = [
+    # Costs
+    "CostCalculator",
+    "CostCalculationInput",
+    "WeeklyCostReport",
+    "CumulativeCostReport",
+    "ProductCosts",
+    "OverheadCosts",
     # Inventory
     "InventoryManager",
     "OrderReceiptResult",
@@ -53,5 +68,4 @@ __all__ = [
 
 # Additional engine components will be imported here as they are implemented
 # from prosim.engine.simulation import Simulation
-# from prosim.engine.costs import calculate_costs
 # from prosim.engine.demand import generate_demand
