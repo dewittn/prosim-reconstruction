@@ -431,7 +431,7 @@ prosim-reconstruction/
 
 #### Tasks
 
-- [ ] **6.1** Write player documentation
+- [x] **6.1** Write player documentation
   - In-game tutorial/introduction for new players
   - Game rules and objectives explanation
   - Decision guide with recommended starting values
@@ -439,18 +439,18 @@ prosim-reconstruction/
   - Strategy tips (from original course materials)
   - CLI quick-start guide
 
-- [ ] **6.2** Write technical documentation
+- [x] **6.2** Write technical documentation
   - Algorithm documentation
   - API reference
   - Configuration guide
 
-- [ ] **6.3** Historical documentation
+- [x] **6.3** Historical documentation
   - Include case study
   - Document original authors
   - Link to LGIRA archive
   - Explain preservation motivation
 
-- [ ] **6.4** Contribution guide
+- [x] **6.4** Contribution guide
   - How to contribute translations
   - How to report issues
   - How to add features
@@ -900,6 +900,63 @@ Implemented complete command-line interface for playable single-player mode:
 - 60 new tests for Phase 4 functionality
 
 Phase 4 complete. Ready for Phase 5 (Web Interface).
+
+### 2024-12-09 - Phase 6.1-6.4 - Documentation & Preservation
+_Status: Complete (excluding 6.5 Archive submission)_
+
+Implemented comprehensive documentation for the PROSIM reconstruction:
+
+**Phase 6.1 - Player Documentation (`docs/game_manual.md`):**
+- Complete game manual with table of contents
+- Quick start guide with installation and first week walkthrough
+- Game objective and winning strategies
+- Production system documentation with flow diagrams
+- Weekly decisions guide with recommended values
+- Understanding reports section
+- Strategy guide by game phase (startup, production, optimization, endgame)
+- CLI reference with all commands
+- Glossary of terms
+- Default configuration appendix
+
+**Phase 6.2 - Technical Documentation (`docs/algorithms.md`):**
+- Architecture overview with module structure
+- Detailed algorithm documentation:
+  - Week processing flow
+  - Production algorithm with formulas
+  - Operator efficiency calculations
+  - Cost calculation breakdown
+  - Demand generation algorithm
+  - Machine repair stochastic model
+  - Inventory management flow
+- Complete API reference for all major classes
+- Configuration guide with all parameters
+- File format documentation (DECS, REPT, save files)
+
+**Phase 6.3 - Historical Documentation (`docs/history.md`):**
+- Complete history of PROSIM from 1968 to present
+- Original authors documentation (Greenlaw, Hottenstein, Chu)
+- The "lost software" problem explanation
+- Reconstruction project story and methodology
+- LGIRA archive links and references
+- Timeline of PROSIM history
+- Acknowledgments section
+
+**Phase 6.4 - Contribution Guide (`CONTRIBUTING.md`):**
+- Ways to contribute (code and non-code)
+- Development setup instructions
+- Code style guidelines with examples
+- Translation guide for i18n
+- Issue reporting templates
+- Pull request process
+- Historical data contribution guidelines
+- Code of conduct
+
+**Additional Updates:**
+- Updated README.md with current CLI usage
+- Updated README.md with documentation links
+- Removed "coming soon" placeholders
+
+Phase 6.1-6.4 complete. Phase 6.5 (Archive submission) deferred for future work.
 
 ---
 

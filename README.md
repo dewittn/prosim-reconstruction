@@ -74,25 +74,39 @@ pip install -e .
 
 ## Usage
 
-_Coming soon - CLI and web interface in development_
-
 ```bash
-# Start a new game (planned)
-prosim new
+# Start a new game
+prosim new --name "My Company"
 
-# Load existing game (planned)
-prosim load saves/my_game.json
+# Start with specific random seed (for reproducibility)
+prosim new --name "My Company" --seed 42
 
-# Process a DECS file (planned)
-prosim process --decs input.DAT --state state.json
+# Load a saved game
+prosim load 1              # Load from slot 1
+prosim load --autosave     # Load from autosave
+
+# List saved games
+prosim saves
+
+# Process a DECS file (batch mode)
+prosim process --decs input.DAT --slot 1
+
+# Show information about PROSIM
+prosim info
+
+# Play in Spanish
+prosim --lang es new --name "Mi Empresa"
 ```
 
 ## Documentation
 
-- [Implementation Plan](IMPLEMENTATION_PLAN.md) - Development roadmap and task tracking
-- [Case Study](archive/docs/PROSIM_CASE_STUDY.md) - Detailed forensic analysis and historical research
-- [Game Manual](docs/game_manual.md) - How to play _(coming soon)_
-- [Algorithms](docs/algorithms.md) - Technical documentation of simulation mechanics _(coming soon)_
+- [Game Manual](docs/game_manual.md) - How to play, strategy guide, CLI reference
+- [Technical Documentation](docs/algorithms.md) - Algorithms, API reference, configuration
+- [Calibration Report](docs/calibration_report.md) - Parameter verification and accuracy analysis
+- [History & Preservation](docs/history.md) - The story of PROSIM and this reconstruction
+- [Case Study](archive/docs/PROSIM_CASE_STUDY.md) - Forensic analysis and reverse engineering
+- [Implementation Plan](IMPLEMENTATION_PLAN.md) - Development roadmap and progress
+- [Contributing](CONTRIBUTING.md) - How to contribute to the project
 
 ## 📢 Seeking PROSIM Data Files
 
@@ -128,7 +142,7 @@ Contributions are welcome! This project has a preservation mission, so we especi
 - **Testing** - Validation against any original PROSIM materials you may have
 - **Code Contributions** - Help build the reconstruction
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines _(coming soon)_.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Technical Details
 
