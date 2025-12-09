@@ -18,6 +18,12 @@ from prosim.engine.costs import (
     ProductCosts,
     WeeklyCostReport,
 )
+from prosim.engine.demand import (
+    DemandGenerationResult,
+    DemandManager,
+    ForecastUpdateResult,
+    ShippingPeriodDemand,
+)
 from prosim.engine.inventory import (
     ConsumptionResult,
     DemandFulfillmentResult,
@@ -47,6 +53,11 @@ __all__ = [
     "CumulativeCostReport",
     "ProductCosts",
     "OverheadCosts",
+    # Demand
+    "DemandManager",
+    "DemandGenerationResult",
+    "ShippingPeriodDemand",
+    "ForecastUpdateResult",
     # Inventory
     "InventoryManager",
     "OrderReceiptResult",
@@ -68,4 +79,3 @@ __all__ = [
 
 # Additional engine components will be imported here as they are implemented
 # from prosim.engine.simulation import Simulation
-# from prosim.engine.demand import generate_demand

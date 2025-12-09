@@ -281,7 +281,7 @@ prosim-reconstruction/
   - Overhead costs (all 8 categories)
   - Weekly vs cumulative tracking
 
-- [ ] **2.5** Implement demand system
+- [x] **2.5** Implement demand system
   - Demand generation (configurable)
   - Shipping/fulfillment logic
   - Demand penalty calculations
@@ -692,6 +692,55 @@ Created comprehensive test suite (`tests/test_production_engine.py`) with 26 tes
 - Integration tests verifying formulas match case study
 
 All 171 tests pass with 85% coverage. Type checking passes with mypy.
+
+### 2024-12-09 - Phase 2.4 - Implement Cost Calculations
+_Status: Complete_
+
+Implemented cost calculation module in `prosim/engine/costs.py`:
+- `CostCalculator` class for all cost calculations
+- 9 per-product cost categories (labor, setup, repair, raw materials, purchased parts, equipment, parts carrying, products carrying, demand penalty)
+- 8 overhead cost categories (quality, maintenance, training, hiring, layoff/firing, raw materials carrying, ordering, fixed expense)
+- Weekly cost reports with per-product breakdown
+- Cumulative cost tracking across simulation periods
+- Configuration-driven cost parameters via ProsimConfig
+
+Created comprehensive test suite (`tests/test_cost_calculator.py`) with 24 tests.
+All 195 tests pass with 86% coverage. Type checking passes with mypy.
+
+### 2024-12-09 - Phase 2.5 - Implement Demand System
+_Status: Complete_
+
+Implemented demand management module in `prosim/engine/demand.py`:
+- `DemandManager` class for demand generation and tracking
+- Demand forecasting with uncertainty that decreases as shipping approaches
+- Configurable base demand per product (defaults: X=600, Y=400, Z=200)
+- Standard deviation by weeks until shipping (4w=300, 3w=300, 2w=200, 1w=100, 0w=0)
+- Actual demand revelation at shipping weeks
+- Carryover/backlog tracking from unfulfilled demand
+- Shipping period coordination (default: every 4 weeks)
+- Integration with DemandSchedule and DemandForecast models
+- Random seed support for reproducible simulations
+
+Key features:
+- `generate_forecast()`: Create demand forecast with uncertainty
+- `reveal_actual_demand()`: Get actual demand at shipping week
+- `process_shipping_week()`: Handle fulfillment and calculate carryover
+- `calculate_demand_penalty_units()`: Calculate shortage for penalties
+- `initialize_demand_schedule()`: Set up initial forecasts
+- `add_next_period_forecasts()`: Add forecasts after shipping period
+
+Created comprehensive test suite (`tests/test_demand_manager.py`) with 37 tests:
+- Initialization and configuration
+- Forecast generation with uncertainty
+- Actual demand revelation
+- Shipping period demand generation
+- Shipping week helper methods
+- Demand schedule management
+- Demand penalty calculations
+- Reproducibility tests
+- Integration tests for full shipping cycles
+
+All 232 tests pass with 87% coverage. Type checking passes with mypy.
 
 ### [Date] - Phase X.X - Task Description
 _Status: Not Started | In Progress | Complete | Blocked_
