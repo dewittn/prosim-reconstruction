@@ -307,7 +307,7 @@ prosim-reconstruction/
 
 #### Tasks
 
-- [ ] **3.1** Create validation test suite
+- [x] **3.1** Create validation test suite
   - Load original DECS files
   - Run through simulation
   - Compare to original REPT files
@@ -783,6 +783,37 @@ REPT file writer was already implemented in Phase 1.5 as part of `prosim/io/rept
 - `write_rept_human_readable()`: Generate formatted reports like week1.txt
 
 No additional work needed. Phase 2 deliverables complete.
+
+### 2024-12-09 - Phase 3.1 - Create Validation Test Suite
+_Status: Complete_
+
+Implemented comprehensive validation test suite in `tests/validation/test_against_original.py`:
+- `AccuracyMetrics` dataclass for comparing simulated vs original reports
+- `calculate_percent_accuracy()` utility for accuracy calculations
+- `compare_reports()` function for detailed comparison between reports
+- `create_company_from_report()` helper to reconstruct Company state from REPT data
+
+Test categories implemented (43 tests total):
+- **Original File Parsing**: Verify DECS12, DECS14, REPT12-14 parse correctly
+- **Production Rate Verification**: Verify parts (60/50/40) and assembly (40/30/20) rates
+- **Reject Rate Verification**: Document varying rates (~11.85% wk12, ~15% wk13, ~17.8% wk14)
+- **Cost Structure Verification**: Verify cost categories sum correctly, document week1.txt reference values
+- **Productive Hours Verification**: Verify trained (95-100%) vs untrained (60-90%) efficiency
+- **Inventory Flow Verification**: Verify conservation equations for all inventory types
+- **Simulation Integration Tests**: Test simulation produces valid reports, reproducibility, multi-week
+- **Accuracy Metrics Tests**: Verify accuracy calculation utilities work correctly
+- **Demand/Performance/Lead Time Verification**: Verify demand tracking and lead time constants
+- **Cost Constants Verification**: Verify $2700 hiring, $200 layoff, $400 termination, $1500 fixed
+- **Configuration Validation**: Verify config matches documented parameters
+- **Cross-Week Validation**: Verify internal consistency within each REPT file
+- **Simulation vs Original**: Verify production and cost formulas match case study
+
+Key findings:
+- REPT12, REPT13, REPT14 appear to be from different simulation runs (cumulative costs don't increase)
+- Reject rate varies by week (influenced by quality budget or other factors)
+- Production rates and cost constants verified against case study documentation
+
+All 302 tests pass with 89% coverage.
 
 ### [Date] - Phase X.X - Task Description
 _Status: Not Started | In Progress | Complete | Blocked_
