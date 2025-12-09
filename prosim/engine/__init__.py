@@ -3,6 +3,7 @@ PROSIM simulation engine.
 
 This module contains the core simulation logic:
 - Inventory management
+- Workforce/operator management
 - Production calculations (Parts and Assembly departments)
 - Cost calculations
 - Demand generation and fulfillment
@@ -16,13 +17,27 @@ from prosim.engine.inventory import (
     OrderReceiptResult,
     ProductionInput,
 )
+from prosim.engine.workforce import (
+    OperatorEfficiencyResult,
+    OperatorManager,
+    TrainingResult,
+    WorkforceCostResult,
+    WorkforceSchedulingResult,
+)
 
 __all__ = [
+    # Inventory
     "InventoryManager",
     "OrderReceiptResult",
     "ConsumptionResult",
     "ProductionInput",
     "DemandFulfillmentResult",
+    # Workforce
+    "OperatorManager",
+    "OperatorEfficiencyResult",
+    "WorkforceSchedulingResult",
+    "WorkforceCostResult",
+    "TrainingResult",
 ]
 
 # Additional engine components will be imported here as they are implemented

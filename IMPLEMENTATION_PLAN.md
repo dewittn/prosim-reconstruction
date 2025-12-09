@@ -263,7 +263,7 @@ prosim-reconstruction/
   - Order receiving logic
   - Consumption calculations
 
-- [ ] **2.2** Implement operator system
+- [x] **2.2** Implement operator system
   - Training status tracking
   - Efficiency calculations (trained vs untrained)
   - Consecutive scheduling tracking (layoff/termination)
@@ -623,6 +623,36 @@ Created comprehensive test suite (`tests/test_inventory_manager.py`) with 26 tes
 - Integration test for full week flow
 
 All 111 tests pass with 82% coverage.
+
+### 2024-12-09 - Phase 2.2 - Implement Operator System
+_Status: Complete_
+
+Implemented workforce/operator management module in `prosim/engine/workforce.py`:
+- `OperatorManager` class coordinating all workforce operations
+- Efficiency calculations with configurable randomness (trained: 95-100%, untrained: 60-90%)
+- Training flow: send_to_training → process_training_completion
+- Operator scheduling based on machine assignments
+- Consecutive unscheduled week tracking for layoff/termination
+- Hiring logic for trained/untrained operators
+- Cost calculations (training, hiring, layoff, termination)
+- Week start/end processing helpers
+
+Key features:
+- Random seed support for reproducible simulations
+- Full integration with existing `Workforce`, `Operator`, `Machine` models
+- Configurable via `ProsimConfig` (efficiency ranges, cost parameters)
+- Proper handling of operators in training (excluded from unscheduled tracking)
+
+Created comprehensive test suite (`tests/test_workforce_manager.py`) with 34 tests:
+- Efficiency calculations (trained/untrained/training, custom ranges, reproducibility)
+- Training operations (send to training, completion, cost calculation)
+- Scheduling operations (basic, assembly dept, consecutive weeks reset)
+- Hiring and termination operations
+- Cost calculations (all categories and totals)
+- Helper methods and week processing
+- Integration tests for full week and layoff→termination flows
+
+All 145 tests pass with 83% coverage. Type checking passes with mypy.
 
 ### [Date] - Phase X.X - Task Description
 _Status: Not Started | In Progress | Complete | Blocked_
