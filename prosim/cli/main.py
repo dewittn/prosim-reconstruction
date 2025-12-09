@@ -559,9 +559,9 @@ def _display_report(report: WeeklyReport) -> None:
                   format_cost(z.raw_materials),
                   format_cost(x.raw_materials + y.raw_materials + z.raw_materials))
 
-    x_total = x.total
-    y_total = y.total
-    z_total = z.total
+    x_total = x.subtotal
+    y_total = y.subtotal
+    z_total = z.subtotal
     table.add_row("[bold]Sub-Total[/bold]", f"[bold]${x_total:,.0f}[/bold]",
                   f"[bold]${y_total:,.0f}[/bold]", f"[bold]${z_total:,.0f}[/bold]",
                   f"[bold]${x_total + y_total + z_total:,.0f}[/bold]")
@@ -570,7 +570,7 @@ def _display_report(report: WeeklyReport) -> None:
 
     # Overhead
     oh = costs.overhead
-    overhead_total = oh.total
+    overhead_total = oh.subtotal
     console.print(f"\n[bold]Overhead:[/bold] ${overhead_total:,.0f}")
     console.print(f"  Quality: ${oh.quality_planning:,.0f} | Maintenance: ${oh.plant_maintenance:,.0f}")
     console.print(f"  Training: ${oh.training_cost:,.0f} | Fixed: ${oh.fixed_expense:,.0f}")
