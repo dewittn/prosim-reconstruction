@@ -1,31 +1,61 @@
-# PROSIM Reconstruction
+# PROSIM - Production Management Simulation
 
-A modern open-source reconstruction of **PROSIM**, a production management simulation game originally created in 1968 by Paul S. Greenlaw and Michael P. Hottenstein.
+> **A modern open-source reconstruction of the classic PROSIM business simulation game (1968-1996)**
 
-## About
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Status: In Development](https://img.shields.io/badge/Status-In%20Development-orange)]()
 
-PROSIM was one of the earliest computer-based business simulation games, originally written in FORTRAN for IBM mainframes and later updated for Windows in 1996. The simulation teaches production management concepts including:
+## What is PROSIM?
 
-- Inventory management (raw materials, parts, finished goods)
-- Workforce scheduling and training
-- Production planning across multiple departments
-- Cost control and budgeting
-- Demand forecasting
+**PROSIM** (Production Simulation) is a computer-based business simulation game that teaches production and operations management. Originally developed in **1968** by **Paul S. Greenlaw** and **Michael P. Hottenstein** at Penn State University, it was one of the pioneering educational simulations of its era.
 
-The original software is now abandonware with no known copies available online. This project reconstructs the simulation based on reverse-engineered spreadsheets and preserved course materials from a 2004 college course.
+The simulation was later updated and published as **"PROSIM: A Production Management Simulation"** with **Chao-Hsien Chu** joining as co-author for the Windows version (1996). The accompanying textbook was published by Prentice Hall.
+
+### The Original Software
+
+- **PROSIM (1968)** - IBM mainframe version written in FORTRAN
+- **PROSIM II** - Updated mainframe version
+- **PROSIM III for Windows (1996)** - Final commercial release by Chu, Hottenstein, and Greenlaw
+
+The simulation was used in Operations Management courses at universities including Penn State, Bryant University, and others throughout the 1970s-2000s. Players manage a manufacturing company producing three products (X, Y, Z), making weekly decisions about:
+
+- **Production scheduling** - Assigning operators to machines
+- **Inventory management** - Ordering raw materials and parts
+- **Workforce planning** - Hiring, training, and scheduling workers
+- **Budget allocation** - Quality control, maintenance, and other overhead
+- **Demand forecasting** - Predicting customer orders
+
+### Why This Reconstruction?
+
+The original PROSIM software is now **abandonware** - no copies are known to exist online, and the original authors have either retired or passed away (Dr. Chu passed in 2021). This project aims to:
+
+1. **Preserve** the educational value of this classic simulation
+2. **Reconstruct** the game mechanics through forensic analysis
+3. **Modernize** the interface while maintaining authenticity
+4. **Open-source** the simulation for future educational use
 
 ## Project Status
 
 🚧 **Under Development** - See [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for roadmap.
 
-## Historical Context
+This reconstruction is based on:
 
-- **1968**: Original PROSIM created by Greenlaw & Hottenstein (IBM mainframe, FORTRAN)
-- **1996**: PROSIM III for Windows released (Chu, Hottenstein, Greenlaw)
-- **2004**: Course materials and reverse-engineered spreadsheets preserved
-- **2024**: This reconstruction project initiated
+- Reverse-engineered spreadsheets achieving ~97% prediction accuracy
+- Preserved DECS (decision) and REPT (report) files from actual gameplay
+- Course materials, presentations, and textbook references
+- Forensic analysis of game mechanics through input/output correlation
 
-For detailed historical analysis, see [archive/docs/PROSIM_CASE_STUDY.md](archive/docs/PROSIM_CASE_STUDY.md).
+## Historical Timeline
+
+| Year          | Event                                                                             |
+| ------------- | --------------------------------------------------------------------------------- |
+| **1968**      | Original PROSIM created by Greenlaw & Hottenstein (Penn State, IBM FORTRAN)       |
+| **1970s-80s** | PROSIM II developed and widely used in business schools                           |
+| **1996**      | PROSIM III for Windows released (Chu, Hottenstein, Greenlaw)                      |
+| **1996**      | _"PROSIM: A Production Management Simulation"_ textbook published (Prentice Hall) |
+| **2000s**     | Still in use at various universities                                              |
+| **2021**      | Dr. Chao-Hsien Chu passes away                                                    |
+| **2025**      | This reconstruction project initiated                                             |
 
 ## Installation
 
@@ -44,7 +74,7 @@ pip install -e .
 
 ## Usage
 
-*Coming soon - CLI and web interface in development*
+_Coming soon - CLI and web interface in development_
 
 ```bash
 # Start a new game (planned)
@@ -60,39 +90,108 @@ prosim process --decs input.DAT --state state.json
 ## Documentation
 
 - [Implementation Plan](IMPLEMENTATION_PLAN.md) - Development roadmap and task tracking
-- [Game Manual](docs/game_manual.md) - How to play *(coming soon)*
-- [Algorithms](docs/algorithms.md) - Technical documentation *(coming soon)*
-- [Case Study](archive/docs/PROSIM_CASE_STUDY.md) - Historical analysis
+- [Case Study](archive/docs/PROSIM_CASE_STUDY.md) - Detailed forensic analysis and historical research
+- [Game Manual](docs/game_manual.md) - How to play _(coming soon)_
+- [Algorithms](docs/algorithms.md) - Technical documentation of simulation mechanics _(coming soon)_
+
+## 📢 Seeking PROSIM Data Files
+
+**Did you play PROSIM in college?** We're looking for DECS (decision) and REPT (report) files from anyone who used PROSIM in courses or training programs. These files help us verify the accuracy of our reconstructed simulation.
+
+**What we're looking for:**
+
+- `DECS*.DAT` files (decision inputs)
+- `REPT*.DAT` files (simulation reports)
+- The original textbook: _"PROSIM: A Production Management Simulation"_
+- Any documentation, manuals, or course materials
+- Screenshots or printouts from the original software
+- Memories of how the game worked!
+
+If you have any of these from the 1970s-2000s era, please [open an issue](https://github.com/yourusername/prosim-reconstruction/issues) or contact us. **Even a single DECS/REPT pair would be valuable for validation!**
+
+### Keywords for Fellow Searchers
+
+If you found this page searching for any of these terms, you're in the right place:
+
+> PROSIM simulation, PROSIM III, PROSIM for Windows, Greenlaw Hottenstein simulation,
+> Chao-Hsien Chu PROSIM, Penn State production simulation, production management simulation game,
+> PROSIM Prentice Hall, PROSIM business simulation, PROSIM operations management,
+> DECS DAT file, REPT DAT file, PROSIM course, Bryant University PROSIM
 
 ## Contributing
 
 Contributions are welcome! This project has a preservation mission, so we especially appreciate:
 
+- **DECS/REPT Files** - Help validate our simulation accuracy (see above)
+- **Historical Information** - Documentation about the original PROSIM
 - **Translations** - Help make the game accessible in more languages
-- **Historical information** - Additional documentation about the original PROSIM
 - **Testing** - Validation against any original PROSIM materials you may have
+- **Code Contributions** - Help build the reconstruction
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines *(coming soon)*.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines _(coming soon)_.
+
+## Technical Details
+
+### Simulation Mechanics (Discovered Through Forensic Analysis)
+
+The reconstruction is based on detailed analysis of preserved game files. Key findings include:
+
+- **Production rates**: Parts (60/50/40 per hour), Assembly (40/30/20 per hour)
+- **Quality budget impact**: Higher quality budget reduces reject rate (~10-18%)
+- **Operator training**: Workers improve efficiency over 3-4 weeks of continuous work
+- **Demand forecasting**: Uses EWMA (Exponentially Weighted Moving Average)
+- **Cost structures**: Labor ($10/hr), overtime (1.5x), various overhead categories
+
+For complete technical details, see the [Case Study](archive/docs/PROSIM_CASE_STUDY.md).
+
+### File Formats
+
+- **DECS files**: Weekly decision inputs (operator assignments, orders, budgets)
+- **REPT files**: Simulation output reports (costs, production, inventory, performance)
 
 ## Acknowledgments
 
 ### Original Authors
-- **Paul S. Greenlaw** - Original co-author (1968)
-- **Michael P. Hottenstein** - Original co-author (1968)
-- **Chao-Hsien Chu** (1951-2021) - Co-author of Windows version (1996)
+
+- **Paul S. Greenlaw** - Original co-author (1968), Penn State University
+- **Michael P. Hottenstein** - Original co-author (1968), Penn State University
+- **Chao-Hsien Chu** (1951-2021) - Co-author of Windows version (1996), Penn State University
 
 ### Reconstruction
-- **Nelson DeWitt** - Reverse engineering (2004), reconstruction (2024)
+
+- **Nelson DeWitt** - Reverse engineering (2004), reconstruction (2025)
 
 ### Preservation Resources
-- [Learning Games Initiative Research Archive (LGIRA)](https://www.lgira.mesmernet.org/items/show/2717)
+
+- [Learning Games Initiative Research Archive (LGIRA)](https://www.lgira.mesmernet.org/items/show/2717) - Archive entry for PROSIM
+
+## Related Projects & Resources
+
+- [LGIRA](https://www.lgira.mesmernet.org/) - Learning Games Initiative Research Archive
+- [Computer Simulation Archive](https://www.simulationarchive.org/) - General simulation preservation
+
+**Note:** There are several unrelated products that share the "PROSIM" name:
+
+- Fives ProSim (prosim.net) - Chemical process simulation
+- ProSim Aviation (prosim-ar.com) - Flight simulator software
+- KBSI ProSim - Business process workflow simulation
+
+This project reconstructs the _educational production management simulation_, not any of the above.
 
 ## License
 
 MIT License - See [LICENSE](LICENSE) for details.
 
-This is a clean-room reconstruction based on observed behavior of the original software, not a copy or derivative of the original source code.
+This is a **clean-room reconstruction** based on observed behavior of the original software, not a copy or derivative of the original source code.
 
 ---
 
-*"Those who cannot remember the past are condemned to repeat it."* - But in this case, we're trying to make sure you **can** repeat it, for educational purposes.
+<p align="center">
+<i>"Those who cannot remember the past are condemned to repeat it."</i><br>
+But in this case, we're trying to make sure you <b>can</b> repeat it — for educational purposes.
+</p>
+
+<p align="center">
+<b>Help preserve educational software history!</b><br>
+⭐ Star this repo | 🔀 Fork and contribute | 📢 Share with former classmates
+</p>

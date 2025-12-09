@@ -1,0 +1,154 @@
+{
+  "app": {
+    "name": "PROSIM",
+    "tagline": "Simulacion de Gestion de Produccion",
+    "version": "Version {version}",
+    "about": "Una reconstruccion del juego de simulacion PROSIM de 1968 para uso educativo."
+  },
+  "menu": {
+    "new_game": "Nuevo Juego",
+    "load_game": "Cargar Juego",
+    "save_game": "Guardar Juego",
+    "settings": "Configuracion",
+    "quit": "Salir",
+    "help": "Ayuda",
+    "info": "Informacion",
+    "process_week": "Procesar Semana"
+  },
+  "cli": {
+    "choice": "Opcion",
+    "enter_decisions": "Ingresar decisiones y procesar semana",
+    "view_report": "Ver ultimo informe",
+    "save_before_quit": "Guardar antes de salir?",
+    "press_enter": "Presione Enter para continuar",
+    "game_created": "Juego nuevo creado",
+    "game_id": "ID del Juego",
+    "max_weeks": "Semanas Maximas",
+    "random_seed": "Semilla Aleatoria",
+    "company_name": "Nombre de la empresa",
+    "save_slot": "Guardar en ranura",
+    "save_name": "Nombre del guardado"
+  },
+  "game": {
+    "week": "Semana {week}",
+    "company": "Empresa {company}",
+    "current_state": "Estado Actual",
+    "decisions": "Decisiones",
+    "results": "Resultados"
+  },
+  "departments": {
+    "parts": "Departamento de Partes",
+    "assembly": "Departamento de Ensamblaje"
+  },
+  "inventory": {
+    "title": "Inventario",
+    "raw_materials": "Materias Primas",
+    "parts": "Partes",
+    "products": "Productos",
+    "beginning": "Inicial",
+    "ending": "Final",
+    "orders_received": "Pedidos Recibidos",
+    "production": "Produccion",
+    "used": "Usado",
+    "demand": "Demanda"
+  },
+  "production": {
+    "title": "Produccion",
+    "machine": "Maquina",
+    "operator": "Operador",
+    "part": "Parte",
+    "product": "Producto",
+    "scheduled_hours": "Horas Programadas",
+    "productive_hours": "Horas Productivas",
+    "units_produced": "Unidades Producidas",
+    "rejects": "Rechazos"
+  },
+  "costs": {
+    "title": "Costos",
+    "labor": "Mano de Obra",
+    "machine_setup": "Preparacion de Maquina",
+    "machine_repair": "Reparacion de Maquina",
+    "raw_materials": "Materias Primas",
+    "purchased_parts": "Partes Compradas",
+    "equipment_usage": "Uso de Equipo",
+    "parts_carrying": "Costo de Almacenamiento de Partes",
+    "products_carrying": "Costo de Almacenamiento de Productos",
+    "demand_penalty": "Penalidad por Demanda",
+    "quality_planning": "Planificacion de Calidad",
+    "plant_maintenance": "Mantenimiento de Planta",
+    "training": "Costo de Capacitacion",
+    "hiring": "Costo de Contratacion",
+    "layoff": "Costo de Despido",
+    "rm_carrying": "Costo de Almacenamiento de Materias Primas",
+    "ordering": "Costo de Pedido",
+    "fixed_expense": "Gastos Fijos",
+    "subtotal": "Sub-Total",
+    "total": "Costos Totales",
+    "weekly": "Esta Semana",
+    "cumulative": "Acumulado"
+  },
+  "orders": {
+    "title": "Pedidos",
+    "type": "Tipo",
+    "week_due": "Semana de Entrega",
+    "amount": "Cantidad",
+    "raw_materials_regular": "Materias Primas (Regular)",
+    "raw_materials_expedited": "Materias Primas (Urgente)",
+    "finished_part": "Parte Terminada {part}"
+  },
+  "demand": {
+    "title": "Demanda",
+    "estimated": "Demanda Estimada",
+    "carryover": "Arrastre del Mes Anterior",
+    "total": "Demanda Total Estimada"
+  },
+  "performance": {
+    "title": "Medidas de Desempeno",
+    "standard_cost": "Costos Estandar Totales",
+    "actual_cost": "Costos Reales Totales",
+    "efficiency": "Porcentaje de Eficiencia",
+    "variance": "Variacion $ Por Unidad",
+    "on_time": "% de Entregas a Tiempo",
+    "weekly": "Semana Actual",
+    "cumulative": "Acumulado"
+  },
+  "operators": {
+    "title": "Operadores",
+    "id": "ID del Operador",
+    "trained": "Capacitado",
+    "not_trained": "No Capacitado",
+    "efficiency": "Eficiencia"
+  },
+  "decisions": {
+    "title": "Decisiones Semanales",
+    "quality_budget": "Presupuesto de Calidad",
+    "maintenance_budget": "Presupuesto de Mantenimiento",
+    "rm_order_regular": "Pedido de Materias Primas (Regular)",
+    "rm_order_expedited": "Pedido de Materias Primas (Urgente)",
+    "parts_order": "Pedido de Partes",
+    "machine_assignments": "Asignaciones de Maquinas",
+    "train_operator": "Capacitar Operador",
+    "hours": "Horas"
+  },
+  "messages": {
+    "game_saved": "Juego guardado exitosamente.",
+    "game_loaded": "Juego cargado exitosamente.",
+    "invalid_input": "Entrada invalida. Por favor intente de nuevo.",
+    "week_processed": "Semana {week} procesada.",
+    "no_more_scheduled": "* * No hay (Mas) Recepciones Programadas * *"
+  },
+  "errors": {
+    "file_not_found": "Archivo no encontrado: {file}",
+    "invalid_decs": "Formato de archivo DECS invalido.",
+    "invalid_state": "Estado de juego invalido."
+  },
+  "validation": {
+    "week_mismatch": "La semana de decision no coincide con la semana actual de la empresa",
+    "negative_budget": "El presupuesto no puede ser negativo",
+    "high_budget": "El presupuesto parece inusualmente alto",
+    "negative_order": "El pedido no puede ser negativo",
+    "expedited_warning": "Usar pedidos urgentes es costoso (+$1,200)",
+    "excessive_hours": "Las horas programadas no pueden exceder 50 por semana",
+    "training_warning": "Capacitar muchos operadores a la vez reducira la produccion significativamente"
+  }
+}

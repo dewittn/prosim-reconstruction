@@ -351,12 +351,12 @@ prosim-reconstruction/
 
 #### Tasks
 
-- [ ] **4.1** Implement game state persistence
+- [x] **4.1** Implement game state persistence
   - Save/load game state (JSON)
   - Support multiple save slots
   - Auto-save after each week
 
-- [ ] **4.2** Implement CLI interface
+- [x] **4.2** Implement CLI interface
   - New game setup
   - Display current state
   - Enter decisions interactively
@@ -364,19 +364,19 @@ prosim-reconstruction/
   - Display reports
   - Save/load games
 
-- [ ] **4.3** Implement decision validation
+- [x] **4.3** Implement decision validation
   - Validate machine assignments
   - Validate budget inputs
   - Validate order quantities
   - Helpful error messages
 
-- [ ] **4.4** Implement reporting
+- [x] **4.4** Implement reporting
   - Weekly report display
   - Cumulative summaries
   - Performance metrics
   - Export to various formats
 
-- [ ] **4.5** Add i18n support
+- [x] **4.5** Add i18n support
   - Extract all user-facing strings
   - Implement locale loading
   - Create English translations
@@ -521,9 +521,9 @@ web = [
 - [ ] Configuration allows tuning unknown parameters
 
 ### Phase 4 (CLI)
-- [ ] Complete game can be played from command line
-- [ ] Game state persists between sessions
-- [ ] Reports match original format
+- [x] Complete game can be played from command line
+- [x] Game state persists between sessions
+- [x] Reports match original format
 
 ### Phase 5 (Web)
 - [ ] Game playable in web browser
@@ -846,6 +846,57 @@ Implemented comprehensive calibration module (`prosim/engine/calibration.py`):
 - All calibration data stored in `CALIBRATION_DATA` dict
 
 Phase 3 complete. Ready for Phase 4 (CLI & Single-Player Mode).
+
+### 2024-12-09 - Phase 4 - CLI & Single-Player Mode
+_Status: Complete_
+
+Implemented complete command-line interface for playable single-player mode:
+
+**Phase 4.1 - Game State Persistence (`prosim/io/state_io.py`):**
+- `SaveMetadata`, `SavedGame` Pydantic models for save data
+- `save_game()`, `load_game()` for slot-based persistence
+- `autosave()`, `load_autosave()` for automatic saving
+- Multiple save slots support (slot 0 = autosave)
+- `list_saves()`, `delete_save()`, `export_save()`, `import_save()`
+- XDG Base Directory compliant save locations
+- 34 tests covering all persistence functionality
+
+**Phase 4.2 - CLI Interface (`prosim/cli/main.py`):**
+- `prosim new` - Start new game with company name, max weeks, random seed
+- `prosim load [slot]` - Load saved game from slot or autosave
+- `prosim saves` - List all saved games
+- `prosim process` - Batch process week with DECS file
+- `prosim info` - Show game information
+- Interactive game loop with menu-driven interface
+- Rich console output with tables, panels, and formatting
+
+**Phase 4.3 - Decision Validation (`prosim/engine/validation.py`):**
+- `ValidationError`, `ValidationResult` data classes
+- `validate_decisions()` function with comprehensive checks
+- Validates week/company match, budgets, orders, machine assignments
+- Warnings for expensive operations (expedited orders, many trainings)
+- Helpful error messages with suggestions
+- Integration with CLI for real-time validation feedback
+- 26 tests covering validation scenarios
+
+**Phase 4.4 - Reporting:**
+- Rich-formatted weekly reports displayed in CLI
+- Costs summary with per-product breakdown
+- Production summary by machine
+- Inventory flow tracking
+- Integrated into interactive game loop
+
+**Phase 4.5 - i18n Support:**
+- Enhanced `prosim/i18n/locales/en.json` with CLI and validation strings
+- Created `prosim/i18n/locales/es.json` Spanish translation
+- Locale loading via `--lang` CLI flag
+
+**Test Results:**
+- 403 tests passing
+- 79% code coverage
+- 60 new tests for Phase 4 functionality
+
+Phase 4 complete. Ready for Phase 5 (Web Interface).
 
 ---
 

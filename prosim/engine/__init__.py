@@ -60,6 +60,12 @@ from prosim.engine.workforce import (
     WorkforceCostResult,
     WorkforceSchedulingResult,
 )
+from prosim.engine.validation import (
+    ValidationError,
+    ValidationResult,
+    validate_decisions,
+    validate_decisions_with_messages,
+)
 
 __all__ = [
     # Calibration
@@ -109,6 +115,11 @@ __all__ = [
     "Simulation",
     "SimulationWeekResult",
     "run_simulation",
+    # Validation
+    "ValidationError",
+    "ValidationResult",
+    "validate_decisions",
+    "validate_decisions_with_messages",
 ]
 
 from prosim.engine.simulation import (

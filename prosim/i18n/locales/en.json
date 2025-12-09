@@ -2,7 +2,8 @@
   "app": {
     "name": "PROSIM",
     "tagline": "Production Management Simulation",
-    "version": "Version {version}"
+    "version": "Version {version}",
+    "about": "A reconstruction of the 1968 PROSIM simulation game for educational use."
   },
   "menu": {
     "new_game": "New Game",
@@ -10,7 +11,23 @@
     "save_game": "Save Game",
     "settings": "Settings",
     "quit": "Quit",
-    "help": "Help"
+    "help": "Help",
+    "info": "Information",
+    "process_week": "Process Week"
+  },
+  "cli": {
+    "choice": "Choice",
+    "enter_decisions": "Enter decisions and process week",
+    "view_report": "View last report",
+    "save_before_quit": "Save before quitting?",
+    "press_enter": "Press Enter to continue",
+    "game_created": "Created new game",
+    "game_id": "Game ID",
+    "max_weeks": "Max Weeks",
+    "random_seed": "Random Seed",
+    "company_name": "Company name",
+    "save_slot": "Save to slot",
+    "save_name": "Save name"
   },
   "game": {
     "week": "Week {week}",
@@ -124,5 +141,14 @@
     "file_not_found": "File not found: {file}",
     "invalid_decs": "Invalid DECS file format.",
     "invalid_state": "Invalid game state."
+  },
+  "validation": {
+    "week_mismatch": "Decision week doesn't match company's current week",
+    "negative_budget": "Budget cannot be negative",
+    "high_budget": "Budget seems unusually high",
+    "negative_order": "Order cannot be negative",
+    "expedited_warning": "Using expedited orders is expensive (+$1,200)",
+    "excessive_hours": "Scheduled hours cannot exceed 50 per week",
+    "training_warning": "Training many operators at once will significantly reduce production"
   }
 }
