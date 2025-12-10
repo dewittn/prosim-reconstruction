@@ -1,0 +1,62 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv
+ENV
+env
+.eggs
+*.egg-info
+*.egg
+dist
+build
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+.tox
+.nox
+
+# Type checking
+.mypy_cache
+
+# Documentation (not needed in container)
+docs
+*.md
+!README.md
+
+# Archive (historical files, not needed in container)
+archive
+
+# Tests (not needed in production container)
+tests
+
+# Local development
+.claude
+.env
+.env.local
+*.db
+data/
+
+# macOS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*.log

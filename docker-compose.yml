@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  prosim:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist SQLite database
+      - prosim_data:/app/data
+    environment:
+      - PROSIM_DATABASE_URL=sqlite:///./data/prosim.db
+      - PROSIM_SECRET_KEY=${PROSIM_SECRET_KEY:-dev-secret-key-change-in-production}
+      - PROSIM_DEBUG=${PROSIM_DEBUG:-false}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Development service with hot reload
+  prosim-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source code for hot reload
+      - ./prosim:/app/prosim:ro
+      - ./web:/app/web:ro
+      - prosim_data:/app/data
+    environment:
+      - PROSIM_DATABASE_URL=sqlite:///./data/prosim.db
+      - PROSIM_SECRET_KEY=dev-secret-key
+      - PROSIM_DEBUG=true
+    profiles:
+      - dev
+
+volumes:
+  prosim_data:
+    name: prosim_data
