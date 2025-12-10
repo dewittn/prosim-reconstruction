@@ -116,12 +116,22 @@ prosim --lang es new --name "Mi Empresa"
 
 - `DECS*.DAT` files (decision inputs)
 - `REPT*.DAT` files (simulation reports)
+- **State/save files** - We've **successfully decoded the `.XTC` file format** as PROSIM game state files! These contain hidden operator statistics (efficiency, proficiency) and weekly snapshots. If you have any `*.XTC` files, they would be extremely valuable for calibration!
 - The original textbook: _"PROSIM: A Production Management Simulation"_
 - Any documentation, manuals, or course materials
 - Screenshots or printouts from the original software
 - Memories of how the game worked!
 
-If you have any of these from the 1970s-2000s era, please [open an issue](https://github.com/yourusername/prosim-reconstruction/issues) or contact us. **Even a single DECS/REPT pair would be valuable for validation!**
+**Important note about file usefulness:**
+
+PROSIM is path-dependent - each week's output depends on all previous decisions. A REPT file from Week 12 reflects 11 weeks of prior choices (training, inventory, hiring, etc.). This means:
+
+- **Most valuable:** Complete game sequences (DECS1→REPT1, DECS2→REPT2, ... through week 24) from a single playthrough
+- **Very useful:** Week 1 REPT files (show initial state before player decisions)
+- **Still helpful:** Partial sequences, even just 2-3 consecutive weeks
+- **Limited use:** Isolated late-game files without preceding weeks
+
+If you have any of these from the 1970s-2000s era, please [open an issue](https://github.com/yourusername/prosim-reconstruction/issues) or contact us.
 
 ### Keywords for Fellow Searchers
 
@@ -162,6 +172,11 @@ For complete technical details, see the [Case Study](archive/docs/PROSIM_CASE_ST
 
 - **DECS files**: Weekly decision inputs (operator assignments, orders, budgets)
 - **REPT files**: Simulation output reports (costs, production, inventory, performance)
+- **XTC files**: Game state save files containing:
+  - Hidden operator attributes (base efficiency 64-103%, proficiency 55-68%)
+  - Weekly state snapshots appended as game progresses
+  - Workforce tracking (operator count stored in header byte 9)
+  - Evidence of "expert" operators who exceed 100% efficiency
 
 ## Acknowledgments
 

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Help{% endblock %}
+
+{% block content %}
+<h1>How to Play PROSIM</h1>
+
+<nav>
+    <strong>Contents:</strong>
+    <a href="#objective">Objective</a> |
+    <a href="#production">Production</a> |
+    <a href="#decisions">Weekly Decisions</a> |
+    <a href="#costs">Costs</a> |
+    <a href="#tips">Strategy Tips</a>
+</nav>
+
+<section id="objective">
+    <h2>Game Objective</h2>
+    <p>
+        You are the production manager of a manufacturing company. Your goal is to
+        <strong>minimize total costs</strong> while meeting customer demand.
+    </p>
+    <p>
+        The game runs for a set number of weeks (typically 15). At the end,
+        the company with the lowest total costs wins.
+    </p>
+</section>
+
+<section id="production">
+    <h2>Production System</h2>
+
+    <h3>Production Flow</h3>
+    <pre>
+Raw Materials → Parts Department → Parts (X', Y', Z') → Assembly Department → Products (X, Y, Z)
+    </pre>
+
+    <h3>Departments</h3>
+    <p><strong>Parts Department</strong> (Machines 1-4)</p>
+    <ul>
+        <li>Converts raw materials into parts</li>
+        <li>Production rates: X' = 60/hr, Y' = 50/hr, Z' = 40/hr</li>
+    </ul>
+
+    <p><strong>Assembly Department</strong> (Machines 5-9)</p>
+    <ul>
+        <li>Converts parts into finished products</li>
+        <li>Production rates: X = 40/hr, Y = 30/hr, Z = 20/hr</li>
+        <li>Each product requires 1 part (X→X', Y→Y', Z→Z')</li>
+    </ul>
+
+    <h3>Workforce</h3>
+    <ul>
+        <li><strong>Untrained operators:</strong> 60-90% efficiency</li>
+        <li><strong>Trained operators:</strong> 95-100% efficiency</li>
+        <li>Training costs $1,000 and takes 1 week</li>
+    </ul>
+
+    <h3>Quality</h3>
+    <p>
+        Approximately 17.8% of production is rejected due to quality issues.
+        Higher quality budgets may reduce this rate.
+    </p>
+</section>
+
+<section id="decisions">
+    <h2>Weekly Decisions</h2>
+
+    <h3>Budgets</h3>
+    <ul>
+        <li><strong>Quality Budget:</strong> Invest in quality control (suggested: $500-1000)</li>
+        <li><strong>Maintenance Budget:</strong> Invest in equipment maintenance (suggested: $500-1000)</li>
+    </ul>
+
+    <h3>Orders</h3>
+    <ul>
+        <li><strong>Regular Raw Materials:</strong> 3-week lead time</li>
+        <li><strong>Expedited Raw Materials:</strong> 1-week lead time (+$1,200)</li>
+        <li><strong>Purchased Parts (X', Y', Z'):</strong> 1-week lead time</li>
+    </ul>
+
+    <h3>Machine Assignments</h3>
+    <p>For each of the 9 machines, you decide:</p>
+    <ul>
+        <li>Which part/product type to make (X/Y/Z)</li>
+        <li>How many hours to schedule (0-50)</li>
+        <li>Whether to send the operator for training</li>
+    </ul>
+</section>
+
+<section id="costs">
+    <h2>Cost Structure</h2>
+
+    <h3>Per-Product Costs</h3>
+    <ol>
+        <li>Labor ($10/hour)</li>
+        <li>Machine Set-Up (when changing part types)</li>
+        <li>Machine Repair (random failures, $400)</li>
+        <li>Raw Materials ($5/lb)</li>
+        <li>Purchased Parts (varies by part type)</li>
+        <li>Equipment Usage ($20/hour)</li>
+        <li>Parts Carrying Cost (inventory holding)</li>
+        <li>Products Carrying Cost (inventory holding)</li>
+        <li>Demand Penalty (unfulfilled orders)</li>
+    </ol>
+
+    <h3>Overhead Costs</h3>
+    <ol>
+        <li>Quality Planning (your budget)</li>
+        <li>Plant Maintenance (your budget)</li>
+        <li>Training Cost ($1,000/operator)</li>
+        <li>Hiring Cost ($2,700/new hire)</li>
+        <li>Layoff Cost ($200/week unscheduled, $400 termination)</li>
+        <li>Raw Materials Carrying Cost</li>
+        <li>Ordering Cost</li>
+        <li>Fixed Expense ($1,500/week)</li>
+    </ol>
+</section>
+
+<section id="tips">
+    <h2>Strategy Tips</h2>
+
+    <h3>Early Game (Weeks 1-4)</h3>
+    <ul>
+        <li>Train your operators - efficiency gains pay off quickly</li>
+        <li>Order raw materials early (3-week lead time!)</li>
+        <li>Focus on one or two product types initially</li>
+    </ul>
+
+    <h3>Mid Game (Weeks 5-10)</h3>
+    <ul>
+        <li>Monitor demand forecasts and adjust production</li>
+        <li>Keep safety stock of parts for assembly</li>
+        <li>Balance production across product types based on demand</li>
+    </ul>
+
+    <h3>Late Game (Weeks 11+)</h3>
+    <ul>
+        <li>Reduce raw material orders as game winds down</li>
+        <li>Focus on meeting remaining demand</li>
+        <li>Minimize ending inventory (carrying costs)</li>
+    </ul>
+
+    <h3>General Tips</h3>
+    <ul>
+        <li>Shipping occurs every 4 weeks - plan ahead!</li>
+        <li>Unfulfilled demand carries heavy penalties</li>
+        <li>Consistent scheduling reduces setup costs</li>
+        <li>Quality and maintenance budgets prevent costly problems</li>
+    </ul>
+</section>
+
+<section>
+    <p>
+        <a href="/">&larr; Back to Games</a>
+    </p>
+</section>
+{% endblock %}

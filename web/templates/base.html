@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PROSIM{% endblock %} - Production Management Simulation</title>
+
+    <!-- Simple.css - Classless CSS framework -->
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+
+    <!-- HTMX for dynamic interactions -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% include "components/navbar.html" %}
+
+    <main>
+        {% block flash %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="notice {% if message.type %}{{ message.type }}{% endif %}">
+                {{ message.text }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endblock %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>
+            <strong>PROSIM</strong> - Production Management Simulation
+            <br>
+            <small>Originally created by Greenlaw, Hottenstein & Chu (1968) | Reconstructed 2024-2025</small>
+        </p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

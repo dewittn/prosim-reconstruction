@@ -1,0 +1,186 @@
+/**
+ * PROSIM Web Interface - Custom Styles
+ *
+ * Extends Simple.css with PROSIM-specific styling.
+ * Keep this minimal - let Simple.css do the heavy lifting.
+ */
+
+/* Brand styling */
+.brand {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Flash messages */
+.flash-messages {
+    margin-bottom: 1rem;
+}
+
+.flash-messages .notice {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.flash-messages .notice.success {
+    background-color: var(--accent-bg);
+    border-left: 4px solid var(--accent);
+}
+
+.flash-messages .notice.error {
+    background-color: #fee;
+    border-left: 4px solid #c00;
+}
+
+.flash-messages .notice.warning {
+    background-color: #ffc;
+    border-left: 4px solid #cc0;
+}
+
+/* Game cards */
+.game-list {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.game-card {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+}
+
+.game-card h3 {
+    margin-top: 0;
+}
+
+.game-card .meta {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* Decision form */
+.machine-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.machine-card {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.machine-card.parts-dept {
+    border-left: 4px solid #4a9;
+}
+
+.machine-card.assembly-dept {
+    border-left: 4px solid #49a;
+}
+
+.machine-card h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.machine-card .dept-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-light);
+}
+
+/* Form improvements */
+fieldset {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.form-row > * {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Report tables */
+.cost-table th,
+.cost-table td {
+    text-align: right;
+}
+
+.cost-table th:first-child,
+.cost-table td:first-child {
+    text-align: left;
+}
+
+.total-row {
+    font-weight: bold;
+    border-top: 2px solid var(--border);
+}
+
+/* Status indicators */
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.status.active {
+    background-color: #dfd;
+    color: #060;
+}
+
+.status.complete {
+    background-color: #ddf;
+    color: #006;
+}
+
+/* HTMX loading indicator */
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline-block;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline-block;
+}
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-row > * {
+        min-width: 100%;
+    }
+
+    .machine-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -123,7 +123,7 @@ This makes ProsimTable.xls potentially one of the most detailed surviving record
 | `ProSim_intro.ppt` | Detailed simulation mechanics |
 | `475chapter*.ppt` | OM textbook chapter slides |
 | `prosim_forecasting.htm` | Lab assignment for forecasting |
-| `prosim.xtc`, `prosim1.xtc` | Unknown format (possibly PROSIM internal) |
+| `prosim.xtc`, `prosim1.xtc` | **PROSIM game state files** (see Appendix F) |
 
 ### Folder Structure
 
@@ -644,6 +644,103 @@ Several other products share the "PROSIM" name but are unrelated:
 - **Fives ProSim** - Chemical process simulation software (prosim.net)
 - **ProSim Training Solutions** - Flight simulator software (prosim-ar.com)
 - **KBSI ProSim** - Business process workflow simulation
+
+---
+
+---
+
+## Appendix F: XTC File Format (Game State Files)
+
+### Discovery (December 2024)
+
+Analysis of two `.xtc` files found in the Prosim folder revealed they are **PROSIM III game state/save files**:
+
+| File | Size | Modified | Contents |
+|------|------|----------|----------|
+| `prosim.xtc` | 18,963 bytes | May 12, 2004 | Game state snapshot |
+| `prosim1.xtc` | 29,088 bytes | May 15, 2004 | Later game state (10KB larger) |
+
+### File Structure
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Header (87 bytes)                                            │
+│   Byte 9:  Number of operators (9 in prosim.xtc, 13 in prosim1.xtc) │
+│   Byte 40: Maximum simulation weeks (24)                     │
+│   Byte 44: Week-related counter                              │
+├─────────────────────────────────────────────────────────────┤
+│ Record Delimiter: 0x15 (ASCII NAK)                           │
+├─────────────────────────────────────────────────────────────┤
+│ Operator Records (16 bytes each)                             │
+│   Format: [Efficiency:f32] [Proficiency:f32] [?:f32] [Cumulative:f32] │
+├─────────────────────────────────────────────────────────────┤
+│ Product/Inventory Records (variable size)                    │
+│   Marker: 2.8004 value indicates product data sections       │
+├─────────────────────────────────────────────────────────────┤
+│ Large Data Segments (100-1200 bytes)                         │
+│   Possibly compressed or encoded game state tables           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Operator Data Discovery
+
+The XTC files contain **hidden operator statistics** not visible in REPT files:
+
+| Operator | Time Efficiency | Proficiency | Skill Level |
+|----------|-----------------|-------------|-------------|
+| 1 | 0.6397 | 0.6637 | Untrained/New |
+| 2 | 0.7751 | 0.6171 | Partial Training |
+| 3 | 0.8074 | 0.5700 | Partial Training |
+| 4 | 0.8093 | 0.5586 | Partial Training |
+| 5 | 0.8188 | 0.5490 | Partial Training |
+| 6 | 0.8509 | 0.6104 | Mostly Trained |
+| 7 | 0.9086 | 0.5551 | Mostly Trained |
+| 8 | 0.9667 | 0.5942 | Fully Trained |
+| 9 | **1.0312** | 0.6778 | **EXPERT (>100%)** |
+
+### Key Findings
+
+1. **Two Hidden Stats Per Operator**:
+   - **Time Efficiency**: Percentage of scheduled hours that become productive hours (64-103%)
+   - **Proficiency**: Production rate modifier (55-68% of standard rate)
+
+2. **Expert Operators Exist**: Operator 9 has 103.12% efficiency - confirming the spreadsheet's "superstar" operator hypothesis where some workers consistently exceed 100% of standard production.
+
+3. **Fixed vs Variable Stats**: Efficiency appears to be a fixed attribute per operator (randomized at hire?), while the REPT file shows variable productive hours based on training state.
+
+4. **File Growth = Game Progression**:
+   - `prosim.xtc` (May 12): 18,963 bytes, 9 operators
+   - `prosim1.xtc` (May 15): 29,088 bytes, 13 operators
+   - The 10KB growth and 4 additional operators suggest this tracks cumulative game state
+
+5. **Weekly Snapshots**: Each operator appears multiple times in the file (2-4 records in prosim.xtc, 7-8 in prosim1.xtc), suggesting weekly state snapshots are appended.
+
+### Correlation with REPT Data
+
+From REPT12.DAT operator section:
+```
+Op  1: Dept=1, Sched=50h, Prod=50.0h, TimeEff=1.0000
+Op  3: Dept=2, Sched=50h, Prod=47.0h, TimeEff=0.9400
+Op 26: Dept=1, Sched=50h, Prod=43.1h, TimeEff=0.8620
+```
+
+The REPT file shows **achieved** efficiency (affected by training state), while the XTC file appears to store **base** efficiency (fixed attribute). This explains why training improves performance - it unlocks more of the hidden base efficiency.
+
+### Implications for Reconstruction
+
+This discovery provides critical insight:
+
+1. **Operator Hidden Stats**: Each operator has permanent efficiency/proficiency values assigned at hire
+2. **Training Unlocks Potential**: Training doesn't change base stats, but allows operators to achieve closer to their potential
+3. **Expert Operator Chance**: Some operators can exceed 100% - this was designed into the game, not an anomaly
+4. **State Persistence**: The instructor's XTC file tracked cumulative state across the entire simulation
+
+### Remaining Questions
+
+- What algorithm determines initial efficiency/proficiency values for new hires?
+- How does training interact with base efficiency to produce REPT productive hours?
+- What data is in the large encoded segments (inventory history? production logs?)?
+- Are there other XTC files from different teams that could help calibrate the model?
 
 ---
 

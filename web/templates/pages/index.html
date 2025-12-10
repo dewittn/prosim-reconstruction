@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Your Games{% endblock %}
+
+{% block content %}
+<h1>PROSIM</h1>
+<p>
+    <strong>Production Management Simulation</strong> - A game where you manage a manufacturing
+    company, making decisions about production, inventory, workforce, and maintenance.
+</p>
+
+<section>
+    <header>
+        <h2>Your Games</h2>
+        <a href="/new" role="button">New Game</a>
+    </header>
+
+    {% if games %}
+    <div class="game-list">
+        {% for game in games %}
+        <article class="game-card" id="game-{{ game.session_id }}">
+            <h3>{{ game.company_name or "Unnamed Company" }}</h3>
+            <p class="meta">
+                Game ID: {{ game.game_id }}<br>
+                Week {{ game.current_week }} of {{ game.max_weeks }}
+                {% if game.is_complete %}
+                <span class="status complete">Complete</span>
+                {% elif game.is_active %}
+                <span class="status active">Active</span>
+                {% endif %}
+            </p>
+            <p>
+                Total Costs: ${{ "{:,.2f}".format(game.total_costs) }}
+            </p>
+            <p>
+                <a href="/game/{{ game.session_id }}">Continue Playing</a>
+                |
+                <a href="#"
+                   hx-delete="/game/{{ game.session_id }}"
+                   hx-target="#game-{{ game.session_id }}"
+                   hx-swap="outerHTML"
+                   hx-confirm="Delete this game? This cannot be undone.">
+                    Delete
+                </a>
+            </p>
+            <small>Last played: {{ game.last_played.strftime('%Y-%m-%d %H:%M') if game.last_played else 'Never' }}</small>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>
+        <em>No games yet.</em>
+        <a href="/new">Start your first game!</a>
+    </p>
+    {% endif %}
+</section>
+
+<section>
+    <h2>About PROSIM</h2>
+    <p>
+        PROSIM is a production management simulation game originally created by
+        Greenlaw, Hottenstein, and Chu in 1968. This reconstruction preserves
+        the educational value of the original while making it accessible
+        through a modern web interface.
+    </p>
+    <p>
+        <a href="/help">Learn how to play &rarr;</a>
+    </p>
+</section>
+{% endblock %}

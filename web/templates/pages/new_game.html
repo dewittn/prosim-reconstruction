@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}New Game{% endblock %}
+
+{% block content %}
+<h1>Start New Game</h1>
+
+<p>
+    Create a new PROSIM game. You'll manage a manufacturing company,
+    making weekly decisions about production, inventory, and workforce.
+</p>
+
+<form method="post" action="/new">
+    <fieldset>
+        <legend>Company Setup</legend>
+
+        <label for="company_name">Company Name</label>
+        <input type="text"
+               id="company_name"
+               name="company_name"
+               required
+               placeholder="e.g., Acme Manufacturing"
+               maxlength="100">
+
+        <label for="max_weeks">Game Length (weeks)</label>
+        <select id="max_weeks" name="max_weeks">
+            <option value="10">10 weeks (Short)</option>
+            <option value="15" selected>15 weeks (Standard)</option>
+            <option value="20">20 weeks (Extended)</option>
+            <option value="25">25 weeks (Long)</option>
+        </select>
+        <small>Standard games run 15 weeks with shipping every 4 weeks.</small>
+    </fieldset>
+
+    <fieldset>
+        <legend>Advanced Options</legend>
+
+        <label for="random_seed">Random Seed (optional)</label>
+        <input type="number"
+               id="random_seed"
+               name="random_seed"
+               placeholder="Leave blank for random">
+        <small>
+            Set a specific seed for reproducible results.
+            Useful for comparing strategies or debugging.
+        </small>
+    </fieldset>
+
+    <div>
+        <button type="submit">Start Game</button>
+        <a href="/" role="button" class="secondary">Cancel</a>
+    </div>
+</form>
+
+<section>
+    <h2>Game Overview</h2>
+    <p>In PROSIM, you'll manage:</p>
+    <ul>
+        <li><strong>Production</strong> - Schedule machines to produce parts (X', Y', Z') and assemble products (X, Y, Z)</li>
+        <li><strong>Workforce</strong> - Train operators to improve efficiency, manage scheduling</li>
+        <li><strong>Inventory</strong> - Order raw materials and purchased parts with lead times</li>
+        <li><strong>Quality &amp; Maintenance</strong> - Budget for quality control and equipment maintenance</li>
+    </ul>
+    <p>
+        Your goal is to minimize total costs while meeting demand.
+        Shipping occurs every 4 weeks, and unfulfilled demand carries penalties.
+    </p>
+    <p>
+        <a href="/help">Read the full game manual &rarr;</a>
+    </p>
+</section>
+{% endblock %}

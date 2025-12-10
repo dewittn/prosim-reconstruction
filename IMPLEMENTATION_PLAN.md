@@ -389,20 +389,20 @@ prosim-reconstruction/
 
 ---
 
-### Phase 5: Web Interface (Future)
+### Phase 5: Web Interface
 **Goal**: Create web-based UI for broader accessibility
 
 #### Tasks
 
-- [ ] **5.1** Design web architecture
-  - Choose framework (FastAPI + React/Vue/HTMX)
-  - Design API endpoints
-  - Design database schema (if needed)
+- [x] **5.1** Design web architecture
+  - Framework: FastAPI + HTMX + Jinja2
+  - Database: SQLite with SQLAlchemy ORM
+  - Sessions: Cookie-based (no user accounts required)
 
-- [ ] **5.2** Implement backend API
-  - REST/GraphQL endpoints
-  - Authentication (simple)
-  - Game state management
+- [x] **5.2** Implement backend API
+  - Game management routes (create, list, view, delete)
+  - Service layer wrapping prosim.engine.Simulation
+  - Database persistence for game state
 
 - [ ] **5.3** Implement frontend
   - Decision entry form
@@ -973,6 +973,52 @@ Implemented comprehensive documentation for the PROSIM reconstruction:
 - Removed "coming soon" placeholders
 
 Phase 6.1-6.4 complete. Phase 6.5 (Archive submission) deferred for future work.
+
+### 2024-12-10 - Phase 5.1-5.2 - Web Interface Foundation
+_Status: Complete_
+
+Implemented web interface foundation using FastAPI + HTMX + Jinja2:
+
+**Phase 5.1 - Web Architecture:**
+- Framework: FastAPI with Jinja2 templates and HTMX for interactivity
+- Database: SQLite with SQLAlchemy ORM for game state persistence
+- Sessions: Cookie-based sessions (no user accounts required)
+- Styling: Simple.css classless CSS framework with custom overrides
+
+**Phase 5.2 - Backend API:**
+- `web/database/models.py` - SQLAlchemy models (GameSession, WeeklyDecision)
+- `web/database/session.py` - Database session management and initialization
+- `web/services/game_service.py` - Game state CRUD operations
+- `web/services/simulation_service.py` - Wrapper for prosim.engine.Simulation
+- `web/routes/game.py` - Game management routes (create, list, view, delete)
+- `web/dependencies.py` - FastAPI dependency injection helpers
+- `web/config.py` - Web configuration with environment variable support
+- `web/app.py` - FastAPI application factory with lifespan management
+
+**Templates Created:**
+- `web/templates/base.html` - Base template with HTMX and Simple.css
+- `web/templates/components/navbar.html` - Navigation component
+- `web/templates/pages/index.html` - Game list landing page
+- `web/templates/pages/new_game.html` - New game creation form
+- `web/templates/pages/game.html` - Main game dashboard
+- `web/templates/pages/help.html` - Game help documentation
+- `web/templates/pages/not_found.html` - 404 error page
+- `web/static/css/style.css` - Custom styles
+
+**Dependencies Added:**
+- fastapi>=0.100.0
+- uvicorn>=0.23.0
+- jinja2>=3.0
+- python-multipart>=0.0.6
+- sqlalchemy>=2.0
+
+**Running the Web App:**
+```bash
+pip install -e ".[web]"
+uvicorn web.app:app --reload
+```
+
+Phase 5.1-5.2 complete. Phase 5.3 (Decision entry forms) is next.
 
 ---
 
