@@ -466,6 +466,24 @@ prosim-reconstruction/
 
 ---
 
+### Planned Enhancements (Future)
+
+These features are planned for future implementation:
+
+#### Worker Customization
+- [ ] Allow players to rename operators (e.g., "Operator 1" → "Alice")
+- [ ] Add worker renaming to CLI settings menu
+- [ ] Persist custom names in save files
+- [ ] Display custom names in reports and decision screens
+
+#### File Format Export
+- [ ] Export weekly decisions in original DECS file format
+- [ ] Export weekly reports in original REPT file format
+- [ ] Support batch export of multiple weeks
+- [ ] Useful for validation, archival, and interoperability with original materials
+
+---
+
 ## Development Guidelines
 
 ### Code Style
@@ -518,10 +536,10 @@ web = [
 ## Success Criteria
 
 ### Phase 1-3 (Core)
-- [ ] Simulation produces output within 97% accuracy of original REPT files
-- [ ] All original DECS files can be parsed
-- [ ] All original REPT files can be parsed and compared
-- [ ] Configuration allows tuning unknown parameters
+- [x] Simulation produces output within 97% accuracy of original REPT files
+- [x] All original DECS files can be parsed
+- [x] All original REPT files can be parsed and compared
+- [x] Configuration allows tuning unknown parameters
 
 ### Phase 4 (CLI)
 - [x] Complete game can be played from command line
@@ -534,8 +552,8 @@ web = [
 - [ ] Mobile-responsive
 
 ### Phase 6 (Preservation)
-- [ ] Documentation sufficient for future developers
-- [ ] Historical context preserved
+- [x] Documentation sufficient for future developers
+- [x] Historical context preserved
 - [ ] Submitted to relevant archives
 
 ---
