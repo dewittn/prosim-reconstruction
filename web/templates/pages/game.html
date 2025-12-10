@@ -79,7 +79,7 @@
         <tbody>
             <tr>
                 <td>Raw Materials</td>
-                <td>{{ "{:,.0f}".format(company.inventory.raw_materials.on_hand) }} lbs</td>
+                <td>{{ "{:,.0f}".format(company.inventory.raw_materials.ending) }} lbs</td>
             </tr>
         </tbody>
     </table>
@@ -95,15 +95,15 @@
         <tbody>
             <tr>
                 <td>X' Parts</td>
-                <td>{{ "{:,.0f}".format(company.inventory.parts.x_prime.on_hand) }}</td>
+                <td>{{ "{:,.0f}".format(company.inventory.parts.x_prime.ending) }}</td>
             </tr>
             <tr>
                 <td>Y' Parts</td>
-                <td>{{ "{:,.0f}".format(company.inventory.parts.y_prime.on_hand) }}</td>
+                <td>{{ "{:,.0f}".format(company.inventory.parts.y_prime.ending) }}</td>
             </tr>
             <tr>
                 <td>Z' Parts</td>
-                <td>{{ "{:,.0f}".format(company.inventory.parts.z_prime.on_hand) }}</td>
+                <td>{{ "{:,.0f}".format(company.inventory.parts.z_prime.ending) }}</td>
             </tr>
         </tbody>
     </table>
@@ -119,15 +119,15 @@
         <tbody>
             <tr>
                 <td>Product X</td>
-                <td>{{ "{:,.0f}".format(company.inventory.products.x.on_hand) }}</td>
+                <td>{{ "{:,.0f}".format(company.inventory.products.x.ending) }}</td>
             </tr>
             <tr>
                 <td>Product Y</td>
-                <td>{{ "{:,.0f}".format(company.inventory.products.y.on_hand) }}</td>
+                <td>{{ "{:,.0f}".format(company.inventory.products.y.ending) }}</td>
             </tr>
             <tr>
                 <td>Product Z</td>
-                <td>{{ "{:,.0f}".format(company.inventory.products.z.on_hand) }}</td>
+                <td>{{ "{:,.0f}".format(company.inventory.products.z.ending) }}</td>
             </tr>
         </tbody>
     </table>
