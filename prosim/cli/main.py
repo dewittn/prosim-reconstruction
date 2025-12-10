@@ -33,6 +33,8 @@ from prosim.io import (
     load_game,
     parse_decs,
     save_game,
+    write_decs,
+    write_rept,
     write_rept_human_readable,
 )
 from prosim.models.company import Company, GameState
@@ -213,8 +215,7 @@ def process(
 
     # Output report
     if output:
-        with open(output, "w") as f:
-            f.write(write_rept_human_readable(result.weekly_report))
+        write_rept_human_readable(result.weekly_report, output)
         console.print(f"[green]Report written to {output}[/green]")
     else:
         _display_report(result.weekly_report)
@@ -275,17 +276,24 @@ def _play_game(game_state: GameState, save_slot: Optional[int] = None) -> None:
         console.print("  [1] Enter decisions and process week")
         console.print("  [2] View last report")
         console.print("  [3] Save game")
-        console.print("  [4] Help")
+        console.print("  [4] Export files (DECS/REPT)")
+        console.print("  [5] Settings")
+        console.print("  [6] Help")
         console.print("  [q] Quit")
         console.print()
 
-        choice = Prompt.ask("Choice", choices=["1", "2", "3", "4", "q"], default="1")
+        choice = Prompt.ask("Choice", choices=["1", "2", "3", "4", "5", "6", "q"], default="1")
 
         if choice == "1":
             # Enter decisions
             decisions = _get_decisions_interactive(company)
             if decisions is None:
                 continue
+
+            # Store decisions for potential export
+            game_state = game_state.model_copy(
+                update={"_last_decisions": decisions}
+            ) if hasattr(game_state, "_last_decisions") else game_state
 
             # Process week
             try:
@@ -317,6 +325,19 @@ def _play_game(game_state: GameState, save_slot: Optional[int] = None) -> None:
             _save_game_interactive(game_state, save_slot)
 
         elif choice == "4":
+            _export_files_interactive(company)
+
+        elif choice == "5":
+            updated_company = _settings_menu(company)
+            if updated_company:
+                game_state = game_state.update_company(updated_company)
+                # Auto-save after settings change
+                try:
+                    autosave(game_state, config=config)
+                except SaveError:
+                    pass
+
+        elif choice == "6":
             _show_help()
 
         elif choice == "q":
@@ -379,9 +400,14 @@ def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
         for machine_id in range(1, 10):
             dept = "Parts" if machine_id <= 4 else "Assembly"
             op = company.workforce.get_operator(machine_id)
-            trained_str = "[green]Trained[/green]" if op and op.is_trained else "[yellow]Untrained[/yellow]"
+            if op:
+                trained_str = "[green]Trained[/green]" if op.is_trained else "[yellow]Untrained[/yellow]"
+                op_name = op.display_name
+            else:
+                trained_str = "[yellow]Untrained[/yellow]"
+                op_name = f"Operator {machine_id}"
 
-            console.print(f"  Machine {machine_id} ({dept}) - Operator {trained_str}")
+            console.print(f"  Machine {machine_id} ({dept}) - {op_name} {trained_str}")
 
             hours_input = Prompt.ask(
                 f"    Hours (0-50 or 't' for training)",
@@ -720,6 +746,243 @@ Raw Materials -> Parts Dept (X', Y', Z') -> Assembly Dept (X, Y, Z)
 Products ship every 4 weeks. Unfulfilled demand carries over with penalty.""",
         border_style="cyan",
     ))
+
+
+def _settings_menu(company: Company) -> Optional[Company]:
+    """Display settings menu and handle worker renaming.
+
+    Args:
+        company: Current company state
+
+    Returns:
+        Updated Company if changes were made, None otherwise
+    """
+    console.print()
+    console.print(Panel.fit(
+        "[bold]Settings[/bold]",
+        border_style="magenta",
+    ))
+
+    console.print("\n[bold]Options:[/bold]")
+    console.print("  [1] Rename workers")
+    console.print("  [2] View all workers")
+    console.print("  [b] Back to main menu")
+    console.print()
+
+    choice = Prompt.ask("Choice", choices=["1", "2", "b"], default="b")
+
+    if choice == "1":
+        return _rename_workers_menu(company)
+    elif choice == "2":
+        _display_workers(company)
+        return None
+    else:
+        return None
+
+
+def _rename_workers_menu(company: Company) -> Optional[Company]:
+    """Interactive menu for renaming workers.
+
+    Args:
+        company: Current company state
+
+    Returns:
+        Updated Company if changes were made, None otherwise
+    """
+    console.print()
+    console.print("[bold]Current Workers:[/bold]")
+
+    # Display workers in a table
+    table = Table(box=None)
+    table.add_column("ID", justify="right")
+    table.add_column("Current Name")
+    table.add_column("Status")
+    table.add_column("Department")
+
+    for op_id, operator in sorted(company.workforce.operators.items()):
+        status = "[green]Trained[/green]" if operator.is_trained else "[yellow]Untrained[/yellow]"
+        if operator.training_status.value == "training":
+            status = "[cyan]In Training[/cyan]"
+        dept = operator.department.value.title() if operator.department.value != "unassigned" else "-"
+
+        table.add_row(
+            str(op_id),
+            operator.display_name,
+            status,
+            dept,
+        )
+
+    console.print(table)
+    console.print()
+
+    # Get worker ID to rename
+    try:
+        worker_id = IntPrompt.ask(
+            "Enter worker ID to rename (0 to cancel)",
+            default=0,
+        )
+
+        if worker_id == 0:
+            return None
+
+        if worker_id not in company.workforce.operators:
+            console.print(f"[red]Worker {worker_id} not found.[/red]")
+            return None
+
+        operator = company.workforce.operators[worker_id]
+        console.print(f"\nCurrent name: [cyan]{operator.display_name}[/cyan]")
+
+        new_name = Prompt.ask(
+            "Enter new name (leave empty to reset to default)",
+            default="",
+        )
+
+        # Update the workforce
+        new_workforce = company.workforce.rename_operator(
+            worker_id,
+            new_name if new_name.strip() else None,
+        )
+
+        # Update company with new workforce
+        updated_company = company.model_copy(update={"workforce": new_workforce})
+
+        new_display = new_workforce.operators[worker_id].display_name
+        console.print(f"[green]Worker {worker_id} renamed to: {new_display}[/green]")
+
+        return updated_company
+
+    except (KeyboardInterrupt, EOFError):
+        console.print("\n[yellow]Cancelled.[/yellow]")
+        return None
+
+
+def _display_workers(company: Company) -> None:
+    """Display all workers with their details."""
+    console.print()
+    console.print(Panel.fit(
+        "[bold]Workforce[/bold]",
+        border_style="blue",
+    ))
+
+    table = Table(title="All Workers")
+    table.add_column("ID", justify="right")
+    table.add_column("Name")
+    table.add_column("Status")
+    table.add_column("Department")
+    table.add_column("Weeks Unscheduled", justify="right")
+
+    for op_id, operator in sorted(company.workforce.operators.items()):
+        status = "[green]Trained[/green]" if operator.is_trained else "[yellow]Untrained[/yellow]"
+        if operator.training_status.value == "training":
+            status = "[cyan]In Training[/cyan]"
+        dept = operator.department.value.title() if operator.department.value != "unassigned" else "-"
+
+        table.add_row(
+            str(op_id),
+            operator.display_name,
+            status,
+            dept,
+            str(operator.consecutive_weeks_unscheduled),
+        )
+
+    console.print(table)
+    console.print()
+    Prompt.ask("[dim]Press Enter to continue[/dim]", default="")
+
+
+def _export_files_interactive(company: Company) -> None:
+    """Interactive menu for exporting DECS/REPT files.
+
+    Args:
+        company: Current company state
+    """
+    console.print()
+    console.print(Panel.fit(
+        "[bold]Export Files[/bold]",
+        border_style="yellow",
+    ))
+
+    if not company.reports:
+        console.print("[yellow]No reports available to export yet.[/yellow]")
+        console.print("[dim]Complete at least one week to generate reports.[/dim]")
+        return
+
+    console.print("\n[bold]Available Reports:[/bold]")
+    for report in company.reports:
+        console.print(f"  Week {report.week}")
+
+    console.print("\n[bold]Export Options:[/bold]")
+    console.print("  [1] Export REPT file (simulation report)")
+    console.print("  [2] Export REPT file (human-readable format)")
+    console.print("  [3] Export all weeks")
+    console.print("  [b] Back to main menu")
+    console.print()
+
+    choice = Prompt.ask("Choice", choices=["1", "2", "3", "b"], default="b")
+
+    if choice == "b":
+        return
+
+    if choice in ["1", "2"]:
+        # Single week export
+        try:
+            week = IntPrompt.ask(
+                "Week to export",
+                default=company.reports[-1].week if company.reports else 1,
+            )
+
+            report = company.get_report(week)
+            if report is None:
+                console.print(f"[red]No report found for week {week}.[/red]")
+                return
+
+            # Get output filename
+            default_name = f"REPT{week:02d}.{'txt' if choice == '2' else 'DAT'}"
+            filename = Prompt.ask("Output filename", default=default_name)
+
+            if choice == "1":
+                write_rept(report, filename)
+            else:
+                write_rept_human_readable(report, filename)
+
+            console.print(f"[green]Exported to {filename}[/green]")
+
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n[yellow]Cancelled.[/yellow]")
+        except Exception as e:
+            console.print(f"[red]Error exporting: {e}[/red]")
+
+    elif choice == "3":
+        # Export all weeks
+        try:
+            format_choice = Prompt.ask(
+                "Format",
+                choices=["dat", "txt"],
+                default="txt",
+            )
+
+            output_dir = Prompt.ask("Output directory", default=".")
+
+            from pathlib import Path
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+
+            exported = 0
+            for report in company.reports:
+                if format_choice == "dat":
+                    filepath = output_path / f"REPT{report.week:02d}.DAT"
+                    write_rept(report, filepath)
+                else:
+                    filepath = output_path / f"REPT{report.week:02d}.txt"
+                    write_rept_human_readable(report, filepath)
+                exported += 1
+
+            console.print(f"[green]Exported {exported} report(s) to {output_dir}/[/green]")
+
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n[yellow]Cancelled.[/yellow]")
+        except Exception as e:
+            console.print(f"[red]Error exporting: {e}[/red]")
 
 
 # =============================================================================

@@ -38,6 +38,10 @@ class Operator(BaseModel):
     """
 
     operator_id: int = Field(ge=1, description="Unique operator identifier")
+    name: Optional[str] = Field(
+        default=None,
+        description="Custom name for the operator (None uses default 'Operator N')"
+    )
     training_status: TrainingStatus = Field(
         default=TrainingStatus.UNTRAINED,
         description="Current training status"
@@ -55,6 +59,22 @@ class Operator(BaseModel):
         default=False,
         description="Whether this operator was hired this week"
     )
+
+    @property
+    def display_name(self) -> str:
+        """Get display name (custom name or default 'Operator N')."""
+        return self.name if self.name else f"Operator {self.operator_id}"
+
+    def rename(self, new_name: Optional[str]) -> "Operator":
+        """Rename the operator.
+
+        Args:
+            new_name: New name, or None to reset to default
+
+        Returns:
+            Updated Operator with new name
+        """
+        return self.model_copy(update={"name": new_name if new_name else None})
 
     @property
     def is_trained(self) -> bool:
@@ -152,6 +172,23 @@ class Workforce(BaseModel):
     def terminate_operator(self, operator_id: int) -> "Workforce":
         """Terminate an operator."""
         new_operators = {k: v for k, v in self.operators.items() if k != operator_id}
+        return self.model_copy(update={"operators": new_operators})
+
+    def rename_operator(self, operator_id: int, new_name: Optional[str]) -> "Workforce":
+        """Rename an operator.
+
+        Args:
+            operator_id: ID of the operator to rename
+            new_name: New name, or None to reset to default
+
+        Returns:
+            Updated Workforce with renamed operator
+        """
+        if operator_id not in self.operators:
+            return self
+        operator = self.operators[operator_id]
+        renamed_operator = operator.rename(new_name)
+        new_operators = {**self.operators, operator_id: renamed_operator}
         return self.model_copy(update={"operators": new_operators})
 
     @property

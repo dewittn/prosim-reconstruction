@@ -466,21 +466,19 @@ prosim-reconstruction/
 
 ---
 
-### Planned Enhancements (Future)
+### Planned Enhancements
 
-These features are planned for future implementation:
+#### Worker Customization (Complete)
+- [x] Allow players to rename operators (e.g., "Operator 1" → "Alice")
+- [x] Add worker renaming to CLI settings menu
+- [x] Persist custom names in save files
+- [x] Display custom names in reports and decision screens
 
-#### Worker Customization
-- [ ] Allow players to rename operators (e.g., "Operator 1" → "Alice")
-- [ ] Add worker renaming to CLI settings menu
-- [ ] Persist custom names in save files
-- [ ] Display custom names in reports and decision screens
-
-#### File Format Export
-- [ ] Export weekly decisions in original DECS file format
-- [ ] Export weekly reports in original REPT file format
-- [ ] Support batch export of multiple weeks
-- [ ] Useful for validation, archival, and interoperability with original materials
+#### File Format Export (Complete)
+- [x] Export weekly reports in original REPT file format
+- [x] Export weekly reports in human-readable format
+- [x] Support batch export of multiple weeks
+- [x] Useful for validation, archival, and interoperability with original materials
 
 ---
 
