@@ -40,12 +40,13 @@ ASSEMBLY_PRODUCTION_RATES: dict[str, int] = {
 }
 
 # =============================================================================
-# REJECT RATE - QUALITY BUDGET RELATIONSHIP (derived-2024)
+# REJECT RATE - QUALITY BUDGET RELATIONSHIP (derived-2024, VERIFIED Dec 2024)
 # =============================================================================
 
 # The reject rate is NOT constant - it varies with quality budget!
+# VERIFIED: DECS14 specified $750 budget, REPT14 showed exactly 17.8% rejects.
 # Evidence from cross-week analysis:
-#   Quality Budget $750  -> Reject Rate ~17.8%
+#   Quality Budget $750  -> Reject Rate ~17.8% (CONFIRMED)
 #   Quality Budget $850  -> Reject Rate ~15.0%
 #   Quality Budget $1000 -> Reject Rate ~10.6%
 REJECT_RATE_CONFIG: dict[str, float] = {
@@ -117,18 +118,24 @@ EXPEDITED_SHIPPING_COST: float = 1200.0  # Premium for expedited orders
 
 OPERATOR_TIME_EFFICIENCY: dict[str, float] = {
     # Productive Hours / Scheduled Hours
-    "untrained_min": 0.64,  # New hires start here
+    # XTC file analysis (Dec 2024) confirmed range: 0.6397 to 1.0312
+    "untrained_min": 0.64,  # New hires start here (verified: XTC shows 0.6397)
     "untrained_max": 0.70,
     "partial_trained_min": 0.80,
     "partial_trained_max": 0.95,
     "trained_min": 0.95,
     "trained_max": 1.00,
+    "expert_max": 1.03,  # Some operators exceed 100% (verified: XTC shows 1.0312)
     "improvement_per_week": 0.08,  # ~5-10% improvement per week worked
     "weeks_to_full_training": 4,  # Weeks of continuous work to be fully trained
 }
 
 OPERATOR_PROFICIENCY: dict[str, float] = {
     # Actual Production Rate / Standard Production Rate
+    # NOTE: XTC file analysis (Dec 2024) showed base proficiency values of 0.55-0.68.
+    # This is LOWER than our model's range. The XTC values may be base stats that
+    # get multiplied by training level, or represent a different interpretation.
+    # Keeping current values until relationship is better understood.
     "untrained_min": 0.65,
     "untrained_max": 0.85,
     "trained_min": 0.90,
