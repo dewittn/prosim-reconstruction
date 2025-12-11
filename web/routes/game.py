@@ -60,7 +60,7 @@ async def new_game_form(request: Request):
 async def create_game(
     request: Request,
     company_name: str = Form(...),
-    max_weeks: int = Form(default=15),
+    max_weeks: int = Form(default=16),
     random_seed: Optional[int] = Form(default=None),
     db: Session = Depends(get_db),
 ):
@@ -147,6 +147,64 @@ async def delete_game(
 
     # For HTMX, return empty response to remove element
     return HTMLResponse(content="", status_code=200)
+
+
+@router.get("/game/{session_id}/reports/{week}", response_class=HTMLResponse)
+async def view_report(
+    request: Request,
+    session_id: str,
+    week: int,
+    db: Session = Depends(get_db),
+):
+    """View a weekly report in authentic PROSIM format.
+
+    Uses the original report format verified against week1.txt and report.doc
+    from the 2004 course materials. This is exactly what students saw.
+    """
+    import io
+    from prosim.io.rept_parser import write_rept_human_readable
+
+    templates = get_templates(request)
+    game_service = get_game_service()
+
+    # Get game from database
+    db_game = (
+        db.query(GameSession).filter(GameSession.session_id == session_id).first()
+    )
+
+    if not db_game:
+        return templates.TemplateResponse(
+            "pages/not_found.html",
+            {"request": request, "message": "Game not found"},
+            status_code=404,
+        )
+
+    # Get the full game state and find the report
+    game_state = game_service.get_game_state(db_game)
+    company = game_state.get_company(1)
+
+    report = company.get_report(week)
+    if not report:
+        return templates.TemplateResponse(
+            "pages/not_found.html",
+            {"request": request, "message": f"Report for week {week} not found"},
+            status_code=404,
+        )
+
+    # Generate authentic PROSIM report format
+    output = io.StringIO()
+    write_rept_human_readable(report, output)
+    report_text = output.getvalue()
+
+    return templates.TemplateResponse(
+        "pages/report.html",
+        {
+            "request": request,
+            "game": db_game,
+            "week": week,
+            "report_text": report_text,
+        },
+    )
 
 
 @router.get("/help", response_class=HTMLResponse)

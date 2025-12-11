@@ -73,7 +73,7 @@ def cli(lang: str) -> None:
 
 @cli.command()
 @click.option("--name", "-n", prompt="Company name", help="Your company name")
-@click.option("--weeks", "-w", default=15, help="Maximum simulation weeks")
+@click.option("--weeks", "-w", default=16, help="Maximum simulation weeks")
 @click.option("--seed", "-s", type=int, default=None, help="Random seed for reproducibility")
 @click.option("--slot", type=int, default=None, help="Save slot to use (auto-saves to this slot)")
 def new(name: str, weeks: int, seed: Optional[int], slot: Optional[int]) -> None:
@@ -240,7 +240,7 @@ def info() -> None:
   - Michael P. Hottenstein
   - Chao-Hsien Chu
 
-[bold]Reconstruction (2024):[/bold]
+[bold]Reconstruction (2025):[/bold]
   - Nelson DeWitt
 
 This is a clean-room reconstruction of the original PROSIM simulation
@@ -551,9 +551,43 @@ def _display_game_state(company: Company) -> None:
     console.print(table)
 
 
-def _display_report(report: WeeklyReport) -> None:
-    """Display a weekly report."""
+def _display_report(report: WeeklyReport, use_authentic_format: bool = True) -> None:
+    """Display a weekly report.
+
+    Args:
+        report: The WeeklyReport to display
+        use_authentic_format: If True, use the original PROSIM report format
+                              from week1.txt/report.doc (verified Dec 2025).
+                              This matches what students saw in 2004.
+    """
     console.print()
+
+    if use_authentic_format:
+        # Use the authentic PROSIM format (verified against week1.txt and report.doc)
+        # This is the exact format students received in the original simulation
+        import io
+        output = io.StringIO()
+        write_rept_human_readable(report, output)
+        report_text = output.getvalue()
+
+        # Display in a panel with monospace formatting preserved
+        console.print(Panel(
+            report_text,
+            title=f"[bold]Week {report.week} Report[/bold]",
+            border_style="green",
+            padding=(0, 1),
+        ))
+    else:
+        # Legacy Rich-formatted display (kept for reference)
+        _display_report_rich(report)
+
+    # Press enter to continue
+    console.print()
+    Prompt.ask("[dim]Press Enter to continue[/dim]", default="")
+
+
+def _display_report_rich(report: WeeklyReport) -> None:
+    """Display a weekly report using Rich tables (legacy format)."""
     console.print(Panel.fit(
         f"[bold]Week {report.week} Report[/bold]",
         border_style="green",
@@ -676,10 +710,6 @@ def _display_report(report: WeeklyReport) -> None:
         )
 
     console.print(table)
-
-    # Press enter to continue
-    console.print()
-    Prompt.ask("[dim]Press Enter to continue[/dim]", default="")
 
 
 def _show_saves() -> None:

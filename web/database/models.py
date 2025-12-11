@@ -43,7 +43,7 @@ class GameSession(Base):
 
     # Denormalized metadata for quick queries
     current_week: int = Column(Integer, default=1)
-    max_weeks: int = Column(Integer, default=15)
+    max_weeks: int = Column(Integer, default=16)
     total_costs: float = Column(Float, default=0.0)
     is_active: bool = Column(Boolean, default=True)
     is_complete: bool = Column(Boolean, default=False)

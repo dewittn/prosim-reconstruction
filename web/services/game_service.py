@@ -28,7 +28,7 @@ class GameService:
         self,
         db: Session,
         company_name: str,
-        max_weeks: int = 15,
+        max_weeks: int = 16,
         random_seed: Optional[int] = None,
         config: Optional[ProsimConfig] = None,
     ) -> GameSession:
@@ -37,7 +37,7 @@ class GameService:
         Args:
             db: Database session.
             company_name: Name for the player's company.
-            max_weeks: Maximum weeks to play (default 15).
+            max_weeks: Maximum weeks to play (default 16).
             random_seed: Optional seed for reproducibility.
             config: Optional custom game configuration.
 

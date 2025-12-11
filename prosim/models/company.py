@@ -168,7 +168,7 @@ class GameState(BaseModel):
         description="Map of company_id to Company"
     )
     current_week: int = Field(default=1, ge=1, description="Current game week")
-    max_weeks: int = Field(default=15, ge=1, description="Maximum simulation weeks")
+    max_weeks: int = Field(default=16, ge=1, description="Maximum simulation weeks")
     is_active: bool = Field(default=True, description="Whether game is still active")
     random_seed: Optional[int] = Field(
         default=None,
@@ -214,7 +214,7 @@ class GameState(BaseModel):
         game_id: str,
         company_name: str = "",
         config: Optional[CompanyConfig] = None,
-        max_weeks: int = 15,
+        max_weeks: int = 16,
         random_seed: Optional[int] = None,
     ) -> "GameState":
         """Create a new single-player game.
@@ -249,7 +249,7 @@ class GameState(BaseModel):
         game_id: str,
         num_companies: int,
         config: Optional[CompanyConfig] = None,
-        max_weeks: int = 15,
+        max_weeks: int = 16,
         random_seed: Optional[int] = None,
     ) -> "GameState":
         """Create a new multiplayer game.
