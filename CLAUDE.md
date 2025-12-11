@@ -86,11 +86,28 @@ REPT files (machine-readable) and week1.txt (human-readable) contain identical d
 
 | File | Purpose |
 |------|---------|
+| `docs/forensic_verification_status.md` | **START HERE** - Consolidated verification status of all mechanics |
+| `docs/key_discoveries.md` | Chronicle of major forensic discoveries with evidence |
 | `IMPLEMENTATION_PLAN.md` | Detailed roadmap and progress log |
 | `docs/algorithms.md` | Technical documentation of all algorithms |
 | `docs/verification_guide.md` | How to verify mechanics against original files |
+| `docs/xtc_verification_guide.md` | XTC binary file analysis and open hypotheses |
 | `prosim/config/defaults.py` | All game constants with verification notes |
 | `prosim/io/rept_parser.py` | REPT file parsing and human-readable output |
+| `archive/docs/PROSIM_CASE_STUDY.md` | Original forensic analysis and history |
+
+## Verification Status Summary
+
+Before modifying simulation mechanics, check `docs/forensic_verification_status.md` for confidence levels:
+
+| Status | Meaning | Action |
+|--------|---------|--------|
+| ✅ VERIFIED | Confirmed against original data | Do not change without explicit request |
+| ⚠️ PARTIAL | Partially understood | Changes OK, document reasoning |
+| ❓ UNKNOWN | Estimated/hypothesized | Make configurable, flag uncertainty |
+
+**Key verified items**: Production rates, training matrix, cost constants, lead times
+**Key unknowns**: Machine repair probability, XTC Float2 meaning, maintenance budget effect
 
 ## Current Implementation Status
 
@@ -135,3 +152,4 @@ This contains the raw 2004 files including:
 2. **Document Everything**: All discoveries go in IMPLEMENTATION_PLAN.md
 3. **Verify Against Archive**: Use original files to validate formulas
 4. **Authentic Output**: Reports should match what students saw in 2004
+5. **Record Key Discoveries**: When you discover something significant about the original simulation (unexpected data patterns, formula corrections, hidden data, etc.), **add it to `docs/key_discoveries.md`** using the template provided there
