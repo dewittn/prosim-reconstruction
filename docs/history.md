@@ -92,7 +92,7 @@ Despite nearly four decades of use, PROSIM effectively disappeared within a few 
 
 ### What Survives
 
-As of 2024, no copies of the PROSIM simulation software are known to exist online:
+As of 2025, no copies of the PROSIM simulation software are known to exist online:
 - The simulation executable is not archived
 - The instructor diskette (required to run) is unavailable
 - No source code was ever published
@@ -246,7 +246,7 @@ Consider contributing to:
 | 1996 | PROSIM III for Windows released |
 | 2004 | Reverse-engineered spreadsheet created |
 | 2021 | Dr. Chao-Hsien Chu passes away |
-| 2024 | This reconstruction project initiated |
+| 2025 | This reconstruction project initiated |
 
 ---
 

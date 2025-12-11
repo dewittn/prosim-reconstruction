@@ -80,8 +80,8 @@ class TestSaveMetadata:
             current_week=3,
             company_name="My Company",
             total_costs=5000.0,
-            created_at="2024-12-09T10:00:00",
-            updated_at="2024-12-09T11:00:00",
+            created_at="2025-12-09T10:00:00",
+            updated_at="2025-12-09T11:00:00",
         )
         assert metadata.save_name == "Test Save"
         assert metadata.save_slot == 1
@@ -94,8 +94,8 @@ class TestSaveMetadata:
             save_slot=1,
             game_id="test",
             current_week=1,
-            created_at="2024-01-01T00:00:00",
-            updated_at="2024-01-01T00:00:00",
+            created_at="2025-01-01T00:00:00",
+            updated_at="2025-01-01T00:00:00",
         )
         assert metadata.version == "0.1.0"
 

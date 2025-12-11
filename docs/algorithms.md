@@ -163,9 +163,56 @@ class ProductionEngine:
 
 ### 3. Operator Efficiency Algorithm
 
-**Location**: `prosim/engine/workforce.py`
+**Location**: `prosim/engine/workforce.py`, `prosim/config/defaults.py`
 
-Operator efficiency varies based on training status:
+#### Verified Two-Component Model (Dec 2025)
+
+Forensic analysis of `week1.txt` and XTC game state files revealed that operator output is determined by **two separate hidden stats**:
+
+```
+Output = Scheduled_Hours × Time_Efficiency × Production_Rate × Proficiency × (1 - Reject_Rate)
+```
+
+| Component | Stored In | Meaning | Range |
+|-----------|-----------|---------|-------|
+| **Time Efficiency** | XTC float 1 | Productive Hours ÷ Scheduled Hours | 64-103% |
+| **Proficiency** | XTC float 2 | Output quality multiplier (fixed at hire) | 51-104% |
+
+**Evidence from Week 1 report (`archive/data/week1.txt`):**
+```
+Operator 1: Time Eff 92.5% × Proficiency 70.1% = 64.8% combined
+Operator 3: Time Eff 92.5% × Proficiency 103.7% = 95.9% combined (expert!)
+Operator 5: Time Eff 100.0% × Proficiency 55.2% = 55.2% combined
+```
+
+The Training Matrix in `defaults.py` represents the **combined** efficiency (Time × Proficiency) at each training level and quality tier. The matrix was verified against XTC files with 0.2% average error.
+
+#### Operator Efficiency Ceiling (Dec 2025)
+
+Each operator has a **maximum efficiency ceiling** determined by their Quality Tier (Proficiency). Training improves Time Efficiency, but cannot exceed the ceiling set by Proficiency.
+
+**Cross-game analysis of Operator 3:**
+| Game Run | Proficiency | Notes |
+|----------|-------------|-------|
+| Andy (Week 12) | 111.9% | Expert |
+| Shorty (Week 13) | 108.9% | Expert |
+| Nelson (Week 14) | 106.2% | Expert |
+| week1.txt | 103.7% | Expert |
+
+Operator 3 is consistently an expert across **all** game runs (std dev 3.1%), suggesting starting operators (1-9) have **fixed profiles**:
+
+| Operator | Profile | Ceiling |
+|----------|---------|---------|
+| Op 3 | Expert | ~132% |
+| Op 7 | Strong | ~110% |
+| Op 4 | Low | ~60% |
+| Op 5 | Low | ~55% |
+
+**Hired operators (10+)** appear to have randomized quality tiers.
+
+#### Current Implementation (Simplified)
+
+The current implementation uses a simplified random model that approximates the two-component behavior:
 
 ```python
 class OperatorManager:
@@ -223,7 +270,44 @@ Costs are calculated in two categories:
 | Ordering Cost | `orders × $100 + expedited × $1,200` |
 | Fixed Expense | `$1,500/week` |
 
-### 5. Demand Generation Algorithm
+### 5. Game Performance Efficiency (Distinguished from Operator Efficiency)
+
+**Location**: Game-level metric, not directly in code
+
+The game calculates an **overall efficiency metric** to rank company performance:
+
+```
+Game Efficiency = (Standard Costs / Actual Costs) × 100%
+```
+
+**Important distinction:**
+- **Operator Efficiency**: How well an operator produces output (`Production / Expected`)
+- **Game Efficiency**: How cost-effective the company operates (`Standard / Actual`)
+
+**Interpretation:**
+| Efficiency | Meaning |
+|------------|---------|
+| > 100% | Outperforming standard (lower actual costs) |
+| = 100% | Meeting standard exactly |
+| < 100% | Underperforming (higher actual costs) |
+
+**Strategic Insight - The Shutdown Strategy:**
+
+An advanced strategy exploits this formula during endgame:
+1. Build up inventory well before shipping week
+2. In final weeks, reduce scheduled hours to minimum
+3. Continue shipping from inventory
+4. Minimal actual costs while maintaining output = very high efficiency
+
+This works because:
+- Standard costs assume continuous production
+- Actual costs drop when production stops
+- If inventory is sufficient, shipping continues normally
+- Result: Efficiency spikes above 100%
+
+Evidence from Week 16 spreadsheet shows operators at 99-132% efficiency during shutdown phase with Z' Production = 0.
+
+### 6. Demand Generation Algorithm
 
 **Location**: `prosim/engine/demand.py`
 
@@ -256,7 +340,7 @@ class DemandManager:
 | 1 | 100 |
 | 0 (shipping) | 0 (exact) |
 
-### 6. Machine Repair Algorithm
+### 7. Machine Repair Algorithm
 
 **Location**: `prosim/engine/simulation.py`
 
@@ -276,7 +360,7 @@ def generate_machine_repairs(self) -> dict[str, int]:
     return repairs
 ```
 
-### 7. Inventory Management Algorithm
+### 8. Inventory Management Algorithm
 
 **Location**: `prosim/engine/inventory.py`
 
@@ -511,7 +595,7 @@ Parameters are marked as **verified** or **estimated**:
 | Parameter | Status | Source |
 |-----------|--------|--------|
 | Production rates | Verified | Case study, REPT files |
-| Reject rate | Verified | 17.8% from REPT14 |
+| Reject rate formula | Verified | 17.8% at $750, floor ~1.5% at $2,500 |
 | Lead times | Verified | Course materials |
 | Hiring cost ($2,700) | Verified | week1.txt |
 | Layoff cost ($200) | Verified | week1.txt |
@@ -620,8 +704,8 @@ Game state is saved as JSON:
   "metadata": {
     "save_id": "abc123",
     "save_name": "Week 5",
-    "created_at": "2024-12-09T10:30:00Z",
-    "updated_at": "2024-12-09T12:45:00Z",
+    "created_at": "2025-12-09T10:30:00Z",
+    "updated_at": "2025-12-09T12:45:00Z",
     "game_id": "xyz789",
     "company_name": "My Company",
     "current_week": 5,
@@ -657,9 +741,10 @@ See [calibration_report.md](calibration_report.md) for detailed calibration find
 
 Key findings:
 - Production rates match documentation exactly
-- Reject rate varies 11.85% - 17.8% (influenced by quality budget)
-- Operator efficiency ranges: trained 95-100%, untrained 58-90%
+- Reject rate varies 1.5% - 17.8% (influenced by quality budget, floor at ~1.5%)
+- Operator efficiency ranges: trained 95-120%, untrained 20-67%
 - All verified cost constants match original files
+- Fixed operator profiles: Operators 1-9 have consistent ceilings across game instances
 
 ---
 

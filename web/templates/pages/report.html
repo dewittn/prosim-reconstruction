@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Week {{ week }} Report - {{ game.company_name }}{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Week {{ week }} Report</h1>
+    <p>{{ game.company_name }}</p>
+</header>
+
+<section>
+    <details open>
+        <summary>About This Report Format</summary>
+        <p>
+            This is the <strong>authentic PROSIM report format</strong> from the original
+            1996/2004 simulation. The format has been verified against archived files
+            (week1.txt, report.doc) from the 2004 course materials.
+        </p>
+    </details>
+</section>
+
+<section>
+    <pre style="font-family: 'Courier New', Courier, monospace; font-size: 12px; line-height: 1.4; background: #f5f5f5; padding: 1rem; overflow-x: auto; border: 1px solid #ddd;">{{ report_text }}</pre>
+</section>
+
+<section>
+    <p>
+        <a href="/game/{{ game.session_id }}">&larr; Back to Game</a>
+    </p>
+</section>
+{% endblock %}

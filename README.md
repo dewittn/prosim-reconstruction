@@ -105,6 +105,7 @@ prosim --lang es new --name "Mi Empresa"
 - [Calibration Report](docs/calibration_report.md) - Parameter verification and accuracy analysis
 - [History & Preservation](docs/history.md) - The story of PROSIM and this reconstruction
 - [Case Study](archive/docs/PROSIM_CASE_STUDY.md) - Forensic analysis and reverse engineering
+- [Verification Guide](docs/verification_guide.md) - How to independently verify game mechanics
 - [Implementation Plan](IMPLEMENTATION_PLAN.md) - Development roadmap and progress
 - [Contributing](CONTRIBUTING.md) - How to contribute to the project
 

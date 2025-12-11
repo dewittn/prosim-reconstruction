@@ -616,7 +616,7 @@ Lines 41-42: Performance metrics
 
 ---
 
-## Appendix E: Online Sources (December 2024)
+## Appendix E: Online Sources (December 2025)
 
 ### Confirmed PROSIM References
 
@@ -635,7 +635,7 @@ Lines 41-42: Performance metrics
 | PROSIM simulation software | Not found online |
 | Instructor diskette | Not found |
 | PROSIM manual/Appendix A | Not found |
-| Ohio thesis "PROSIM VII" | 404 error as of Dec 2024 |
+| Ohio thesis "PROSIM VII" | 404 error as of Dec 2025 |
 | ACS.org PDF reference | Unverified |
 
 ### Related But Different Products
@@ -651,7 +651,7 @@ Several other products share the "PROSIM" name but are unrelated:
 
 ## Appendix F: XTC File Format (Game State Files)
 
-### Discovery (December 2024)
+### Discovery (December 2025)
 
 Analysis of two `.xtc` files found in the Prosim folder revealed they are **PROSIM III game state/save files**:
 
@@ -744,4 +744,4 @@ This discovery provides critical insight:
 
 ---
 
-*Document generated through forensic analysis of preserved files and online research, without access to original PROSIM source code or documentation. Last updated: December 2024.*
+*Document generated through forensic analysis of preserved files and online research, without access to original PROSIM source code or documentation. Last updated: December 2025.*

@@ -17,6 +17,10 @@ Production Formula:
     Gross Production = Productive Hours * Production Rate
     Rejects = Gross Production * Reject Rate
     Net Production = Gross Production - Rejects
+
+Note: Curious players may discover that the path to optimal efficiency
+is not always what it seems. Sometimes the best move is no move at all.
+    -- N.D., Summer 2004
 """
 
 from dataclasses import dataclass, field

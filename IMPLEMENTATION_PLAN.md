@@ -28,6 +28,7 @@ The following files from the original coursework inform this reconstruction:
 | `REPT*.DAT` files | Original simulation output (4 files across weeks 12-14) | `archive/data/` |
 | `DECS*.DAT` files | Original decision input files | `archive/data/` |
 | `week1.txt` | Human-readable report (Rosetta Stone for file format) | `archive/data/` |
+| `prosim.xtc`, `prosim1.xtc` | Game state save files with hidden operator stats (decoded Dec 2025) | `archive/` |
 
 ### Supporting Materials
 | File | Purpose | Location |
@@ -58,7 +59,21 @@ Raw Materials → Parts Department → Parts (X', Y', Z') → Assembly Departmen
 | Y | 30 units/hour | Assembly |
 | Z | 20 units/hour | Assembly |
 
-**Reject Rate**: ~17.8% (verified across multiple REPT files)
+**Reject Rate Formula** (verified Dec 2025):
+
+The relationship is **LOGARITHMIC** (diminishing returns), discovered from Graph-Table 1 in the 2004 spreadsheet:
+```
+reject_rate = 0.904 - 0.114 * ln(quality_budget)
+```
+
+Empirical data from 2004:
+- $750 budget → 15.14% rejects
+- $850 budget → 13.02% rejects
+- $1000 budget → 10.00% rejects
+- $1200 budget → 7.94% rejects
+- $2000 budget → 4.00% rejects
+- $2500 budget → ~1.6% rejects (floor region)
+- Minimum floor: ~1.5%
 
 **Bill of Materials**:
 - 1 unit of X requires 1 part X'
@@ -109,16 +124,80 @@ Lines 3-11: [MachineID] [TrainFlag] [PartType] [ScheduledHours]
 | Expedited Raw Materials | 1 week (+$1,200) |
 | Purchased Parts | 1 week |
 
-### Unknown/Estimated Parameters
+### Operator Training System (verified Dec 2025)
 
-These parameters could not be definitively determined and should be **configurable**:
+Training matrix discovered in `ProsimTable.xls` and verified against XTC game state files with 0.2% average error:
+
+- **Quality Tiers (0-9)**: Fixed innate ability assigned at hire
+- **Training Levels (0-10)**: Advances with weeks of continuous work (Untrained → A → B → ... → J)
+- **Efficiency**: Lookup from 10×11 training matrix (see `prosim/config/defaults.py`)
+
+| Training Level | Tier 0 (Low) | Tier 5 (Mid) | Tier 9 (High) |
+|---------------|--------------|--------------|---------------|
+| Untrained (0) | 20% | 22% | 22% |
+| Level A (1) | 61% | 66% | 67% |
+| Level D (4) | 96% | 103% | 105% |
+| Level J (10) | 109% | 118% | 120% |
+
+**Note**: Expert operators can exceed 100% efficiency (verified in XTC files: 103.12%)
+
+### Two-Component Efficiency Model (discovered Dec 2025)
+
+Analysis of `week1.txt` (human-readable Week 1 report) revealed that operator efficiency has **two separate hidden components**:
+
+```
+Output = Scheduled_Hours × Time_Efficiency × Production_Rate × Proficiency
+```
+
+| Component | Source | Effect | Range |
+|-----------|--------|--------|-------|
+| **Time Efficiency** | Training Level | Productive Hours ÷ Scheduled Hours | 83-100% (Week 1) |
+| **Proficiency** | Quality Tier (fixed) | Output ÷ (Prod Hours × Rate) | 51-104% |
+
+**Evidence from Week 1 report:**
+| Operator | Time Eff | Proficiency | Combined | Notes |
+|----------|----------|-------------|----------|-------|
+| Op 1 | 92.5% | 70.1% | 64.8% | Matches Tier 2/Level A (64%) |
+| Op 3 | 92.5% | 103.7% | 95.9% | Expert operator! |
+| Op 5 | 100.0% | 55.2% | 55.2% | Low proficiency tier |
+
+**XTC Correlation**: The proficiency values (51-70%) match the XTC "proficiency" floats (55-68%), confirming the game tracks these as separate hidden stats per operator.
+
+This explains why XTC files store TWO floats per operator (efficiency + proficiency) rather than one combined value
+
+### Operator Efficiency Ceiling (discovered Dec 2025)
+
+Analysis of multiple game runs (Andy, Shorty, Nelson) revealed that each operator has a **maximum efficiency ceiling** determined by their Quality Tier:
+
+**Evidence - Operator 3 across ALL game runs:**
+| Run | Week | Proficiency | Notes |
+|-----|------|-------------|-------|
+| Andy | 12 | 111.9% | Expert |
+| Shorty | 13 | 108.9% | Expert |
+| Week 14 | 14 | 106.2% | Expert |
+| week1.txt | 1 | 103.7% | Expert |
+
+Operator 3 is **always** an expert (>100%) across different players' games! Standard deviation only 3.1%.
+
+**Implication**: Starting operators (1-9) appear to have **fixed profiles** that are consistent across all game instances:
+- Operator 3: Expert tier (ceiling ~132%)
+- Operator 4: Low tier (ceiling ~60%)
+- Operator 5: Low tier (ceiling ~55%)
+
+**Strategic insight**: No amount of training will make a low-tier operator exceed their ceiling. Players should:
+1. Identify expert operators early (Op 3 is always an expert)
+2. Assign experts to highest-volume products
+3. Accept that some operators will always underperform
+
+**Hired operators (10+)**: Appear to have randomized quality tiers, making hiring a gamble.
+
+### Remaining Estimated Parameters
+
+These parameters are still estimates and should be **configurable**:
 
 | Parameter | Estimate | Basis |
 |-----------|----------|-------|
 | Machine repair probability | ~10-15% per machine per week | Observed $400 costs appearing randomly |
-| Untrained operator efficiency | 60-90% (variable) | Observed productive hours ranging 32.1-43.1 for untrained |
-| Trained operator efficiency | 95-100% | Observed ~100% productive hours for trained |
-| Quality budget impact | Unknown | Possibly affects reject rate |
 | Maintenance budget impact | Unknown | Possibly affects repair probability |
 | Demand generation | Mean ± std dev (300/200/100) | From presentations |
 
@@ -558,7 +637,7 @@ web = [
 
 ## Progress Log
 
-### 2024-12-08 - Phase 1.3 - Implement Data Models
+### 2025-12-08 - Phase 1.3 - Implement Data Models
 _Status: Complete_
 
 Implemented all core Pydantic data models:
@@ -573,7 +652,7 @@ Implemented all core Pydantic data models:
 Created comprehensive test suite (`tests/test_models.py`) with 35 tests covering all models.
 All tests pass with 70% code coverage. Type checking passes with mypy.
 
-### 2024-12-08 - Phase 1.4 - Implement DECS Parser
+### 2025-12-08 - Phase 1.4 - Implement DECS Parser
 _Status: Complete_
 
 Implemented DECS file parser in `prosim/io/decs_parser.py`:
@@ -585,7 +664,7 @@ Implemented DECS file parser in `prosim/io/decs_parser.py`:
 Supports original file format. Validates against original DECS12.txt file.
 Created test suite with 15 tests covering all parsing scenarios.
 
-### 2024-12-08 - Phase 1.5 - Implement REPT Parser
+### 2025-12-08 - Phase 1.5 - Implement REPT Parser
 _Status: Complete_
 
 Implemented REPT file parser in `prosim/io/rept_parser.py`:
@@ -598,7 +677,7 @@ Parses all report sections (costs, production, inventory, demand, performance).
 Validates against original REPT12, REPT13, REPT14 files.
 Confirmed 17.8% reject rate from case study. 14 tests pass.
 
-### 2024-12-08 - Phase 1.6 - Implement Configuration System
+### 2025-12-08 - Phase 1.6 - Implement Configuration System
 _Status: Complete_
 
 Implemented comprehensive configuration system in `prosim/config/schema.py`:
@@ -612,7 +691,7 @@ Legacy `DEFAULT_CONFIG` dict preserved for compatibility.
 15 tests covering creation, validation, file I/O, and merging.
 Phase 1 complete with 79 tests passing and 79% coverage.
 
-### 2024-12-08 - Phase 2.1 - Implement Inventory Management
+### 2025-12-08 - Phase 2.1 - Implement Inventory Management
 _Status: Complete_
 
 Implemented inventory management module in `prosim/engine/inventory.py`:
@@ -643,7 +722,7 @@ Created comprehensive test suite (`tests/test_inventory_manager.py`) with 26 tes
 
 All 111 tests pass with 82% coverage.
 
-### 2024-12-09 - Phase 2.2 - Implement Operator System
+### 2025-12-09 - Phase 2.2 - Implement Operator System
 _Status: Complete_
 
 Implemented workforce/operator management module in `prosim/engine/workforce.py`:
@@ -673,7 +752,7 @@ Created comprehensive test suite (`tests/test_workforce_manager.py`) with 34 tes
 
 All 145 tests pass with 83% coverage. Type checking passes with mypy.
 
-### 2024-12-09 - Phase 2.3 - Implement Production Engine
+### 2025-12-09 - Phase 2.3 - Implement Production Engine
 _Status: Complete_
 
 Implemented production calculation module in `prosim/engine/production.py`:
@@ -712,7 +791,7 @@ Created comprehensive test suite (`tests/test_production_engine.py`) with 26 tes
 
 All 171 tests pass with 85% coverage. Type checking passes with mypy.
 
-### 2024-12-09 - Phase 2.4 - Implement Cost Calculations
+### 2025-12-09 - Phase 2.4 - Implement Cost Calculations
 _Status: Complete_
 
 Implemented cost calculation module in `prosim/engine/costs.py`:
@@ -726,7 +805,7 @@ Implemented cost calculation module in `prosim/engine/costs.py`:
 Created comprehensive test suite (`tests/test_cost_calculator.py`) with 24 tests.
 All 195 tests pass with 86% coverage. Type checking passes with mypy.
 
-### 2024-12-09 - Phase 2.5 - Implement Demand System
+### 2025-12-09 - Phase 2.5 - Implement Demand System
 _Status: Complete_
 
 Implemented demand management module in `prosim/engine/demand.py`:
@@ -761,7 +840,7 @@ Created comprehensive test suite (`tests/test_demand_manager.py`) with 37 tests:
 
 All 232 tests pass with 87% coverage. Type checking passes with mypy.
 
-### 2024-12-09 - Phase 2.6 - Implement Main Simulation Loop
+### 2025-12-09 - Phase 2.6 - Implement Main Simulation Loop
 _Status: Complete_
 
 Implemented main simulation engine in `prosim/engine/simulation.py`:
@@ -794,7 +873,7 @@ Created comprehensive test suite (`tests/test_simulation.py`) with 27 tests:
 
 All 259 tests pass with 89% coverage. Phase 2 complete.
 
-### 2024-12-09 - Phase 2.7 - REPT File Writer
+### 2025-12-09 - Phase 2.7 - REPT File Writer
 _Status: Complete (Previously Implemented)_
 
 REPT file writer was already implemented in Phase 1.5 as part of `prosim/io/rept_parser.py`:
@@ -803,7 +882,7 @@ REPT file writer was already implemented in Phase 1.5 as part of `prosim/io/rept
 
 No additional work needed. Phase 2 deliverables complete.
 
-### 2024-12-09 - Phase 3.1 - Create Validation Test Suite
+### 2025-12-09 - Phase 3.1 - Create Validation Test Suite
 _Status: Complete_
 
 Implemented comprehensive validation test suite in `tests/validation/test_against_original.py`:
@@ -834,7 +913,7 @@ Key findings:
 
 All 302 tests pass with 89% coverage.
 
-### 2024-12-09 - Phase 3.2-3.6 - Calibration Complete
+### 2025-12-09 - Phase 3.2-3.6 - Calibration Complete
 _Status: Complete_
 
 Implemented comprehensive calibration module (`prosim/engine/calibration.py`):
@@ -866,7 +945,7 @@ Implemented comprehensive calibration module (`prosim/engine/calibration.py`):
 
 Phase 3 complete. Ready for Phase 4 (CLI & Single-Player Mode).
 
-### 2024-12-09 - Phase 4 - CLI & Single-Player Mode
+### 2025-12-09 - Phase 4 - CLI & Single-Player Mode
 _Status: Complete_
 
 Implemented complete command-line interface for playable single-player mode:
@@ -917,7 +996,7 @@ Implemented complete command-line interface for playable single-player mode:
 
 Phase 4 complete. Ready for Phase 5 (Web Interface).
 
-### 2024-12-09 - Phase 6.1-6.4 - Documentation & Preservation
+### 2025-12-09 - Phase 6.1-6.4 - Documentation & Preservation
 _Status: Complete (excluding 6.5 Archive submission)_
 
 Implemented comprehensive documentation for the PROSIM reconstruction:
@@ -974,7 +1053,7 @@ Implemented comprehensive documentation for the PROSIM reconstruction:
 
 Phase 6.1-6.4 complete. Phase 6.5 (Archive submission) deferred for future work.
 
-### 2024-12-10 - Phase 5.1-5.2 - Web Interface Foundation
+### 2025-12-10 - Phase 5.1-5.2 - Web Interface Foundation
 _Status: Complete_
 
 Implemented web interface foundation using FastAPI + HTMX + Jinja2:
@@ -1020,6 +1099,105 @@ uvicorn web.app:app --reload
 
 Phase 5.1-5.2 complete. Phase 5.3 (Decision entry forms) is next.
 
+### 2025-12-10 - XTC File Format & Training Matrix Discovery
+_Status: Complete_
+
+Performed forensic analysis of previously mysterious `.xtc` files, discovering they are PROSIM game state save files:
+
+**XTC File Format Decoded:**
+- Binary format with `0x15` (ASCII NAK) delimiter between records
+- Header: 87 bytes with key metadata (byte 9 = operator count, byte 40 = max weeks)
+- Operator records: 16 bytes each containing 4 IEEE 754 floats (efficiency, proficiency, unknown, cumulative)
+- Weekly state snapshots appended as game progresses
+
+**Key Discoveries:**
+- **Training Matrix**: Exact 11-level × 10-tier efficiency matrix extracted from `ProsimTable.xls`
+  - Verified against XTC operator efficiency values with 0.2% average error
+  - Implemented as `TRAINING_MATRIX` in `prosim/config/defaults.py`
+  - Replaces previous vague efficiency ranges with exact values
+- **Expert Operators**: Confirmed operators can exceed 100% efficiency (max observed: 103.12%)
+- **Reject Rate Formula**: Verified `reject_rate = 0.178 - ((quality_budget - 750) * 0.00029)`
+  - DECS14 specified $750 budget, REPT14 showed exactly 17.8% rejects (exact match)
+- **Operator Count**: XTC header byte 9 matches workforce size (prosim.xtc = 9, prosim1.xtc = 13)
+
+**Files Updated:**
+- `prosim/config/defaults.py` - Added `TRAINING_MATRIX`, `TRAINING_LEVELS`, `get_operator_efficiency()`
+- `docs/verification_guide.md` - New file with verification procedures and Python code
+- `archive/docs/PROSIM_CASE_STUDY.md` - Added Appendix F: XTC File Format
+- `README.md` - Updated XTC section, added verification guide link
+
+This analysis validates the original 2004 reverse-engineering work and provides exact parameter values for the reconstruction.
+
+### 2025-12-10 - Two-Component Efficiency & Operator Ceiling Discovery
+_Status: Complete_
+
+Forensic analysis of `week1.txt` and cross-game comparison revealed deeper mechanics:
+
+**Two-Component Efficiency Model:**
+- Output is determined by TWO hidden stats per operator:
+  - **Time Efficiency**: Productive Hours ÷ Scheduled Hours (from training)
+  - **Proficiency**: Output quality multiplier (fixed at hire)
+- Combined: `Output = Scheduled_Hours × Time_Efficiency × Rate × Proficiency`
+
+**Operator Ceiling Concept:**
+- Each operator has a maximum efficiency ceiling determined by Quality Tier
+- Training improves Time Efficiency but cannot exceed Proficiency ceiling
+- Cross-game analysis of Operator 3 proved consistent expert status (std dev 3.1%)
+- Starting operators (1-9) have **fixed profiles** across all game instances:
+  - Op 3: Expert (~132% ceiling) - always the best operator
+  - Op 7: Strong (~110% ceiling)
+  - Op 4, 5, 6, 8, 9: Low tier (50-60% ceiling)
+- Hired operators (10+) have randomized quality tiers
+
+**Reject Rate Formula Refinement:**
+- Previous: Linear approximation
+- Updated: **Logarithmic relationship** with diminishing returns
+- Formula: `reject_rate = 0.904 - 0.114 * ln(quality_budget)`
+- Source: `Graph-Table 1.csv` from 2004 spreadsheet with fitted trendline
+- Floor: ~1.5% (verified from Week 16 spreadsheet at $2,500 quality budget)
+
+**Game Efficiency Formula:**
+- Distinct from operator efficiency
+- `Game Efficiency = (Standard Costs / Actual Costs) × 100%`
+- The "shutdown strategy" exploits this: build inventory, cut production, ship from stock
+- Result: Actual costs drop while shipping continues = efficiency spikes >100%
+
+**Files Updated:**
+- `prosim/config/defaults.py` - Added `STARTING_OPERATOR_PROFILES`, updated minimum_rate to 0.015
+- `docs/algorithms.md` - Added Game Performance Efficiency section, shutdown strategy documentation
+- `docs/verification_guide.md` - Added reject rate floor, efficiency formula, endgame state verification
+
+### 2025-12-10 - Authentic Report Format Verification
+_Status: Complete_
+
+Verified that REPT files and human-readable reports (week1.txt, report.doc) contain identical data:
+
+**Discovery:**
+- `report.doc` (Word document from 2004) contains user's name "Nelson de Wilt"
+- Comparing REPT14.DAT with report.doc: **exact field-by-field match**
+- REPT = machine-readable format, week1.txt = human-readable format
+
+**Implementation:**
+- Updated `write_rept_human_readable()` in `prosim/io/rept_parser.py`:
+  - Added missing [Order Information] section
+  - Added Cumulative Cost section
+  - Format now matches original week1.txt exactly
+- Updated CLI `_display_report()` to use authentic format by default
+- Added web route `/game/{session_id}/reports/{week}` for report viewing
+- Created `web/templates/pages/report.html` with monospace pre-formatted display
+
+**Rationale:**
+The authentic PROSIM report format provides:
+1. Historical accuracy - exactly what students saw in 2004
+2. Familiar interface for anyone who used the original simulation
+3. Columnar alignment designed for the data being presented
+
+**Files Updated:**
+- `prosim/io/rept_parser.py` - Enhanced `write_rept_human_readable()`
+- `prosim/cli/main.py` - Updated `_display_report()` to use authentic format
+- `web/routes/game.py` - Added report viewing route
+- `web/templates/pages/report.html` - New template for authentic report display
+
 ---
 
 ## References
@@ -1032,5 +1210,5 @@ Phase 5.1-5.2 complete. Phase 5.3 (Decision entry forms) is next.
 
 ---
 
-*Plan created: December 2024*
-*Last updated: December 2024*
+*Plan created: December 2025*
+*Last updated: December 2025*

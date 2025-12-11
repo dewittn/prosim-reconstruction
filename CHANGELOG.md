@@ -42,4 +42,4 @@ This project reconstructs PROSIM, which had its own version history:
 | PROSIM | 1969 | IBM Mainframe |
 | PROSIM III | 1996 | Windows 3.1/95 |
 
-This reconstruction (2024) aims to preserve and modernize the simulation for educational use.
+This reconstruction (2025) aims to preserve and modernize the simulation for educational use.

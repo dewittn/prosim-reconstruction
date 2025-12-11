@@ -846,6 +846,119 @@ def write_rept_human_readable(
     lines.append("")
     lines.append(f"Total Costs{wc.total_costs:>57.1f}")
     lines.append("")
+    lines.append("")
+
+    # Cumulative Costs
+    cc = report.cumulative_costs
+    lines.append(f"Cumulative Cost:               X          Y          Z         Total")
+    lines.append("")
+    lines.append(
+        fmt_row("Labor", cc.x_costs.labor, cc.y_costs.labor, cc.z_costs.labor)
+    )
+    lines.append(
+        fmt_row(
+            "Machine Set-Up",
+            cc.x_costs.machine_setup,
+            cc.y_costs.machine_setup,
+            cc.z_costs.machine_setup,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Machine Repair",
+            cc.x_costs.machine_repair,
+            cc.y_costs.machine_repair,
+            cc.z_costs.machine_repair,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Raw Materials",
+            cc.x_costs.raw_materials,
+            cc.y_costs.raw_materials,
+            cc.z_costs.raw_materials,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Purchased Finished Parts",
+            cc.x_costs.purchased_parts,
+            cc.y_costs.purchased_parts,
+            cc.z_costs.purchased_parts,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Equipment Usage",
+            cc.x_costs.equipment_usage,
+            cc.y_costs.equipment_usage,
+            cc.z_costs.equipment_usage,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Parts Carrying Cost",
+            cc.x_costs.parts_carrying,
+            cc.y_costs.parts_carrying,
+            cc.z_costs.parts_carrying,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Products Carrying Cost",
+            cc.x_costs.products_carrying,
+            cc.y_costs.products_carrying,
+            cc.z_costs.products_carrying,
+        )
+    )
+    lines.append(
+        fmt_row(
+            "Demand Penalty",
+            cc.x_costs.demand_penalty,
+            cc.y_costs.demand_penalty,
+            cc.z_costs.demand_penalty,
+        )
+    )
+    lines.append("")
+    lines.append(
+        fmt_row(
+            "Sub-Total",
+            cc.x_costs.subtotal,
+            cc.y_costs.subtotal,
+            cc.z_costs.subtotal,
+        )
+    )
+    lines.append("")
+
+    # Cumulative Overhead
+    co = cc.overhead
+    lines.append(f"Quality Planning{co.quality_planning:>52.1f}")
+    lines.append(f"Plant Maintenance{co.plant_maintenance:>51.1f}")
+    lines.append(f"Training Cost{co.training_cost:>55.1f}")
+    lines.append(f"Hiring Cost{co.hiring_cost:>57.1f}")
+    lines.append(f"Layoff and Firing Cost{co.layoff_firing_cost:>46.1f}")
+    lines.append(f"Raw Materials Carrying Cost{co.raw_materials_carrying:>41.1f}")
+    lines.append(f"Ordering Cost{co.ordering_cost:>55.1f}")
+    lines.append(f"Fixed Expense{co.fixed_expense:>55.1f}")
+    lines.append("")
+    lines.append(f"Sub-Total{co.subtotal:>59.1f}")
+    lines.append("")
+    lines.append(f"Total Costs{cc.total_costs:>57.1f}")
+    lines.append("")
+    lines.append("")
+
+    # Order Information
+    lines.append("[Order Information]")
+    lines.append("")
+    lines.append("Types of Order                 Week Due             Amounts")
+    lines.append("")
+    if report.pending_orders:
+        for order in report.pending_orders:
+            lines.append(f"{order.order_type:<30}{order.week_due:>6}.{order.amount:>20.0f}.")
+        lines.append("")
+    lines.append("* * No (More) Scheduled Receipt * *")
+    lines.append("")
+    lines.append("")
 
     # Production Information
     lines.append("")
