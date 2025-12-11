@@ -210,31 +210,66 @@ Operator 3 is consistently an expert across **all** game runs (std dev 3.1%), su
 
 **Hired operators (10+)** appear to have randomized quality tiers.
 
-#### Current Implementation (Simplified)
+#### Current Implementation (Two-Component Model)
 
-The current implementation uses a simplified random model that approximates the two-component behavior:
+The implementation uses the verified two-component model where efficiency is calculated from the training matrix and proficiency:
 
 ```python
-class OperatorManager:
-    def calculate_efficiency(self, operator: Operator) -> OperatorEfficiencyResult:
-        if operator.training_status == TrainingStatus.IN_TRAINING:
-            return OperatorEfficiencyResult(efficiency=0.0, reason="in_training")
+class Operator:
+    @property
+    def efficiency(self) -> float:
+        """Combined efficiency = time_efficiency × proficiency."""
+        if self.is_in_training_class:
+            return 0.0
+        return self.time_efficiency * self.proficiency
 
-        if operator.is_trained:
-            # Trained: 95-100% efficiency (random)
-            efficiency = random.uniform(
-                self.config.workforce.efficiency.trained_min,  # 0.95
-                self.config.workforce.efficiency.trained_max,  # 1.00
-            )
-        else:
-            # Untrained: 60-90% efficiency (random)
-            efficiency = random.uniform(
-                self.config.workforce.efficiency.untrained_min,  # 0.60
-                self.config.workforce.efficiency.untrained_max,  # 0.90
-            )
-
-        return OperatorEfficiencyResult(efficiency=efficiency)
+    @property
+    def time_efficiency(self) -> float:
+        """Time efficiency from training matrix lookup."""
+        return TRAINING_MATRIX[self.quality_tier][self.training_level] / 100.0
 ```
+
+**Starting operator profiles** (fixed, verified via XTC analysis):
+
+| Op | Quality Tier | Proficiency | Max Efficiency | Notes |
+|----|--------------|-------------|----------------|-------|
+| 1 | 6 | 1.039 | ~119% | Normal |
+| 2 | 5 | 1.097 | ~120% | Normal |
+| 3 | 9 | 1.122 | **~134%** | **EXPERT** |
+| 4 | 5 | 1.093 | ~119% | Normal |
+| 5 | 5 | 1.028 | ~112% | Normal |
+| 6 | 9 | 0.836 | ~100% | High tier, low prof |
+| 7 | 9 | 0.934 | ~112% | Below average |
+| 8 | 2 | 0.850 | ~95% | Low tier |
+| 9 | 2 | 0.900 | ~100% | Low tier |
+
+#### XTC Game State File Verification (Dec 2025)
+
+Binary analysis of `prosim.xtc` (Week 9) and `prosim1.xtc` (Week 13) validates the two-component model:
+
+**XTC Float Format:**
+- Each operator record contains two IEEE 754 floats after a `0x15` delimiter
+- Float1: Proficiency (normalized by ~1.088)
+- Float2: Unknown component (possibly tier-related)
+
+**Key findings:**
+
+1. **Float1 correlates with proficiency** (scale factor 1.088):
+   ```
+   XTC float1 × 1.088 ≈ Our derived proficiency
+
+   Op 3 (EXPERT): 1.0312 × 1.088 = 1.1219 → Model: 1.122 ✓ EXACT
+   Op 2:          1.0192 × 1.088 = 1.1089 → Model: 1.097 ✓
+   Op 1:          0.9667 × 1.088 = 1.0518 → Model: 1.039 ✓
+   Op 6:          0.6397 × 1.088 = 0.6960 → Model: 0.836 (close)
+   ```
+
+2. **Float values are IDENTICAL across Week 9 and Week 13**:
+   - Confirms proficiency is fixed at hire (never changes)
+   - Suggests player may not have trained operators (user hypothesis)
+
+3. **11 unique float pairs** for 9 operators:
+   - 2 extra pairs may be defaults or represent hired operators
 
 ### 4. Cost Calculation Algorithm
 

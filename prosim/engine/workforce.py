@@ -2,17 +2,20 @@
 Workforce/operator management for PROSIM simulation.
 
 This module handles:
-- Operator efficiency calculations (trained vs untrained)
-- Training status tracking and progression
+- Operator efficiency calculations from training matrix
+- Training level tracking and progression (0-10)
+- Quality tier management (fixed at hire)
 - Scheduling and unscheduling operators to machines
 - Consecutive unscheduled week tracking (layoff/termination)
 - Hiring and termination logic
 - Workforce cost calculations
 
-The efficiency model:
-    - Trained operators: 95-100% efficiency
-    - Untrained operators: 60-90% efficiency (variable)
-    - Operators in training: 0% productive (unavailable that week)
+The efficiency model (verified Dec 2025):
+    - Each operator has quality_tier (0-9): fixed innate ability at hire
+    - Each operator has training_level (0-10): advances with work
+    - Efficiency = TRAINING_MATRIX[tier][level] / 100.0
+    - Range: ~20% (tier 0, level 0) to ~120% (tier 9, level 10)
+    - Operators in training class: 0% productive (unavailable that week)
 """
 
 import random
@@ -23,6 +26,8 @@ from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.models.machines import Machine
 from prosim.models.operators import (
     Department,
+    MAX_QUALITY_TIER,
+    MIN_QUALITY_TIER,
     Operator,
     TrainingStatus,
     Workforce,
@@ -116,27 +121,18 @@ class OperatorManager:
     ) -> float:
         """Calculate efficiency for an operator.
 
-        Efficiency determines the ratio of productive hours to scheduled hours.
+        Efficiency is looked up from the training matrix based on the operator's
+        quality tier and training level. This replaces the old random-range model.
 
         Args:
             operator: The operator to calculate efficiency for
 
         Returns:
-            Efficiency as a float between 0.0 and 1.0
+            Efficiency as a float (e.g., 1.03 for 103% efficiency)
+            Returns 0.0 if operator is in training class
         """
-        if operator.training_status == TrainingStatus.TRAINING:
-            return 0.0
-
-        efficiency_config = self.config.workforce.efficiency
-
-        if operator.training_status == TrainingStatus.TRAINED:
-            min_eff = efficiency_config.trained_min
-            max_eff = efficiency_config.trained_max
-        else:  # UNTRAINED
-            min_eff = efficiency_config.untrained_min
-            max_eff = efficiency_config.untrained_max
-
-        return self._rng.uniform(min_eff, max_eff)
+        # Efficiency is now a property that uses the training matrix
+        return operator.efficiency
 
     def calculate_productive_hours(
         self,
@@ -169,10 +165,14 @@ class OperatorManager:
         workforce: Workforce,
         operator_ids: list[int],
     ) -> tuple[Workforce, TrainingResult]:
-        """Send operators to training for this week.
+        """Send operators to training class for this week.
 
-        Operators in training produce 0 productive hours but become trained
-        at the start of the next week.
+        Operators in training class produce 0 productive hours but gain +1
+        training level at the end of the week (up to max level 10).
+
+        Training can be sent at any level - it always advances training by 1.
+        This matches the original PROSIM behavior where training is beneficial
+        even for partially trained operators.
 
         Args:
             workforce: Current workforce state
@@ -190,9 +190,9 @@ class OperatorManager:
             if operator is None:
                 continue
 
-            # Can only train untrained operators
-            if operator.training_status == TrainingStatus.UNTRAINED:
-                updated_operator = operator.send_to_training()
+            # Can train any operator not already in training and not at max level
+            if not operator.is_in_training_class and not operator.is_fully_trained:
+                updated_operator = operator.send_to_training_class()
                 new_operators = {
                     **current_workforce.operators,
                     op_id: updated_operator,
@@ -215,9 +215,10 @@ class OperatorManager:
         self,
         workforce: Workforce,
     ) -> tuple[Workforce, list[int]]:
-        """Complete training for operators who were in training.
+        """Complete training class for operators who were in training.
 
-        Called at the start of a week to graduate operators from training.
+        Called at the start of a week to graduate operators from training class.
+        Each operator gains +1 training level (up to max 10).
 
         Args:
             workforce: Current workforce state
@@ -229,8 +230,8 @@ class OperatorManager:
         completed: list[int] = []
 
         for op_id, operator in workforce.operators.items():
-            if operator.training_status == TrainingStatus.TRAINING:
-                updated_operator = operator.complete_training()
+            if operator.is_in_training_class:
+                updated_operator = operator.complete_training_class()
                 new_operators = {
                     **current_workforce.operators,
                     op_id: updated_operator,
@@ -306,7 +307,7 @@ class OperatorManager:
 
         for op_id, operator in current_workforce.operators.items():
             if op_id not in scheduled_operator_ids:
-                if operator.training_status == TrainingStatus.TRAINING:
+                if operator.is_in_training_class:
                     in_training_ids.append(op_id)
                 else:
                     # Mark as unscheduled (increment consecutive weeks)
@@ -342,6 +343,9 @@ class OperatorManager:
     ) -> tuple[Workforce, list[Operator]]:
         """Hire new operators.
 
+        Hired operators (10+) receive randomized quality tiers, unlike
+        starting operators (1-9) who have fixed profiles.
+
         Args:
             workforce: Current workforce state
             count: Number of operators to hire
@@ -354,7 +358,13 @@ class OperatorManager:
         hired: list[Operator] = []
 
         for _ in range(count):
-            current_workforce, new_op = current_workforce.hire_operator(trained=trained)
+            # Randomize quality tier and proficiency for new hires (original PROSIM behavior)
+            quality_tier = self._rng.randint(MIN_QUALITY_TIER, MAX_QUALITY_TIER)
+            # Proficiency ranges from 0.85 to 1.15 for hired operators (estimated)
+            proficiency = self._rng.uniform(0.85, 1.15)
+            current_workforce, new_op = current_workforce.hire_operator(
+                quality_tier=quality_tier, proficiency=proficiency, trained=trained
+            )
             hired.append(new_op)
 
         return current_workforce, hired
@@ -417,7 +427,7 @@ class OperatorManager:
         for operator in workforce.active_operators:
             if (
                 operator.department == Department.UNASSIGNED
-                and operator.training_status != TrainingStatus.TRAINING
+                and not operator.is_in_training_class
                 and operator.consecutive_weeks_unscheduled == 1
             ):
                 # Only count first week of being unscheduled (before termination)
@@ -466,7 +476,7 @@ class OperatorManager:
     ) -> list[Operator]:
         """Get operators available for scheduling.
 
-        Excludes operators in training.
+        Excludes operators in training class.
 
         Args:
             workforce: Current workforce state
@@ -477,7 +487,7 @@ class OperatorManager:
         return [
             op
             for op in workforce.active_operators
-            if op.training_status != TrainingStatus.TRAINING
+            if not op.is_in_training_class
         ]
 
     def process_week_start(

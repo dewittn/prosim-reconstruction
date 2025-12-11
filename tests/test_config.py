@@ -222,12 +222,18 @@ class TestLegacyConfig:
 
 
 class TestDerivedCalculations:
-    """Tests for derived calculation functions from forensic analysis."""
+    """Tests for derived calculation functions from forensic analysis.
+
+    The reject rate uses a logarithmic formula derived from Graph-Table 1:
+        reject_rate = 0.904 - 0.114 * ln(quality_budget)
+    This was verified against the original 2004 spreadsheet analysis.
+    """
 
     def test_calculate_reject_rate_base(self) -> None:
-        """Reject rate at base budget ($750) should be 17.8%."""
+        """Reject rate at base budget ($750) should be ~15.1% (logarithmic model)."""
         rate = calculate_reject_rate(750.0)
-        assert rate == pytest.approx(0.178, abs=0.001)
+        # Logarithmic formula: 0.904 - 0.114 * ln(750) = ~0.149
+        assert rate == pytest.approx(0.1493, abs=0.001)
 
     def test_calculate_reject_rate_higher_budget(self) -> None:
         """Higher quality budget should reduce reject rate."""
@@ -237,13 +243,13 @@ class TestDerivedCalculations:
 
         assert rate_1000 < rate_750
         assert rate_1500 < rate_1000
-        # At $1000: ~10.6% (verified from forensic analysis)
-        assert rate_1000 == pytest.approx(0.106, abs=0.01)
+        # At $1000: ~11.7% (logarithmic formula: 0.904 - 0.114 * ln(1000))
+        assert rate_1000 == pytest.approx(0.117, abs=0.01)
 
     def test_calculate_reject_rate_minimum(self) -> None:
-        """Reject rate should not go below 5% floor."""
+        """Reject rate should not go below 1.5% floor (verified from Week 16 data)."""
         rate = calculate_reject_rate(5000.0)  # Very high budget
-        assert rate == 0.05  # Should hit the floor
+        assert rate == 0.015  # Should hit the floor at 1.5%
 
     def test_calculate_repair_probability_base(self) -> None:
         """Repair probability at base budget ($500) should be ~15%."""

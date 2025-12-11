@@ -235,20 +235,29 @@ OPERATOR_EFFICIENCY: dict[str, float] = {
     "untrained_max": 0.22,
 }
 
-# Starting operator profiles (discovered Dec 2025)
+# Starting operator profiles (discovered Dec 2025, refined with proficiency Dec 2025)
 # These appear to be FIXED across all game instances based on cross-game analysis.
-# Values are approximate quality tiers inferred from observed proficiency.
-# Hired operators (10+) have randomized tiers.
+#
+# TWO-COMPONENT EFFICIENCY MODEL:
+#   Actual_Efficiency = Training_Matrix[tier][level] × Proficiency
+#
+# - quality_tier: Determines training matrix row (0-9)
+# - proficiency: Fixed multiplier at hire (derived from ProsimTable.xls Week 16 data)
+#
+# Proficiency was calculated as: Actual_Efficiency / Training_Matrix[tier][level]
+# For example, Op 3 at tier 9, level I (118%) achieved 132.4% → proficiency = 1.122
+#
+# Hired operators (10+) have randomized tiers and proficiency.
 STARTING_OPERATOR_PROFILES: dict[int, dict[str, any]] = {
-    1: {"tier": "normal", "estimated_ceiling": 0.70},
-    2: {"tier": "normal", "estimated_ceiling": 0.75},
-    3: {"tier": "expert", "estimated_ceiling": 1.32},  # Always >100% in all games!
-    4: {"tier": "low", "estimated_ceiling": 0.60},
-    5: {"tier": "low", "estimated_ceiling": 0.55},
-    6: {"tier": "low", "estimated_ceiling": 0.50},
-    7: {"tier": "strong", "estimated_ceiling": 1.10},
-    8: {"tier": "low", "estimated_ceiling": 0.52},
-    9: {"tier": "low", "estimated_ceiling": 0.55},
+    1: {"quality_tier": 6, "proficiency": 1.039},  # Normal performer
+    2: {"quality_tier": 5, "proficiency": 1.097},  # Normal performer
+    3: {"quality_tier": 9, "proficiency": 1.122},  # EXPERT - highest proficiency!
+    4: {"quality_tier": 5, "proficiency": 1.093},  # Normal performer
+    5: {"quality_tier": 5, "proficiency": 1.028},  # Normal performer
+    6: {"quality_tier": 9, "proficiency": 0.836},  # Low proficiency despite high tier
+    7: {"quality_tier": 9, "proficiency": 0.934},  # Below average proficiency
+    8: {"quality_tier": 2, "proficiency": 0.850},  # Low tier, low proficiency (estimated)
+    9: {"quality_tier": 2, "proficiency": 0.900},  # Low tier, low proficiency (estimated)
 }
 
 # =============================================================================

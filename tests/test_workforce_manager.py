@@ -2,12 +2,17 @@
 Tests for the workforce/operator management module.
 
 Tests cover:
-- Efficiency calculations (trained vs untrained)
-- Training status progression
+- Efficiency calculations from training matrix (Dec 2025 update)
+- Training level progression (0-10)
+- Quality tier management (fixed at hire)
 - Operator scheduling and unscheduling
 - Consecutive unscheduled week tracking
 - Hiring and termination logic
 - Workforce cost calculations
+
+Note: Tests updated Dec 2025 to use training matrix model instead of
+random efficiency ranges. Efficiency is now deterministic based on
+quality_tier (0-9) and training_level (0-10).
 """
 
 import pytest
@@ -35,140 +40,170 @@ from prosim.models.operators import (
 
 
 class TestEfficiencyCalculations:
-    """Tests for operator efficiency calculations."""
+    """Tests for operator efficiency calculations using training matrix.
 
-    def test_trained_operator_efficiency_in_range(self):
-        """Test that trained operator efficiency is within configured range."""
+    Efficiency is now deterministic: TRAINING_MATRIX[tier][level] / 100.0
+    """
+
+    def test_trained_operator_efficiency_from_matrix(self):
+        """Test that trained operator efficiency comes from training matrix."""
         manager = OperatorManager(random_seed=42)
-        operator = Operator(operator_id=1, training_status=TrainingStatus.TRAINED)
+        # Tier 5, Level 5 = 108% efficiency from training matrix
+        operator = Operator(operator_id=1, quality_tier=5, training_level=5)
 
-        # Test multiple times to verify range
-        efficiencies = [manager.calculate_efficiency(operator) for _ in range(100)]
+        efficiency = manager.calculate_efficiency(operator)
 
-        assert all(0.95 <= e <= 1.00 for e in efficiencies)
+        # Efficiency is now deterministic, not random
+        assert efficiency == 1.08
+        assert operator.is_trained
 
-    def test_untrained_operator_efficiency_in_range(self):
-        """Test that untrained operator efficiency is within configured range."""
+    def test_untrained_operator_efficiency_from_matrix(self):
+        """Test that untrained operator efficiency comes from training matrix."""
         manager = OperatorManager(random_seed=42)
-        operator = Operator(operator_id=1, training_status=TrainingStatus.UNTRAINED)
+        # Tier 5, Level 0 = 22% efficiency from training matrix
+        operator = Operator(operator_id=1, quality_tier=5, training_level=0)
 
-        # Test multiple times to verify range
-        efficiencies = [manager.calculate_efficiency(operator) for _ in range(100)]
+        efficiency = manager.calculate_efficiency(operator)
 
-        assert all(0.60 <= e <= 0.90 for e in efficiencies)
+        assert efficiency == 0.22
+        assert not operator.is_trained
 
     def test_training_operator_efficiency_zero(self):
-        """Test that operator in training has zero efficiency."""
+        """Test that operator in training class has zero efficiency."""
         manager = OperatorManager(random_seed=42)
-        operator = Operator(operator_id=1, training_status=TrainingStatus.TRAINING)
+        operator = Operator(
+            operator_id=1, quality_tier=5, training_level=0, is_in_training_class=True
+        )
 
         efficiency = manager.calculate_efficiency(operator)
 
         assert efficiency == 0.0
 
-    def test_custom_efficiency_ranges(self):
-        """Test efficiency calculations with custom configuration."""
-        config = ProsimConfig(
-            workforce=WorkforceConfig(
-                efficiency=OperatorEfficiencyConfig(
-                    trained_min=0.99,
-                    trained_max=1.00,
-                    untrained_min=0.50,
-                    untrained_max=0.70,
-                )
-            )
-        )
-        manager = OperatorManager(config=config, random_seed=42)
+    def test_efficiency_varies_by_tier(self):
+        """Test that efficiency varies by quality tier at same training level."""
+        manager = OperatorManager(random_seed=42)
 
-        trained_op = Operator(operator_id=1, training_status=TrainingStatus.TRAINED)
-        untrained_op = Operator(operator_id=2, training_status=TrainingStatus.UNTRAINED)
+        # At level 10 (fully trained), different tiers have different efficiency
+        low_tier = Operator(operator_id=1, quality_tier=0, training_level=10)
+        high_tier = Operator(operator_id=2, quality_tier=9, training_level=10)
 
-        trained_eff = [manager.calculate_efficiency(trained_op) for _ in range(100)]
-        untrained_eff = [manager.calculate_efficiency(untrained_op) for _ in range(100)]
-
-        assert all(0.99 <= e <= 1.00 for e in trained_eff)
-        assert all(0.50 <= e <= 0.70 for e in untrained_eff)
+        assert manager.calculate_efficiency(low_tier) == 1.09  # Tier 0, Level 10
+        assert manager.calculate_efficiency(high_tier) == 1.20  # Tier 9, Level 10
 
     def test_productive_hours_calculation(self):
-        """Test productive hours based on efficiency."""
+        """Test productive hours based on efficiency from training matrix."""
         manager = OperatorManager(random_seed=42)
-        operator = Operator(operator_id=1, training_status=TrainingStatus.TRAINED)
+        # Tier 5, Level 5 = 108% efficiency
+        operator = Operator(operator_id=1, quality_tier=5, training_level=5)
 
         result = manager.calculate_productive_hours(operator, scheduled_hours=40.0)
 
         assert isinstance(result, OperatorEfficiencyResult)
         assert result.operator_id == 1
         assert result.scheduled_hours == 40.0
-        assert 38.0 <= result.productive_hours <= 40.0  # 95-100% of 40
+        assert result.productive_hours == 43.2  # 40 * 1.08
         assert result.training_status == TrainingStatus.TRAINED
         assert not result.is_in_training
 
     def test_productive_hours_while_training(self):
-        """Test that operators in training have zero productive hours."""
+        """Test that operators in training class have zero productive hours."""
         manager = OperatorManager(random_seed=42)
-        operator = Operator(operator_id=1, training_status=TrainingStatus.TRAINING)
+        operator = Operator(
+            operator_id=1, quality_tier=5, training_level=0, is_in_training_class=True
+        )
 
         result = manager.calculate_productive_hours(operator, scheduled_hours=40.0)
 
         assert result.productive_hours == 0.0
         assert result.is_in_training
 
-    def test_reproducible_with_seed(self):
-        """Test that results are reproducible with same seed."""
-        operator = Operator(operator_id=1, training_status=TrainingStatus.UNTRAINED)
+    def test_efficiency_is_deterministic(self):
+        """Test that efficiency is deterministic (not random) from training matrix."""
+        operator = Operator(operator_id=1, quality_tier=5, training_level=3, proficiency=1.0)
 
         manager1 = OperatorManager(random_seed=12345)
-        manager2 = OperatorManager(random_seed=12345)
+        manager2 = OperatorManager(random_seed=99999)  # Different seed
 
-        eff1 = [manager1.calculate_efficiency(operator) for _ in range(10)]
-        eff2 = [manager2.calculate_efficiency(operator) for _ in range(10)]
+        eff1 = manager1.calculate_efficiency(operator)
+        eff2 = manager2.calculate_efficiency(operator)
 
-        assert eff1 == eff2
+        # Same efficiency regardless of random seed (proficiency=1.0 so combined = time_eff)
+        assert eff1 == eff2 == 0.96  # Tier 5, Level 3
+
+    def test_two_component_efficiency_with_proficiency(self):
+        """Test that efficiency includes proficiency multiplier."""
+        manager = OperatorManager(random_seed=42)
+
+        # Operator 3 profile: tier 9, level 8 (H), proficiency 1.122
+        expert = Operator(operator_id=3, quality_tier=9, training_level=8, proficiency=1.122)
+
+        efficiency = manager.calculate_efficiency(expert)
+
+        # Expected: 118% (matrix) × 1.122 (proficiency) = 132.4%
+        assert efficiency == pytest.approx(1.324, rel=0.001)
 
 
 class TestTrainingOperations:
-    """Tests for training operations."""
+    """Tests for training operations.
+
+    Training now advances training_level by 1 (up to max 10) each time.
+    Operators can be sent to training at any level, not just when untrained.
+    """
 
     def test_send_to_training(self):
-        """Test sending untrained operators to training."""
+        """Test sending untrained operators to training class."""
         manager = OperatorManager(random_seed=42)
         workforce = Workforce.create_initial(num_operators=3, num_trained=0)
 
         new_workforce, result = manager.send_to_training(workforce, [1, 2])
 
         assert result.operators_sent_to_training == [1, 2]
-        assert new_workforce.operators[1].training_status == TrainingStatus.TRAINING
-        assert new_workforce.operators[2].training_status == TrainingStatus.TRAINING
-        assert new_workforce.operators[3].training_status == TrainingStatus.UNTRAINED
+        assert new_workforce.operators[1].is_in_training_class
+        assert new_workforce.operators[2].is_in_training_class
+        assert not new_workforce.operators[3].is_in_training_class
 
-    def test_send_trained_operator_to_training_ignored(self):
-        """Test that already trained operators cannot be sent to training."""
+    def test_send_fully_trained_operator_to_training_ignored(self):
+        """Test that fully trained operators (level 10) cannot be sent to training."""
         manager = OperatorManager(random_seed=42)
-        workforce = Workforce.create_initial(num_operators=3, num_trained=2)
+        # Create workforce with operators at max level
+        workforce = Workforce(
+            operators={
+                1: Operator(operator_id=1, quality_tier=5, training_level=10),
+                2: Operator(operator_id=2, quality_tier=5, training_level=10),
+            },
+            next_operator_id=3,
+        )
 
-        # Try to send trained operators to training
+        # Try to send fully trained operators to training
         new_workforce, result = manager.send_to_training(workforce, [1, 2])
 
-        # Should not be sent to training
+        # Should not be sent to training (already at max level)
         assert result.operators_sent_to_training == []
-        assert new_workforce.operators[1].training_status == TrainingStatus.TRAINED
-        assert new_workforce.operators[2].training_status == TrainingStatus.TRAINED
+        assert not new_workforce.operators[1].is_in_training_class
+        assert not new_workforce.operators[2].is_in_training_class
 
     def test_training_completion(self):
-        """Test that operators in training become trained."""
+        """Test that operators complete training class and advance level."""
         manager = OperatorManager(random_seed=42)
         workforce = Workforce.create_initial(num_operators=3, num_trained=0)
 
         # Send to training
         workforce, _ = manager.send_to_training(workforce, [1, 2])
+        # Verify they're at level 0 before training
+        assert workforce.operators[1].training_level == 0
+        assert workforce.operators[2].training_level == 0
 
         # Complete training (simulates next week start)
         new_workforce, completed = manager.process_training_completion(workforce)
 
         assert completed == [1, 2]
-        assert new_workforce.operators[1].training_status == TrainingStatus.TRAINED
-        assert new_workforce.operators[2].training_status == TrainingStatus.TRAINED
-        assert new_workforce.operators[3].training_status == TrainingStatus.UNTRAINED
+        # After training, level should be 1
+        assert new_workforce.operators[1].training_level == 1
+        assert new_workforce.operators[2].training_level == 1
+        assert not new_workforce.operators[1].is_in_training_class
+        assert not new_workforce.operators[2].is_in_training_class
+        # Operator 3 was not trained
+        assert new_workforce.operators[3].training_level == 0
 
     def test_training_cost(self):
         """Test training cost calculation."""
@@ -290,7 +325,14 @@ class TestSchedulingOperations:
     def test_scheduling_result_totals(self):
         """Test scheduling result totals calculation."""
         manager = OperatorManager(random_seed=42)
-        workforce = Workforce.create_initial(num_operators=2, num_trained=2)
+        # Create operators with high training level for high efficiency
+        workforce = Workforce(
+            operators={
+                1: Operator(operator_id=1, quality_tier=5, training_level=10),  # 118%
+                2: Operator(operator_id=2, quality_tier=5, training_level=10),  # 118%
+            },
+            next_operator_id=3,
+        )
 
         machines = [
             create_machine(1, 1, "X'", 40.0),
@@ -300,8 +342,8 @@ class TestSchedulingOperations:
         _, result = manager.schedule_operators(workforce, machines)
 
         assert result.total_scheduled_hours == 90.0
-        # Productive hours should be close to scheduled (trained operators)
-        assert 85.5 <= result.total_productive_hours <= 90.0
+        # With tier 5, level 10 = 118% efficiency: 90 * 1.18 = 106.2
+        assert result.total_productive_hours == pytest.approx(106.2, rel=0.01)
 
 
 class TestHiringOperations:
@@ -527,10 +569,10 @@ class TestHelperMethods:
         manager = OperatorManager(random_seed=42)
 
         operators = {
-            1: Operator(operator_id=1, training_status=TrainingStatus.TRAINED, department=Department.PARTS),
-            2: Operator(operator_id=2, training_status=TrainingStatus.TRAINED, department=Department.PARTS),
-            3: Operator(operator_id=3, training_status=TrainingStatus.TRAINED, department=Department.ASSEMBLY),
-            4: Operator(operator_id=4, training_status=TrainingStatus.TRAINED, department=Department.UNASSIGNED),
+            1: Operator(operator_id=1, quality_tier=5, training_level=5, department=Department.PARTS),
+            2: Operator(operator_id=2, quality_tier=5, training_level=5, department=Department.PARTS),
+            3: Operator(operator_id=3, quality_tier=5, training_level=5, department=Department.ASSEMBLY),
+            4: Operator(operator_id=4, quality_tier=5, training_level=5, department=Department.UNASSIGNED),
         }
         workforce = Workforce(operators=operators, next_operator_id=5)
 
@@ -547,9 +589,9 @@ class TestHelperMethods:
         manager = OperatorManager(random_seed=42)
 
         operators = {
-            1: Operator(operator_id=1, training_status=TrainingStatus.TRAINED),
-            2: Operator(operator_id=2, training_status=TrainingStatus.UNTRAINED),
-            3: Operator(operator_id=3, training_status=TrainingStatus.TRAINING),
+            1: Operator(operator_id=1, quality_tier=5, training_level=5),  # trained, available
+            2: Operator(operator_id=2, quality_tier=5, training_level=0),  # untrained, available
+            3: Operator(operator_id=3, quality_tier=5, training_level=0, is_in_training_class=True),  # in training, unavailable
         }
         workforce = Workforce(operators=operators, next_operator_id=4)
 

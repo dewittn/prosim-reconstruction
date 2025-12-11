@@ -98,21 +98,55 @@ class TestInventory:
 
 
 class TestOperators:
-    """Tests for operator models."""
+    """Tests for operator models.
+
+    Tests updated Dec 2025 to work with training matrix model:
+    - quality_tier (0-9): Fixed innate ability at hire
+    - training_level (0-10): Advances with weeks of work
+    - efficiency: Looked up from TRAINING_MATRIX[tier][level]
+    """
 
     def test_operator_efficiency_trained(self) -> None:
-        op = Operator(operator_id=1, training_status=TrainingStatus.TRAINED)
+        """Test that trained operator (level >= 1) has higher efficiency."""
+        op = Operator(operator_id=1, quality_tier=5, training_level=5)
         assert op.is_trained
-        assert op.efficiency_range == (0.95, 1.00)
+        # Tier 5, Level 5 = 108% efficiency from training matrix
+        assert op.efficiency == 1.08
 
     def test_operator_efficiency_untrained(self) -> None:
-        op = Operator(operator_id=1, training_status=TrainingStatus.UNTRAINED)
+        """Test that untrained operator (level 0) has low efficiency."""
+        op = Operator(operator_id=1, quality_tier=5, training_level=0)
         assert not op.is_trained
-        assert op.efficiency_range == (0.60, 0.90)
+        # Tier 5, Level 0 = 22% efficiency from training matrix
+        assert op.efficiency == 0.22
 
     def test_operator_efficiency_in_training(self) -> None:
-        op = Operator(operator_id=1, training_status=TrainingStatus.TRAINING)
-        assert op.efficiency_range == (0.0, 0.0)
+        """Test that operator in training class has 0% efficiency."""
+        op = Operator(operator_id=1, quality_tier=5, training_level=0, is_in_training_class=True)
+        assert op.efficiency == 0.0
+        assert op.training_status == TrainingStatus.TRAINING
+
+    def test_two_component_efficiency_model(self) -> None:
+        """Test the two-component efficiency model: efficiency = time_eff × proficiency."""
+        # Operator 3 profile from ProsimTable.xls Week 16 data
+        op = Operator(operator_id=3, quality_tier=9, training_level=8, proficiency=1.122)
+
+        # Time efficiency from training matrix (tier 9, level H=8)
+        assert op.time_efficiency == 1.18  # 118%
+
+        # Combined efficiency = 1.18 × 1.122 = 1.324 (132.4%)
+        assert op.efficiency == pytest.approx(1.324, rel=0.001)
+
+    def test_operator_proficiency_affects_max_efficiency(self) -> None:
+        """Test that proficiency affects max efficiency calculation."""
+        # Two operators with same tier but different proficiency
+        expert = Operator(operator_id=1, quality_tier=9, proficiency=1.122)
+        normal = Operator(operator_id=2, quality_tier=9, proficiency=0.934)
+
+        # Both have same tier, so same time efficiency at max level
+        # But different max efficiency due to proficiency
+        assert expert.max_efficiency == pytest.approx(1.20 * 1.122, rel=0.001)  # ~134.6%
+        assert normal.max_efficiency == pytest.approx(1.20 * 0.934, rel=0.001)  # ~112.1%
 
     def test_operator_termination_threshold(self) -> None:
         op = Operator(operator_id=1, consecutive_weeks_unscheduled=1)
