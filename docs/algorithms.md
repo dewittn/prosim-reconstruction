@@ -735,7 +735,94 @@ Game state is saved as JSON:
 
 ---
 
-## Appendix: Calibration Data
+## Appendix A: ProsimTable.xls Spreadsheet Structure
+
+The original reverse-engineering spreadsheet (`archive/spreadsheets/ProsimTable.xls`) was the primary tool used to analyze and predict PROSIM behavior. This section documents its structure for preservation purposes.
+
+### Tabs Overview
+
+| Tab | Purpose |
+|-----|---------|
+| `DECS14` | Decision entry (mirrors DECS file format) |
+| `Week Sumary` | Weekly summary with current/last week tracking |
+| `Weekly Planing` | Production planning calculations |
+| `Entry` | Operator assignments and comparison data (includes Andy/Shorty data) |
+| `Results` | Production predictions with daily (Mon-Fri) breakdown |
+| `Eff` | Cost breakdown and efficiency calculations |
+| `Operators` | Training matrix, operator tracking, efficiency lookups |
+| `Forcasting` | Demand forecasting calculations |
+| `Graph` | Reject rate analysis (source of logarithmic formula) |
+| `Cost` | Detailed cost calculations |
+| `Data` | Raw data and machine production tracking |
+
+### External Dependencies
+
+The spreadsheet references an external file `Nelson.xls` for DGET/DSUM database lookups. The formulas follow this pattern:
+
+```
+=DGET($A$6:$E$34,$C$6,$J21:$J22)  -- "days w/o" lookup
+=DGET($A$6:$E$34,$D$6,$J21:$J22)  -- "days with" lookup
+```
+
+**Database structure required in Nelson.xls:**
+- Row 6: Headers (`op`, `base`, `days_wo`, `days_with`, `op`)
+- Rows 7-15: Operator data keyed by operator number in column E
+
+### Operators Tab Structure
+
+The Operators tab contains the **Training Matrix** (verified source for `prosim/config/defaults.py`):
+
+**Location**: Rows 6-16, Columns K-U (headers: "not trained", "A" through "J")
+
+| Training Level | Not Trained | A | B | C | D | E | F | G | H | I | J |
+|----------------|-------------|-----|-----|-----|-----|------|------|------|------|------|------|
+| 0 | 20% | 61% | 79% | 89% | 96% | 100% | 103% | 106% | 108% | 109% |
+| 1 | 21% | 63% | 81% | 91% | 98% | 103% | 106% | 109% | 111% | 112% |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+| 9 | 22% | 67% | 87% | 98% | 105% | 110% | 113% | 116% | 118% | 120% |
+
+**Operator tracking section** (Rows 21-38):
+- Column I: Operator number
+- Column J: "Not Trained" weeks (calculated via DGET)
+- Column K: "Trained" weeks (calculated via DGET)
+- Column L-M: Capped values (max 9 for lookup)
+- Column N: Training level lookup (A-J)
+- Column O: "days w/o" (from Nelson.xls)
+- Column P: "days with" (from Nelson.xls)
+
+### Results Tab Structure
+
+Production planning with Material Requirements Planning (MRP):
+
+**100% Estimated Section** (Rows 2-13):
+- Operator efficiency and production calculations
+- Formula: `Production = Hours × Efficiency × Rate`
+
+**Material Based Estimate Section** (Rows 15-26):
+- Adjusted production based on material availability
+- Prime component (X', Y', Z') inventory tracking
+
+**Daily Breakdown** (Columns L-AJ):
+- Monday through Friday production scheduling
+- "Next Day" inventory projections
+- Reduction percentages for material constraints
+
+### Reconstruction Notes (December 2025)
+
+To restore full functionality of ProsimTable.xls:
+
+1. **Nelson.xls** was reconstructed with seed data derived from:
+   - Existing values in the Operators tab (Not Trained/Trained columns)
+   - Formula reverse-engineering to determine required database structure
+   - Training data: Op 3=18/9, Op 7=21/9, Op 26=15/5, Op 2=20/5, Op 6=18/10, Op 4=16/5, Op 1=13/6, Op 5=16/5, Op 18=12/6
+
+2. **Column C and D** in the Operators tab (rows 6-15) were populated with training history data to support local DGET lookups
+
+3. The spreadsheet was designed to compare multiple players' games - the Entry tab contains sections labeled "andy" and "Shorty" with their operator assignments
+
+---
+
+## Appendix B: Calibration Data
 
 See [calibration_report.md](calibration_report.md) for detailed calibration findings from comparing the simulation against original REPT files.
 
