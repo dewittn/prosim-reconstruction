@@ -10,7 +10,7 @@ This package provides:
 - CLI interface for playing the game
 - Configurable parameters for simulation tuning
 
-For historical context, see the archive/docs/PROSIM_CASE_STUDY.md file.
+For historical context, see the docs/history.md file.
 """
 
 __version__ = "0.1.0"

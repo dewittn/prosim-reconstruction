@@ -37,7 +37,7 @@ The following files from the original coursework inform this reconstruction:
 | `Prosim spreadsheet.xls` | Earlier calculation spreadsheet | `archive/` |
 | `475ProSim.ppt` | Course introduction slides | `archive/docs/` |
 | `ProSim_intro.ppt` | Detailed simulation mechanics | `archive/docs/` |
-| `PROSIM_CASE_STUDY.md` | Forensic analysis document | `archive/docs/` |
+| `history.md` | PROSIM history and forensic analysis | `docs/` |
 
 ---
 
@@ -296,7 +296,7 @@ prosim-reconstruction/
   - Copy DECS/REPT files to `archive/data/`
   - Copy spreadsheets to `archive/spreadsheets/`
   - Copy documentation to `archive/docs/`
-  - Include PROSIM_CASE_STUDY.md
+  - Include history documentation in `docs/history.md`
 
 - [x] **1.3** Implement data models
   - `Company`: Company state container
@@ -1123,7 +1123,7 @@ Performed forensic analysis of previously mysterious `.xtc` files, discovering t
 **Files Updated:**
 - `prosim/config/defaults.py` - Added `TRAINING_MATRIX`, `TRAINING_LEVELS`, `get_operator_efficiency()`
 - `docs/verification_guide.md` - New file with verification procedures and Python code
-- `archive/docs/PROSIM_CASE_STUDY.md` - Added Appendix F: XTC File Format
+- `docs/xtc_verification_guide.md` - XTC file format documentation
 - `README.md` - Updated XTC section, added verification guide link
 
 This analysis validates the original 2004 reverse-engineering work and provides exact parameter values for the reconstruction.
@@ -1206,7 +1206,7 @@ The authentic PROSIM report format provides:
 - [Amazon - PROSIM 1969](https://www.amazon.com/PROSIM-Production-Management-Paul-Greenlaw/dp/0700222243) - Original textbook
 - [Amazon - PROSIM III 1996](https://www.amazon.com/Prosim-Windows-Production-Management-Simulation/dp/0256214360) - Windows version
 - [Penn State - Chao-Hsien Chu](https://www.psu.edu/news/information-sciences-and-technology/story/chao-hsien-chu-one-ists-original-five-faculty-members-has) - Co-author obituary
-- `archive/docs/PROSIM_CASE_STUDY.md` - Detailed forensic analysis
+- `docs/history.md` - PROSIM history and forensic analysis
 
 ---
 

@@ -4,7 +4,7 @@
 
 ## The Story of PROSIM
 
-PROSIM (Production Simulation) is one of the pioneering educational simulation games in the field of operations management. This document tells the story of its origins, evolution, and eventual reconstruction.
+PROSIM (Production Simulation) is one of the pioneering educational simulation games in the field of operations management. This document tells the story of its origins, evolution, and the 2025 reconstruction effort based on forensic analysis of files preserved from a 2004 college course.
 
 ---
 
@@ -60,7 +60,7 @@ Chu later became one of the original five faculty members of Penn State's Colleg
 
 PROSIM was used in operations management courses at universities including:
 - Penn State University
-- Bryant University (formerly Bryant College)
+- Wentworth Institute of Technology
 - Various other business schools
 
 The simulation taught generations of students about:
@@ -109,16 +109,55 @@ The only remaining documentation exists in:
 
 ## The Reconstruction Project
 
-### The 2004 Spreadsheet
+### The 2004 Reverse-Engineering
 
-In Summer 2004, a student in Bryant College's MGMT 475 course (Managing the Production Process) reverse-engineered PROSIM. Unable to see the simulation's internal algorithms, they systematically:
+In Summer 2004, a student in Wentworth Institute of Technology's MGMT 475 course (Managing the Production Process) reverse-engineered PROSIM. The course, taught by Peter Rourke and using "Operations Management, 7th Edition" by Jay Heizer and Barry Render as the textbook, assigned students to run virtual manufacturing companies using the PROSIM simulation.
+
+Unable to see the simulation's internal algorithms, the student systematically:
 
 1. Tracked all inputs and outputs across multiple simulation weeks
 2. Identified patterns in production rates, costs, and efficiency
 3. Built a predictive Excel spreadsheet
-4. Achieved approximately **97% accuracy** in predicting simulation outcomes
+4. Validated predictions against actual simulation results
+5. Achieved approximately **97% accuracy** in predicting simulation outcomes
 
 This spreadsheet, **ProsimTable.xls**, became one of the most detailed surviving records of how PROSIM actually functioned.
+
+#### Evidence of Iterative Development
+
+The preserved files show the spreadsheet evolved over multiple weeks:
+
+| Version | Date | Size | Features |
+|---------|------|------|----------|
+| ProsimTable(Week3).xls | Jun 5, 2004 | 133 KB | Basic production tracking |
+| ProsimTable.xls (final) | Jul 13, 2004 | 179 KB | Full model with 5th station, forecasting, training lookup |
+
+Features added between versions include:
+- 5th assembly station tracking
+- Advanced demand forecasting (EWMA)
+- Operator training lookup tables
+- Consecutive scheduling tracking ("days w/o" / "days with")
+- Raw material carrying cost calculations
+- Cumulative tracking across weeks
+
+The final spreadsheet also referenced data from classmates (Andy, Shorty), suggesting collaborative validation of the model against multiple companies' game data.
+
+#### Accuracy Analysis
+
+The 97% accuracy claim was verified through comparison of spreadsheet predictions against actual REPT output:
+
+| Metric | Predicted | Actual | Match |
+|--------|-----------|--------|-------|
+| Standard production rates (X'=60, Y'=50, Z'=40) | ✓ | ✓ | Exact |
+| Reject rate | ~17-18% | 17.8% | Exact |
+| Inventory flow calculations | ✓ | ✓ | Exact |
+| Cost category breakdowns | ✓ | ✓ | Exact |
+
+**Sources of the ~3% variance:**
+1. **Machine repairs** - Random events ($400 in some weeks, $0 in others)
+2. **Operator efficiency curves** - Untrained workers showed variable productive hours
+3. **Rounding differences** - Simulation used different decimal precision
+4. **Demand randomness** - Forecasts had inherent uncertainty (σ=100-300)
 
 ### Why Reconstruct PROSIM?
 
@@ -195,7 +234,6 @@ archive/
 │   ├── REPT14.DAT      # Report file (week 14)
 │   └── week1.txt       # Human-readable report (Rosetta Stone)
 ├── docs/
-│   ├── PROSIM_CASE_STUDY.md  # Forensic analysis
 │   ├── 475ProSim.ppt   # Course introduction
 │   └── ProSim_intro.ppt # Simulation mechanics
 └── spreadsheets/
@@ -256,8 +294,40 @@ This reconstruction project acknowledges:
 
 - **Paul S. Greenlaw**, **Michael P. Hottenstein**, and **Chao-Hsien Chu** for creating and maintaining PROSIM
 - The LGIRA for preserving information about the original simulation
-- Bryant University (formerly Bryant College) where the reverse-engineering was performed
+- **Wentworth Institute of Technology** where the 2004 reverse-engineering was performed
+- **Peter Rourke** who taught MGMT 475 in Summer 2004
 - All the students and instructors who used PROSIM over nearly four decades
+
+---
+
+## References & Sources
+
+### Confirmed PROSIM References
+
+| Source | URL | Information |
+|--------|-----|-------------|
+| **LGIRA Archive** | [lgira.mesmernet.org/items/show/2717](https://www.lgira.mesmernet.org/items/show/2717) | Original 1968 PROSIM catalog entry |
+| **Amazon (1969 edition)** | [amazon.com/dp/0700222243](https://www.amazon.com/PROSIM-Production-Management-Paul-Greenlaw/dp/0700222243) | Original Greenlaw & Hottenstein textbook |
+| **Amazon (1996 Windows)** | [amazon.com/dp/0256214360](https://www.amazon.com/Prosim-Windows-Production-Management-Simulation/dp/0256214360) | Windows version with Chu |
+| **Penn State News** | [psu.edu/news/.../chao-hsien-chu...](https://www.psu.edu/news/information-sciences-and-technology/story/chao-hsien-chu-one-ists-original-five-faculty-members-has) | Obituary for Dr. Chao-Hsien Chu |
+| **Chu Memorial** | [kochfuneralhome.com/.../Chao-Hsien-Chu](https://kochfuneralhome.com/tribute/details/2338/Chao-Hsien-Chu/condolences.html) | Hottenstein's tribute mentioning PROSIM collaboration |
+
+### Inaccessible/Lost Resources
+
+| Resource | Status (as of December 2025) |
+|----------|------------------------------|
+| PROSIM simulation executable | Not found online |
+| Instructor diskette | Not found |
+| PROSIM manual / Appendix A | Not found |
+| Ohio thesis "PROSIM VII: An Enhanced Production Simulation" | 404 error |
+
+### Related But Different Products
+
+Several other products share the "PROSIM" name but are unrelated to this educational simulation:
+
+- **Fives ProSim** (prosim.net) - Chemical process simulation software
+- **ProSim Training Solutions** (prosim-ar.com) - Flight simulator software
+- **KBSI ProSim** - Business process workflow simulation
 
 ---
 
@@ -267,4 +337,4 @@ This reconstruction project acknowledges:
 
 ---
 
-*This documentation is part of the PROSIM Reconstruction Project. For the complete forensic analysis, see [PROSIM_CASE_STUDY.md](../archive/docs/PROSIM_CASE_STUDY.md).*
+*This documentation is part of the PROSIM Reconstruction Project. For technical details, see [algorithms.md](algorithms.md).*

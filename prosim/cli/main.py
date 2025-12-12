@@ -249,7 +249,7 @@ game, rebuilt for educational preservation and modern use.
 [dim]For more information, see:
   - README.md
   - IMPLEMENTATION_PLAN.md
-  - archive/docs/PROSIM_CASE_STUDY.md[/dim]""",
+  - docs/history.md[/dim]""",
         title="About PROSIM",
         border_style="blue",
     ))

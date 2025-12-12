@@ -544,4 +544,4 @@ prosim --lang es new --name "Mi Empresa"
 
 ---
 
-*This documentation is part of the PROSIM Reconstruction Project. For technical details, see [calibration_report.md](calibration_report.md). For historical context, see [PROSIM_CASE_STUDY.md](../archive/docs/PROSIM_CASE_STUDY.md).*
+*This documentation is part of the PROSIM Reconstruction Project. For technical details, see [calibration_report.md](calibration_report.md). For historical context, see [history.md](history.md).*

@@ -17,7 +17,7 @@ The simulation was later updated and published as **"PROSIM: A Production Manage
 - **PROSIM II** - Updated mainframe version
 - **PROSIM III for Windows (1996)** - Final commercial release by Chu, Hottenstein, and Greenlaw
 
-The simulation was used in Operations Management courses at universities including Penn State, Bryant University, and others throughout the 1970s-2000s. Players manage a manufacturing company producing three products (X, Y, Z), making weekly decisions about:
+The simulation was used in Operations Management courses at universities including Penn State, Wentworth Institute of Technology, and others throughout the 1970s-2000s. Players manage a manufacturing company producing three products (X, Y, Z), making weekly decisions about:
 
 - **Production scheduling** - Assigning operators to machines
 - **Inventory management** - Ordering raw materials and parts
@@ -103,8 +103,7 @@ prosim --lang es new --name "Mi Empresa"
 - [Game Manual](docs/game_manual.md) - How to play, strategy guide, CLI reference
 - [Technical Documentation](docs/algorithms.md) - Algorithms, API reference, configuration
 - [Calibration Report](docs/calibration_report.md) - Parameter verification and accuracy analysis
-- [History & Preservation](docs/history.md) - The story of PROSIM and this reconstruction
-- [Case Study](archive/docs/PROSIM_CASE_STUDY.md) - Forensic analysis and reverse engineering
+- [History & Preservation](docs/history.md) - The story of PROSIM, the 2004 reverse-engineering, and this reconstruction
 - [Verification Guide](docs/verification_guide.md) - How to independently verify game mechanics
 - [Implementation Plan](IMPLEMENTATION_PLAN.md) - Development roadmap and progress
 - [Contributing](CONTRIBUTING.md) - How to contribute to the project
@@ -141,7 +140,7 @@ If you found this page searching for any of these terms, you're in the right pla
 > PROSIM simulation, PROSIM III, PROSIM for Windows, Greenlaw Hottenstein simulation,
 > Chao-Hsien Chu PROSIM, Penn State production simulation, production management simulation game,
 > PROSIM Prentice Hall, PROSIM business simulation, PROSIM operations management,
-> DECS DAT file, REPT DAT file, PROSIM course, Bryant University PROSIM
+> DECS DAT file, REPT DAT file, PROSIM course, Wentworth Institute of Technology PROSIM
 
 ## Contributing
 
@@ -167,7 +166,7 @@ The reconstruction is based on detailed analysis of preserved game files. Key fi
 - **Demand forecasting**: Uses EWMA (Exponentially Weighted Moving Average)
 - **Cost structures**: Labor ($10/hr), overtime (1.5x), various overhead categories
 
-For complete technical details, see the [Case Study](archive/docs/PROSIM_CASE_STUDY.md).
+For complete technical details, see the [Technical Documentation](docs/algorithms.md).
 
 ### File Formats
 

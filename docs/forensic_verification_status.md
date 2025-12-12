@@ -562,7 +562,7 @@ if report.costs.overhead.hiring_cost > 0:
 | XTC deep dive | `docs/xtc_verification_guide.md` |
 | Algorithm documentation | `docs/algorithms.md` |
 | Calibration data | `docs/calibration_report.md` |
-| Case study context | `archive/docs/PROSIM_CASE_STUDY.md` |
+| Historical context | `docs/history.md` |
 
 ### Running Verification Tests
 
@@ -749,4 +749,4 @@ For multi-week simulations, errors compound. A 95% accurate model could be 90% a
 
 ---
 
-*This document consolidates verification data from: `IMPLEMENTATION_PLAN.md`, `docs/verification_guide.md`, `docs/xtc_verification_guide.md`, `docs/calibration_report.md`, and `archive/docs/PROSIM_CASE_STUDY.md`.*
+*This document consolidates verification data from: `IMPLEMENTATION_PLAN.md`, `docs/verification_guide.md`, `docs/xtc_verification_guide.md`, `docs/calibration_report.md`, and `docs/history.md`.*

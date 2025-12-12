@@ -362,7 +362,7 @@ XTC Float1 × 1.088 ≈ Derived Proficiency
 
 ### References
 - `docs/xtc_verification_guide.md` (complete analysis)
-- `archive/docs/PROSIM_CASE_STUDY.md` Appendix F
+- `docs/history.md` (historical context)
 - `archive/data/prosim.xtc`, `archive/data/prosim1.xtc`
 
 ---

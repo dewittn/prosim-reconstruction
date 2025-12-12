@@ -94,7 +94,7 @@ REPT files (machine-readable) and week1.txt (human-readable) contain identical d
 | `docs/xtc_verification_guide.md` | XTC binary file analysis and open hypotheses |
 | `prosim/config/defaults.py` | All game constants with verification notes |
 | `prosim/io/rept_parser.py` | REPT file parsing and human-readable output |
-| `archive/docs/PROSIM_CASE_STUDY.md` | Original forensic analysis and history |
+| `docs/history.md` | PROSIM history, 2004 reverse-engineering, and preservation |
 
 ## Verification Status Summary
 
