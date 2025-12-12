@@ -2,15 +2,48 @@
 
 ## Project Overview
 
-This is a reconstruction of **PROSIM III**, a production management simulation game originally created in 1968 by Greenlaw, Hottenstein, and Chu. The original Windows software from 1996 is lost/unavailable, so we're rebuilding it from forensic analysis of archived game files from a 2004 college course.
+This is a reconstruction of **PROSIM III for Windows**, a production management simulation game. The original Windows software from 1996 is lost/unavailable, so we're rebuilding it from forensic analysis of archived game files from a 2004 college course.
 
 **Goal**: Create a faithful recreation that produces identical results to the original simulation when given the same inputs.
 
+## Product Lineage (IMPORTANT)
+
+> **CRITICAL DISCOVERY (Dec 2025)**: There are TWO completely separate "PROSIM" product lines. Our target is the **Greenlaw commercial product**, NOT the Mize academic lineage.
+
+### Greenlaw PROSIM (Commercial) - **THIS IS OUR TARGET**
+
+| Version | Year | Authors | Publisher |
+|---------|------|---------|-----------|
+| PROSIM (1st ed) | **1969** | Greenlaw & Hottenstein | Harper & Row |
+| PROSIM (2nd ed) | ~1979 | Greenlaw & Hottenstein | Harper & Row |
+| **PROSIM III for Windows** | **1996** | Chu, Hottenstein, Greenlaw | Irwin/McGraw-Hill |
+
+- **ISBN-10**: 0256214352, **ISBN-13**: 978-0256214352
+- **224-page textbook** included with software (ordered from Amazon Dec 2025)
+- Windows-based GUI, operator training/efficiency system
+- Used at multiple universities (Wentworth, Ohio U, etc.)
+
+### Mize PROSIM (Academic) - NOT OUR TARGET
+
+| Version | Year | Author | Institution |
+|---------|------|--------|-------------|
+| PROSIM V | 1971 | Dr. Joe H. Mize | Auburn University |
+| PROSIM VI | 1981 | Ward & Wright | West Virginia University |
+| PROSIM VII | 1992 | Alexander | Ohio University |
+
+- Thesis-based academic project (unrelated to our target)
+- Stock number / work station focused (different architecture)
+- No operator training/efficiency system
+- 1992 thesis preserved in `docs/prosim_vii_thesis_1992.txt` for historical reference
+
+See `docs/key_discoveries.md` Discovery #13 for full details.
+
 ## Background Story
 
-- **2003-2004**: The project owner played PROSIM as a student in MGMT475 and reverse-engineered the game mechanics using spreadsheet analysis
+- **2003-2004**: The project owner played PROSIM III at Wentworth Institute (MGMT475) and reverse-engineered the game mechanics using spreadsheet analysis
 - **Senior Year Project**: Attempted to reconstruct PROSIM; instructor provided access to teacher-side files
 - **December 2025**: Resuming the reconstruction with Claude's assistance, using the preserved archive files
+- **December 2025**: Discovered the two PROSIM product lines; ordered original textbook from Amazon
 
 ## Archive Structure
 

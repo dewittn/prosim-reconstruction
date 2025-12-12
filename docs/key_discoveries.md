@@ -68,6 +68,8 @@
 | 9 | [Game Efficiency vs Operator Efficiency](#9-game-efficiency-vs-operator-efficiency) | Dec 2025 | Important - Terminology |
 | 10 | [Nelson.xls Structure Reconstructed](#10-nelsonxls-structure-reconstructed) | Dec 2025 | Data recovery |
 | 11 | [ProsimTable.xls Evolution Traced](#11-prosimtablexls-evolution-traced) | Dec 2025 | Archive insight |
+| 12 | [PROSIM VII Doctoral Thesis Found (1992)](#12-prosim-vii-doctoral-thesis-found-1992) | Dec 2025 | Historical context |
+| 13 | [Two Separate PROSIM Product Lines Identified](#13-two-separate-prosim-product-lines-identified) | Dec 2025 | **CRITICAL** - Changes project understanding |
 
 ---
 
@@ -605,24 +607,274 @@ v4 (Jul 13):  + DECS14 (final structure)
 
 ---
 
+## 12. PROSIM VII Doctoral Thesis Found (1992)
+
+**Date Discovered**: December 2025
+
+**Category**: Academic Lineage / Historical Context
+
+### The Discovery
+
+The **1992 Master's Thesis** that created PROSIM VII was located - a 180-page academic document titled *"PROSIM VII: An Enhanced Production Simulation Model"* by **Louis Cadmon Alexander** at **Ohio University**. This establishes the complete academic lineage and reveals that the operator training/efficiency model was **NOT present in PROSIM VII**.
+
+### Evidence
+
+**Document metadata**:
+- **Title**: PROSIM VII: An Enhanced Production Simulation Model
+- **Author**: Louis Cadmon Alexander
+- **Institution**: Ohio University, College of Engineering and Technology, Department of Industrial and Systems Engineering
+- **Date**: August 1992
+- **Advisor**: Dr. Ken Cutright
+- **Source file**: `ohiou1171474745.rtf` (OCR conversion from PDF)
+
+**PROSIM Version History** (documented in thesis):
+| Version | Year | Platform | Author |
+|---------|------|----------|--------|
+| PROSIM V | 1971 | Mainframe/FORTRAN | Dr. Joe H. Mize, Auburn University |
+| PROSIM VI | 1981 | Apple II Plus | Dr. Richard E. Ward, James C. Wright, WVU |
+| PROSIM VII | 1992 | IBM PC/True Basic | Louis Cadmon Alexander, Ohio U |
+
+**PROSIM VII Features** (documented in thesis):
+- Stochastic process times (uniform, normal, exponential, gamma)
+- Machine breakdown with exponential interbreakdown times
+- Repair times (deterministic or stochastic)
+- Defective incoming material and outgoing products
+- Quality control plan (100% inspection vs sampling)
+- Up to 25 work stations, 75 stock numbers, 5 work station tours
+
+**Critical Negative Finding**:
+The thesis contains **zero mentions** of:
+- "efficiency" (as we use it for operators)
+- "proficiency"
+- "training" (for operators)
+- "operator" training/skill development
+
+This proves the **two-component operator efficiency model** we see in PROSIM III (2004) was **added after 1992** in a subsequent version.
+
+### Thesis Chapter Structure
+
+| Chapter | Content |
+|---------|---------|
+| I | Introduction - Background of project |
+| II | Background of Production Control Education |
+| III | Literature Review - Including detailed PROSIM V/VI documentation |
+| IV | Statement of the Problem |
+| V | Solution Methodology - **The enhancement formulas** |
+| VI | Discussion of Results - Validation |
+| VII | Conclusions and Recommendations |
+| Appendix A | Example Problem without enhancements |
+| Appendix B | Example Problem with enhancements |
+
+### Key Formulas from Thesis
+
+**Machine Breakdown** (Section 5.2):
+- Interbreakdown times: Exponential distribution (based on busy time)
+- Repair times: Uniform, normal, exponential, or gamma (administrator choice)
+
+**Quality Control** (Section 5.4):
+- 100% inspection OR lot sampling OR no inspection
+- Defective percentage for each product (uniform random test)
+- Penalty cost for bad products leaving factory
+
+**Cost Structure**:
+- Idle time costs (man + machine)
+- Labor costs per shift (shift 1, 2, 3, overtime)
+- Setup times, process times
+- Carrying costs, order costs
+- Out-of-stock costs
+
+### Implications
+
+> **UPDATE (Dec 2025)**: See Discovery #13 - PROSIM VII (Mize lineage) is a **completely separate product** from PROSIM III (Greenlaw lineage). The thesis below documents a different simulation system.
+
+1. **NOT our ancestor**: PROSIM VII (Mize/Ohio U) is unrelated to PROSIM III (Greenlaw/commercial)
+2. **Historical value**: Documents academic simulation development 1971-1992
+3. **Architecture comparison**: Different approach - stock numbers vs operators
+4. **Quality system different**: 1992 Mize version used inspection/sampling; Greenlaw version uses quality budget
+
+### Historical Timeline (Mize Academic Lineage Only)
+
+```
+1971 - PROSIM V created (Auburn, mainframe) - Dr. Joe H. Mize
+1981 - PROSIM VI (WVU, Apple II)
+1992 - PROSIM VII thesis (Ohio U, IBM PC)
+      ↓
+    [This lineage does NOT lead to PROSIM III]
+```
+
+### References
+- `docs/prosim_vii_thesis_1992.txt` (full extracted text, 180k chars)
+- `Prosim/ohiou1171474745.rtf` (original OCR file, 2.8MB)
+- `CLAUDE.md` PROSIM Archive documentation
+
+---
+
+## 13. Two Separate PROSIM Product Lines Identified
+
+**Date Discovered**: December 2025
+
+**Category**: **CRITICAL** - Foundational Project Understanding
+
+### The Discovery
+
+There are **TWO completely separate and unrelated PROSIM product lines** with similar names:
+
+| Product Line | Our Target? | Origin | Focus |
+|--------------|-------------|--------|-------|
+| **Greenlaw PROSIM** | **YES** | Commercial (1969) | Operations Management |
+| **Mize PROSIM** | No | Academic (1971) | Production Control |
+
+**PROSIM III for Windows** (our reconstruction target) is part of the **Greenlaw commercial lineage**, NOT the Mize academic lineage documented in the 1992 thesis.
+
+### Evidence
+
+**Course materials from MGMT475 (Summer 2003)**:
+- Presentation slide shows "PROSIM III - A Production Management Simulation"
+- Same branding and graphics as the commercial textbook
+
+**Amazon product listing**:
+- **Title**: "Prosim III for Windows: A Production Management Simulation"
+- **Authors**: Chao-Hsien Chu, Michael P. Hottenstein, Paul S. Greenlaw
+- **Publisher**: Richard D. Irwin (McGraw-Hill imprint)
+- **ISBN-10**: 0256214352
+- **ISBN-13**: 978-0256214352
+- **Edition**: Third Edition (1996)
+- **Length**: 224 pages (textbook + software)
+
+**Paul S. Greenlaw background** (from obituary):
+- Pioneer in educational business simulations
+- Co-authored PROSIM 1st edition in **1969** with Michael P. Hottenstein
+- Also created MARKSIM, FINANSIM simulations
+- Published through Prentice-Hall, Harper & Row, Irwin
+
+### The Two Product Lines
+
+#### Greenlaw Commercial Lineage (OUR TARGET)
+
+| Version | Year | Authors | Publisher |
+|---------|------|---------|-----------|
+| **PROSIM** (1st ed) | **1969** | Greenlaw & Hottenstein | Harper & Row |
+| PROSIM (2nd ed) | ~1979 | Greenlaw & Hottenstein | Harper & Row |
+| **PROSIM III for Windows** | **1996** | Chu, Hottenstein, Greenlaw | Irwin/McGraw-Hill |
+
+- **Commercial textbook + software bundle**
+- Windows-based graphical interface
+- Operator-focused simulation with training system
+- Used at multiple universities (Wentworth, Ohio U, others)
+- 224-page textbook included with software
+
+#### Mize Academic Lineage (NOT our target)
+
+| Version | Year | Author | Institution |
+|---------|------|--------|-------------|
+| PROSIM V | 1971 | Dr. Joe H. Mize | Auburn University |
+| PROSIM VI | 1981 | Ward & Wright | West Virginia University |
+| PROSIM VII | 1992 | Louis C. Alexander | Ohio University |
+
+- **Academic research project** (thesis-based)
+- Stock number / work station focused
+- FORTRAN → Apple II → IBM PC/True BASIC
+- Quality via inspection/sampling (not quality budget)
+- No operator training/efficiency system
+
+### Implications
+
+1. **The 1992 thesis is NOT our ancestor** - Different product entirely
+2. **Textbook may contain all formulas** - The 224-page PROSIM III manual likely documents everything we've been reverse-engineering
+3. **Book ordered from Amazon** - ISBN 978-0256214352 ($44, temporarily out of stock)
+4. **Author potentially contactable** - Chao-Hsien Chu appears to be at SMU Singapore
+5. **Explains naming confusion** - "III" = Third Edition (1996), not related to "VII" = 7th academic version (1992)
+6. **Commercial distribution** - Explains why same software used at Wentworth (MA) and Ohio University
+
+### Why the Confusion Occurred
+
+1. Both products named "PROSIM"
+2. Both used for production/operations management education
+3. Both used at Ohio University at different times
+4. Similar publication timeframes (1990s)
+5. The 1992 thesis was found in Ohio University repository, same institution where PROSIM III was used
+
+### Historical Timeline (CORRECTED)
+
+```
+GREENLAW LINEAGE (Commercial) - OUR TARGET
+==========================================
+1969 - PROSIM 1st Edition (Greenlaw & Hottenstein, Harper & Row)
+1979 - PROSIM 2nd Edition (Harper & Row)
+1996 - PROSIM III for Windows (Chu, Hottenstein, Greenlaw, Irwin)
+  ↓
+2003 - Used at Wentworth Institute (MGMT475 Summer 2003)
+2004 - Used at Ohio University (our archive files from this course)
+  ↓
+2025 - This reconstruction project
+
+
+MIZE LINEAGE (Academic) - UNRELATED
+===================================
+1971 - PROSIM V (Mize, Auburn, mainframe)
+1981 - PROSIM VI (WVU, Apple II)
+1992 - PROSIM VII (Ohio U, IBM PC)
+  ↓
+[Different product, not our ancestor]
+```
+
+### Action Items
+
+1. **Await PROSIM III textbook** - Ordered from Amazon, may contain complete documentation
+2. **Contact Michael P. Hottenstein** - Professor Emeritus, Penn State Smeal College of Business (living co-author, best prospect for materials)
+3. **Contact Dr. William D. Biggs** - Arcadia University, ABSEL Fellow (Greenlaw's doctoral student)
+4. **Search WorldCat for Instructor's Manual** - ISBN 978-0256214369 (194 pages, detailed algorithms)
+5. **Penn State Archives inquiry** - Special Collections may hold faculty papers
+6. **Continue reverse-engineering** - Textbook delivery uncertain; maintain current approach
+
+### Additional Research Findings (Dec 2025)
+
+**Research report**: `docs/PROSIM - Tracking a lost educational simulation from 1968.md` (also available as PDF)
+
+**Version history refined**:
+- Chu joined the project in **1991** (2nd edition), not 1996
+- Springer citation confirms: "Greenlaw, P.S., Hottenstein, M.P. and Chu, Chao-Hsien (1991) PROSIM, A Production Management Simulation. 2nd Ed., Harper Collins"
+
+**Academic sources discovered**:
+- ABSEL Proceedings archives (https://absel-ojs-ttu.tdl.org/absel/issue/archive)
+- Johnson & Hendrick (1975): "OMSIM" paper references PROSIM V
+- Biggs (1986): "Computerized Business Management Simulations" bibliography
+- Greenlaw's 1962 foundational text: *Business Simulation in Industrial and University Education*
+
+**Software preservation status**: Confirmed not preserved in any major archive (Internet Archive, WinWorld, Vetusware, etc.)
+
+### References
+- Amazon: https://www.amazon.com/Prosim-Windows-Production-Management-Simulation/dp/0256214360
+- Paul S. Greenlaw obituary (2005): https://www.legacy.com/us/obituaries/centredaily/name/paul-greenlaw-obituary?id=26678227
+- Chao-Hsien Chu profile: https://www.smu.edu.sg/faculty/profile/26277/CHU-Chao-Hsien
+- Course presentation slide: `Prosim/475ProSim.ppt` (MGMT475 Summer 2003)
+- ABSEL proceedings: https://absel-ojs-ttu.tdl.org/absel/issue/archive
+- Springer citation: https://link.springer.com/chapter/10.1007/978-0-387-35089-9_17
+- Research report: `docs/PROSIM - Tracking a lost educational simulation from 1968.pdf`
+
+---
+
 ## Future Discoveries Needed
 
-### High Priority
+### High Priority (Awaiting Textbook)
 
-1. **XTC Float2 meaning**: What does the second float represent?
-2. **Machine repair probability**: Exact formula and maintenance budget effect
-3. **Starting company state**: What are Week 0 values?
+1. **PROSIM III Textbook arrival** - 224-page manual may resolve all unknowns below
+2. **XTC Float2 meaning**: What does the second float represent?
+3. **Machine repair probability**: Exact formula and maintenance budget effect
+4. **Starting company state**: What are Week 0 values?
 
 ### Medium Priority
 
-4. **Hired operator generation**: How are stats assigned to operators 10+?
-5. **Training progression**: Exact weeks required per training level
-6. **Demand generation seed**: How is randomness seeded?
+5. **Hired operator generation**: How are stats assigned to operators 10+?
+6. **Training progression**: Exact weeks required per training level
+7. **Demand generation seed**: How is randomness seeded?
+8. **Contact Chao-Hsien Chu**: Author may have source code or documentation
 
 ### Low Priority
 
-7. **Carrying cost exact rates**: Parts and products per-unit costs
-8. **Setup time edge cases**: Behavior when machine was idle
+9. **Carrying cost exact rates**: Parts and products per-unit costs
+10. **Setup time edge cases**: Behavior when machine was idle
+11. **PROSIM I and II history**: What were the earlier Greenlaw editions like?
 
 ---
 
@@ -632,6 +884,9 @@ v4 (Jul 13):  + DECS14 (final structure)
 |------|--------|
 | Dec 2025 | Initial creation with 10 key discoveries |
 | Dec 2025 | Added #11: ProsimTable.xls evolution traced via recovered floppy file |
+| Dec 2025 | Added #12: PROSIM VII thesis (1992) found - establishes academic lineage |
+| Dec 2025 | **MAJOR UPDATE** - Added #13: Two separate PROSIM product lines identified. Updated #12 to clarify Mize lineage is NOT our ancestor. PROSIM III (Greenlaw, 1969-1996) is our actual target. |
+| Dec 2025 | Added research report findings to #13: Living co-author contact (Hottenstein), Instructor's Manual ISBN, ABSEL archives, academic citations. |
 
 ---
 

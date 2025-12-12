@@ -1,0 +1,10910 @@
+2 ‘i2'io^al
+/ 6526PROSIM VII: AN ENHANCED PRODUCTION
+SIMULATION MODEL
+A Thesis Presented to
+The Faculty of the College of Engineering and Technology
+Ohio University
+In Partial Fulfillment
+of the Requirements for the Degree
+Master of Science
+Usa
+- I
+112
+-kt X
+by
+Louis Cadmon Alexander,
+August, 1992
+This thesis has been approved for
+the Department of Industrial and Systems Engineering and the College of Engineering and Technology
+Assistant Professor of Industrial and Systems Engineering
+Assistant Professor of Management
+Dean of the College of Engineering and TechnologyTABLE OF CONTENTS
+Chapter	page
+1		INTRODUCTION		 1
+1.1		Background of the Project	 I
+1.2		Overview	of the Thesis	  2
+II BACKGROUND OF	PRODUCTION CONTROL EDUCATION 	 3
+2.1		Functions of Production Planning and Control 	 3
+2.2		Production Control Education and its Shortcomings ...	4
+2.3		Alternatives to Teaching Production Control 	 5
+III REVIEW	OF THE LITERATURE	 8
+3.1		AutoMod II	 8
+3.2		FACTOR/AIM	 9
+3.3		Micro Saint 	 9
+3.4		ProModel	10
+3.5		SIMAN/Cinema	10
+3.6		SIMFACTORY II. 5	11
+3.7		SLAMSYSTEM	11
+3.8		Star Cell	12
+3.9		WITNESS	12
+3.10		GPSS/PC	13
+3.11		MODSIM II	13
+3.12		SIMSCRIPT II. 5	13
+3.13		Sandie	14
+3.14		TBS	14
+3.15		OPT - An Executive Challenge	15
+3.16		Summary of Sections 3.1 through	3.15	16
+3.2.1		Discussion of PROSIM V	17
+3.2.2		Concept of PROSIM V’s Operation	18
+3.2.3		Characteristics of PROSIM V’s Simulated Environment .	20
+3.2.4		PROSIM V’s General System Design 	 21
+3.2.5		Conceptualization of PROSIM V’s	Production System . .	23
+3.2.6		PROSIM V’s Operation Period 	 33
+3.2.7		PROSIM V’s Hours of Operation	34
+3.2.8		PROSIM V’s User Decisions	38
+3.2.9		PROSIM V’s Activities During a Subperiod 	 41
+3.2.10		PROSIM V’s Activities at the End of Each Subperiod . .	42
+3.2.11		PROSIM V’s Additional Features 	 43
+3.2.12		The PROSIM V Administrator 	 46
+3.2.13		Discussion of PROSIM VI 	 48
+IV STATEMENT OF THE PROBLEM	51
+V SOLUTION METHODOLOGY 	 56
+5.1 Stochastic Process Times 	 60
+5.2		Machine Breakdown and Repair Times 	 62
+5.3		Defective Incoming Material and Outgoing Final Products 	 63
+5.4		Student Selected Quality Control	Plan 	 64
+5.5		Graphics Enhancements 	 66
+5.6		Weekly Production Reports 	 67
+5.7		Student Access to the Database Information Subroutine 	 67
+5.8		Edit Checks for Valid Information	68
+5.9		Option to Add or Delete Purchase and Production Orders in Review 	 70
+5.10		Editing Recent Information 	 70
+5.11		Addition of New Final Product Demand to the Historical Demand	71
+5.12		Choice of Disk Drive	72
+VI DISCUSSION OF RESULTS	73
+6.1		Validation of the Model	73
+6.2		An Example Problem	76
+6.3		Validation of Enhancements to the Model	77
+6.4		An Example Problem with Enhancements 	 77
+6.5		Verification of Objectives 	 77
+VII CONCLUSIONS AND RECOMMENDATIONS		 80
+7.1		The Most Significant Achievements	80
+7.2		Recommendations for Further	Study 	 82
+BIBLIOGRAPHY 	 87
+APPENDIX A		EXAMPLE PROBLEM
+APPENDIX B		EXAMPLE PROBLEM WITH ENHANCEMENTSLIST OF TABLES
+Table	Page
+5.1 PROSIM System Structure 	 58LIST OF FIGURES
+Figure	page
+1		Typical Inventory-Production-Sales	System 	 20
+2		Conceptual View of a Work Station with its Queue and Hold Block	27
+3		Movement of Items Between Work Stations 	 31
+4		Two Work Stations Preceding A Third Work Station	32
+viCHAPTER 1
+INTRODUCTION
+The task of teaching production control is a difficult one, especially from the course design standpoint. The two traditional methods are: (1) focus on one item at a time and work problems related to those specific items (i.e., forecasting or economic order quantities) or (2) analyze case studies of actual production situations. Examples of the implementation of the first method are Introductory Management Science by Gould, Eppen, and Schmidt; and Fundamentals of Production/Operations Management by Fearon, Ruch, and Wieters. An example of the second method is Production/Operations Management Concepts and Situations by Roger W. Schmenner. An example of the combination of these two methods is Applied Production and Operations Management by James R. Evans. Both methods have advantages and disadvantages but neither provides the proper synthesis of knowledge necessary for a student to develop a deep understanding of the intricacies and nuances of an optimal production system.
+What is needed is a new paradigm, a truly world class methodology for the study of production control. In the spirit of the national crusade for quality, this is the opportune moment to harness the power of the personal computer to create this new paradigm - the study of production control through computer simulation.
+1.1 Background of the Project
+After teaching classes in inventory and production control, Dr. Ken Cutright, my thesis adviser, became aware of the shortcomings
+of the traditional methods of teaching production control. The crux of the problem was that textbooks failed to integrate the different functions. More specifically, the interrelationships between the different functions and their potential to create a "ripple effect” caused by a single error were not stressed. For example, forecasting has an effect on aggregate planning and scheduling has an effect on throughput. Also, the concept of the cost of quality and quality control was not emphasized. The recognition of the need for improvement in these and other areas of production control education laid the groundwork for PROSIM VII.
+1.2 Overview of the Thesis
+The following chapters detail the development of a production simulation model. Chapter II gives a background of production control education and cites the shortcomings of the current methods for teaching production control. Chapter III contains a comprehensive literature review. Chapter IV defines the statement of the problem, and Chapter V details the solution methodology for the problem. Chapter VI discusses the validation of the model and provides examples of the enhancements to the actual simulated model. Chapter VII discusses the most significant achievements of the project and suggests some ideas for further study.
+The following appendices pertain to the revised model: Appendix A is an example problem without the enhancements, and Appendix B is an example problem with the enhancements.CHAPTER II
+BACKGROUND OF PRODUCTION CONTROL EDUCATION
+2.1		Functions of Production Planning and Control
+In order to discuss the teaching of production control, its components must first be defined. Mize, White, and Brooks have stated that production planning and control is made up of the integration of the following five functions:
+1.		Forecasting
+2.		Operations Planning
+3.		Inventory Planning and Control
+4.		Operations Scheduling
+5.		Dispatching and Process Control
+"In this new era of global competition, U.S. manufacturers can no longer be satisfied with the delivery of goods and services that match or just improve on those of their competitors in the United States." Given the recent emphasis on total-quality management, the author believes that it is necessary to augment the above list:
+6.		Crisis Management and Contingency Planning
+7.		Quality Planning
+In order to fully understand the interdependent relationships
+that exist among the above functions, the study of production control must simultaneously incorporate them.
+2.2	Production Control Education and its Shortcomings
+The two most common methods of teaching production control are: (1) treat each of the above functions individually or (2) perform case studies on real or imagined production situations. Both of these techniques have the following disadvantages:
+1.	Analysis rather than the design of the production control system is emphasized. (Only recently have textbooks started to include information on the design of production systems. There is still room for improvement in this area.)
+2.	The dynamic nature of production environments is not considered.
+3.	A conceptual understanding of the total production control system or the interactions between components of the system is not provided.
+4.	The decisions and their associated repercussions that must continuously and repeatedly be made in a production environment are not stressed.
+5.	The concepts of feedback and corrective action are not adequately presented.
+6.	The relationship between production control and a total management information system is usually not stressed.7.	The monetary implications of contingency planning brought on by modern manufacturing techniques tend to be overshadowed by seemingly more important functions and may not be adequately discerned by students.
+8.	True recognition of the importance of the cost of quality may not occur due to inadequate integration into production control.
+2.3	Alternatives to Teaching Production Control
+Alternatives to the teaching methods discussed in Section 2.2 would be to:
+1.	Directly study real-life situations.
+2.	Closely model the system through simulation.
+One problem with the study of a real-life situation would be that the process may be such a horrible condition that it is not a good candidate for study at an introductory level. Other problems with a real-life study would include time and monetary resources, especially in an undergraduate environment. Given these weaknesses, the use of computer simulation as a teaching tool appears to be a suitable alternative.
+While a good simulation model can overcome the traditional teaching problems, the trade off will usually be a loss in complexity and/or a less exact fit with reality. The reverse situation could also happen in which the model would be too complex to be understood. This would occur if a flexible model was misused, such as specifying that machines break down constantly.
+No attempt will be made to quantitatively conclude that a simulation model is the superior teaching method. The course objective is to develop students capable of designing (synthesizing) production control systems. However, it should be noted that since a simulation model would provide a synthesis of the functions of production control, it would fall into the fifth level (synthesis) of Bloom's Taxonomy of Educational Objectives. Treating the functions individually would fall into the third and fourth levels (application and analysis) of Bloom's Taxonomy, and performing case studies would only fall into the second level (comprehension). Simulation must be part of a course for it to meet the educational objectives.
+An interactive production simulation would be more interesting to the student and much more life-like than just working specific problems or reviewing case studies. Letting the students work on the simulation in teams would be beneficial to active learners. "Active learners generally learn best when they interact with others; if they are denied the opportunity to do so they are being deprived of their most effective learning tool.’’
+A simulation would also key on the inductive learning style. Induction is a learning pattern that proceeds from particular information to generalities or theories. Deduction is the opposite process in which consequences are deduced rather than principles inferred. Induction is the natural learning style and deduction isthe natural teaching style for technical subjects at the college level. Working problems or examining case studies would be primarily deductive exercises. A simulation would focus on the inductive learning style. This fact should not be taken lightly.
+Much research supports the notion that the inductive teaching approach promotes effective learning. The benefits claimed for this approach include increased academic achievement and enhanced abstract reasoning skills; longer retention of information; improved ability to apply principles; confidence in problemsolving abilities; and increased capability for inventive thought.6
+A computer simulation would also appeal to visual learners as opposed to auditory learners; and sensing rather than intuitive learners. The majority of engineering students are sensors, and most people of college age are visual learners.7
+Although a good simulation model has the uncanny ability to teach at the synthesis level as outlined in Section 2.2 and also has the ability to introduce different learning styles than traditional methods, a carefully constructed combination of the three methods would probably provide exceptional treatment of the subject matter. The optimal teaching method or mix of methods remains to be seen. The problem is that a model that would take advantage of modern personal computer technology designed for an educational setting as part of a production control course is currently not available.
+Felder and Silverman, p. 678.
+‘Felder and Silverman, p. 676.
+CHAPTER III	
+REVIEW OF THE LITERATURE
+There are currently a number of simulation packages on the market that are designed for the IBM PC or compatibles. The author has obtained current information from many of these vendors. Each product will now be briefly examined. Problems related to the use of these models in the study of production control will be discussed in Section 3.16
+The products to be discussed in the following sections fall into four categories: simulators, simulation languages, educational simulators, and games. The following products are simulators: AutoMod II, FACTOR/AIM, Micro Saint, ProModel, SIMAN/Cinema , SIMFACTORY II. 5, SLAMSYSTEM, Star Cell, and WITNESS. The languages are GPSS/PC, MODSIM II, and SIMSCRIPT II.5. The educational simulators are Sandie and TBS, and OPT is the game.
+3.1		AutoMod II
+AutoMod II by AutoSimulations allows the user to create his/her own production model by choosing machines and material handling methods from pop-up menus and placing them on a CAD-like grid. In fact, designs made on CAD systems can even be imported into AutoMod II. Processing time information is defined by the user, and machine breakdown information can be included. Three-dimensional animation is featured during the simulation runs with machines changing color to indicate their status. Statistical reports are automatically generated. These reports allow the user to determine precisedifferences between models. The vendor claims that AutoMod II is as useful to an engineer as a spreadsheet is to an accountant.
+3.2	FACTOR/AIM
+FACTOR/AIM by the Pritsker Corporation provides a total capacity management system for the manufacturing operation. The system is broken down into three categories: capacity engineering featuring the AIM (Analyzer for Improving Manufacturing) system, schedule development, and schedule management. The user builds models with AIM by positioning machines, operators, and material handling equipment on the screen using pull-down menus and point-and-click graphics. Process details that accompany the factory layout are input using popup forms. AIM provides animation, graphics, and text output. The AIM framework also stores alternative models of the manufacturing process and provides features that easily allow comparisons of these models.
+3.3	Micro Saint
+Micro Saint was developed by Micro Analysis & Design of Boulder, Colorado. Micro Saint is menu-driven and does not require knowledge of any programming language. Basically, the user employs the menus to define the building blocks of a production system. Kathryn C. Hernandez of Price Waterhouse is quoted in the Micro Saint brochure citing that Micro Saint provides features that are not available on other packages such as the ability to tag individual lots, sort queues on a user-specified variable, and make changes to variables while the simulation is running. The Micro Saint package includes animation and either tabular or graphical output. The additional Action View
+10 package allows the user to create a customized animation scene in the Windows environment where the background scene can be imported from the user's favorite graphics package.
+3.4	ProModel
+ProModel was developed by ProModel Corporation of Orem, Utah. ProModel is completely menu-driven, and it allows the user to create and run a model by simply filling in the blanks when prompted by the software. The ProModel brochure cites its materials handling capabilities as first-rate, complete with collision avoidance for AGVs. Changes to schedules, resources, speed, and other factors can be easily made during the simulation. ProModel also features animation, colorful pie charts/bar graphs of results, and detailed reports.
+3.5	SIMAN/Cinema
+SIMAN was developed by C. Dennis Pegden, president and founder of Systems Modeling Corporation. Pegden led the development of the SLAM language and wanted to create a software package that offered advanced features for modeling manufacturing systems, stressed ease-of-use, and ran on a microcomputer. Systems Modeling claims that they were first in all of these areas.
+SIMAN is the only simulation language in which the simulation problem is separated into a model component and an experiment component. The Model describes the physical elements of the system such as work stations or storage points, and the Experiment defines the conditions under which the system is to be run. Information in11 the Experiment component such as machine process times can be easily changed and the simulation can be run again without recompiling the model. Cinema is the animation package that is available with SIMAN.
+3.6	SIMFACTORY I1.5
+SIMFACTORY II.5 features models with two layers: the physical layout and the process layer. The physical layout is constructed from four building blocks: work stations, buffers, transporters, and conveyors. Elements of the process layer are: operations, process plans, resources, setup/teardown time, down time, and extendibility. Extendibility allows the users to alter SIMFACTORY 11.5‘s behavior by adding their own programmed logic.
+A SIMFACTORY II.5 model is built using menus; no programming is required. SIMFACTORY II.5 provides animation during the simulation runs, and reports in the form of graphics and text are produced. SIMFACTORY II.5 raw output may be exported to a spreadsheet or other software. Cost analysis is also available, rather than studying only production time. Datagraph, which allows the user to apply his/her own real-world data to drive experimental scenarios, is also a feature of the software. SIMFACTORY II.5 was developed by CACI Products Company of La Jolla, California.
+3.7	SLAMSYSTEM
+Pritsker Corporation claims that SLAMSYSTEM supports the six basic steps in a simulation project: defining the problem, building a model, simulating the model, generating alternatives, presenting results, and making recommendations. SLAMSYSTEM runs within theMicrosoft Windows environment, and allows the user to quickly build models using a mouse and pull-down menus. SLAMSYSTEM actually uses SIAM II as its modeling language. SLAMSYSTEM provides animation, graphics output, and text output. SLAMSYSTEM is available from Pritsker Corporation of Indianapolis, Indiana.
+3.8	Star Cell
+Star Cell is a menu driven simulation tool for modeling manufacturing workcells. Star Cell has the following constraints: 1) 20 workstations per cell, 2) 5 machines per workstation, 3) 20 operators per shift, 4) 250 part routings, 5) 45 jobs in user- specified run sequence, 6) 20 part family types for setup time savings, and 7) workcells must contain no more than 25,000 part operations.8 The user would build a model and then enter production, routing, and workstation data for each cell. Star Cell features animation, color graphs, and tables. Star Cell was primarily designed to aid in the design of workcells from a production standpoint.
+3.9	WITNESS
+WITNESS is an animated, interactive simulation system that allows the user to build and test models using pull-down menus and forms. Data pertaining to machine location, cycle time, set-up time, labor requirements, breakdowns, and routing must be entered. WITNESS was designed to be interactive, and all linking, recompiling, and debugging functions are accomplished concurrent with data entry. This
+8H . J . S teudel & Associates , Inc . , Demo User’s Guide for Star Cell, (Madison, Wisconsin: H.J. Steudel & Associates, Inc., 1992.
+allows the user to quickly build, test, and change models. WITNESS provides reports in tabular and graphical form. Statistical feedback is provided as the model is running.
+3.10	GPSS/PC
+GPSS/PC is the personal computer version of the popular mainframe simulation language originally developed by IBM. GPSS/PC is supported by Minuteman Software of Stow, Massachusetts. GPSS/PC is an actual language and is therefore quite different from the AutoMod software described above. The user must define the process in terms of GPSS blocks. Five interactive windows allow the user to view selected statistical information in order to quickly determine problem areas. Animation is available, but it is considered an additional item. Statistical reports are automatically generated.
+3.11	MODSIM II
+MODSIM II is a high-level object-oriented simulation language. It features key elements of modern software engineering: block structure, modularity, and strong typing. The language supports multiple inheritance, separate compilation, fully dynamic data types, data encapsulation, and late dynamic binding. MODSIM II was developed by CACI Products Company of La Jolla, California.
+3.12	SIMSCRIPT II.5
+SIMSCRIPT II.5 is a high-level programming language designed for the development of process oriented simulation models. SIMSCRIPT II.5 features animation, graphics, and built-in building blocks. SIMSCRIPTII.	5 was also developed by CACI Products Company.
+3.13	Sandie
+Sandie is a menu-driven system that can perform many of the routine data-analysis chores of simulators as well as simulate simple queueing systems. The analytical features of Sandie include: 1) autocorrelation estimation, 2) batch means analysis, 3) comparison of data in two data sets, 4) confidence intervals, 5) fitting of distributions to data, 6) histograms, 7) one-way analysis of variance, 8) regression, and 9) runs tests. Sandie provides two simulation models: 1) a conventional n-server queueing system and 2) an inspect/repair loop where parts failing inspection are repaired at a second workstation and then returned for another inspection. Animation is provided and data is automatically collected for use with Sandie‘s analytical capabilities. Sandie was written by Arne Thesen and is featured in his 1992 book Simulation for Decision Making.
+3.14	TBS
+TBS (template-based simulator) is an advanced version of Sandie (discussed in Section 3.13) by Arne Thesen. TBS can simulate fairly complex situations involving scheduling and material handling. Information about work centers, parts, and material-handling systems must be input into the program. Work center information requires data on the number of machines, buffer capacities, failure and repair rates15 for machines, and priority rules for processing work orders. Information concerning parts includes interarrival times, processing times, and processing sequences. Material-handling information includes the speed and initial position of trucks, location of truck paths or track, length and capacity of each portion of track, and scheduling rules for trucks. The information is entered into TBS by filling in the appropriate templates. Animation is conjointly available. TBS is also featured in Thesen’s text Simulation for Decision Making.
+3.15	OPT - An Executive Challenge
+OPT is a game developed by Creative Output that was popular in the mid-1980s. The user is given starting cash of $1500 and required to make enough money to at least pay the weekly operating expenses of $2500. The object of the game is to maximize profits. The factory produces three products: P, Pl, and P2. P is an assembly of Pl and P2. The user is to assume that the market will absorb as much of product P as can be produced. However, Pl and P2 are sold as spare parts and therefore their market is limited to the amount of product P already sold. The factory consists of a network of five work stations, and financial records are update instantaneously when raw materials are purchased or final products are sold. The operating overhead is expensed at the end of the week. The user is informed of the set-up time and production time on each work station. The user is also responsible for moving parts between work stations. OPT is an
+16 interactive game, and the opportunity to actually run the factory yourself and make decisions while watching the dollar values on the screen can be quite riveting.
+3.16	Summary of Sections 3.1 through 3.15
+The simulators are wonderful for practicing engineers who need to quickly and decisively refine the components of a manufacturing process. In fact, "it's a safe bet that factories that aren't arranged in software before the machine foundations are poured are, perhaps in the not-too-distant future, destined to become conventionally non-competitive."11 However, they are not designed for an educational setting and would not be the best vehicles for teaching production control. There are two primary reasons for this:
+1.	A student of production control should not be concerned about entering the specifications of a model into the computer.
+2.	None of the simulators discussed encompass all seven functions of production control as discussed in Chapter II.
+The simulation languages require a course on simulation to be used properly. They may be too complex for the student to focus on production control concepts. The educational simulators are not acceptable for the same reasons as the simulators, and the OPT game does not cover the seven functions of production control.
+Educationally based simulators where the student is essentially given a factory in the form of a database and expected to make
+lVasilash, Gary S., "A Tool of the Trade," Production. July 1992,
+17 decisions to successfully run the factory in which many of the functions of production control are integrated have been limited to efforts relating to the PROSIM simulators. These endeavors will be discussed in the following sections.
+3.2.1 Discussion of PROSIM V
+The United States Department of Defense issued a Themis grant to Joe H. Mize at Auburn University in 1971 to develop a production simulation system named PROSIM V. Although named PROSIM V, it is not an enhancement of previous work. PROSIM V was written in FORTRAN for use on mainframe computer systems. It also made use of punched cards for data input and execution. The model accessed a database that contained all of the accounting and stock number routing information necessary to run the factory. Only the system administrator had the capability of changing the information in this database. The administrator is defined as the person who sets up a PROSIM database. In most cases, the administrator would be the instructor or an assistant who was not enrolled in the course.
+PROSIM V was used in undergraduate production control classes at Auburn and other universities. It was flexible enough to model any factory that the administrator loaded into the system with a maximum of fifteen work stations, sixty stock numbers, and ten final products, with no stock number touring more than five work stations.
+PROSIM V also included what were essentially recap and graph subroutines that enabled the instructor to easily evaluate the student's work. Summarizations of important production controlparameters could be easily compared against other student groups. The graph subroutine gave the instructor the ability to plot several items over time and compare the results of different groups. The parameters that could be summarized or graphed are: idle time, idle man costs, idle machine costs, labor costs (not idle), machine costs (not idle), materials used costs, total production time, shift change costs, order costs, carrying costs, out-of-stock costs, value of materials received, value of inventory on-hand, excess inventory penalty cost, total plant cost, and total cost.
+Mize has included PROSIM V databases for four factories in his literature: the shirt problem, bicycle problem, wooden case problem, and transistor radio problem. Each database has been carefully designed to resemble an actual production environment with inherent bottlenecks. The ambitious user could also design his/her own database. The following sections give an overview of the PROSIM V model.
+3.2.2 Concept of PROSIM V’s Operation
+PROSIM V simulates the operation of a plant based on the user's decisions. The user must run the factory by specifying purchase orders, production orders (in order of priority), and the time available on each machine. One week of production is simulated with each run. The program assesses a cost for stockouts of the finished products, order costs, setup costs, idle work station costs, labor costs, materials used costs, machine costs, overhead costs, shift change costs, inventory carrying costs, and total plant costs. It
+also compiles the value of materials received during the current period and the total value of current inventory. The results are printed at the end of each run. The program stores the status of the plant at the end of each run, and this information along with the new set of decisions by the student is used at the start of the next week's run.
+PROSIM V assigns a unique stock number for each finished product, subassembly, and component part (including purchased parts). The program maintains a running account of on-hand inventory data. When a production work order is placed for a specific stock number item, it is assembled from its component items and subassemblies currently in inventory, but only down one level of the product explosion tree. PROSIM V does not automatically manufacture or purchase the required subcomponent parts or assemblies. This task is left to the user.
+The heart of PROSIM V is the ”work station,” where all production activities take place. An ’’operation network” is specified for each manufactured item, giving the sequence of work stations and the number of each component and/or subassembly required to make that particular item. Each manufactured item must be processed through at least one work station, and the same work station can be in more than one operation network.
+A waiting space called a ’’queue” is located in front of each work station. This is where work orders are stored while waiting to be processed. Items and subassemblies are not stored in the queue, only work orders.
+A work station processes orders on a first come, first servedbasis. However, if a required component is not on hand, the program will search the queue for the first order that it can process. If no processible order exists, the station will go idle and an idle cost will be incurred.
+As items are processed through a work station, they are moved into a "hold block” where a specific number of these items is collected before being moved to either the next work station or into inventory if it is the last station in the network.
+
+W. S. denotes Work Station LINES represent Materiel Flew
+Figure 1. Typical Inventory-Production-Sales System
+3.2.3 Characteristics of PROSIM V’s Simulated Environment
+Figure I22 shows a typical inventory-production-sales system that
+PROSIM V is capable of simulating. Such a system has the following
+22Mize, p. 6.
+characteristics:
+1.		There are several finished products, each sold in discrete units.
+2.		Periodic demand for each product is a random variable and may, or may not, follow a trend.
+3.		Each product is composed of assemblies and purchased items.
+4.		At least some of the assemblies are composed of subassemblies and purchased items.
+5.		There are common components and subassemblies among the finished products.
+6.		Lead time for purchased parts is a random variable.
+7.		Fabrication and assembly operations are performed at "work stations.”
+8.		Different assemblies require processing on some of the same work stations.
+9.		Processing times at work stations are essentially deterministic.
+3.2.4 PROSIM V’s General System Design
+PROSIM V computes the costs incurred by the student's managerial decisions. Costs are accumulated over sequential weeks of operation. The student's objective is to minimize the total operating cost over a long period of time. PROSIM V provides the following data as astarting point:
+1.	A demand history for each finished product.
+2.	For each stock number: initial stock on hand, carrying cost, reorder cost, discount price, and average lead time.
+3.	For each work station: idle time cost, labor cost per shift, working machine rate, and overtime labor cost.
+4.	Overhead rate and shift change cost.
+5.	Work station sequences for each manufactured item.
+6.	Process time and setup time for each manufactured item at each work station.
+7.	Other costs, parameters, and constraints pertinent to the simulated system.
+The student is supposed to use the above data in making the managerial decisions for the particular problem assigned. Mize suggests the following procedures:
+1.		Analyze the historical sales data and determine the appropriate forecasting techniques.
+2.		Determine the inventory system to be used and the economic order quantity or time interval for each purchased part.
+3.		Determine the economic batch size for each manufactured item and use this to help determine the hold quantity for each product at each work station and/or the production order quantity.
+4.		Determine the point at which it is economical to switch from overtime to another shift for each work station.
+5.		Analyze the demand trends over a long period of time (e.g., one year) and attempt to "smooth" total production requirements over this period.
+3.2.5 Conceptualization of PROSIM V’s Production System
+A unique identification number called a "stock number" (SN) is assigned to each purchased item, fabricated part, subassembly, and finished good. A complete inventory record is maintained for each stock number, and the record is updated as units of each stock number are used in the production process. To replenish the inventory for each stock number, separate orders must be placed. Purchased items are replenished by placing purchase orders of individual stock numbers, and manufactured items are replenished by placing production orders for individual stock numbers.
+Production activities are performed at "work stations." A work station may consist of a man and/or a machine or several men and/or machines. Each work station is assigned a unique identification number, and each manufactured item must be processed on at least one work station. This processing may, or may not, require the addition of other stock numbers.
+An "operation network" is specified for each manufactured stock number. The operation network for an item defines the sequence of work stations required to manufacture the item and any other stock number (purchased parts or assemblies) that must be added at each workstation. The same work station may appear in more than one network, but may not appear more than once in the same network.
+A waiting space called a "queue” is located before each work station. The queue consists of several queue positions, the exact number of which is fixed by the administrator. A queue position holds one production order, regardless of the size of the order. Queue positions are not used as temporary storage for parts and subassemblies that are needed in the manufacture of the production order. Such items are held in inventory until the moment they are needed in the actual processing.
+A work station can process production orders only from its queue position number one, and consequently PROSIM V continuously moves orders forward in the queue so that there will be an order in the first queue position if there are any orders at all in the queue. If there are no orders in the queue at a particular time, then the work station goes idle until another order arrives.
+For example, suppose that a production order for 30 units of SN 12 arrives at a particular work station. If other orders are in the queue, this order will have to wait, but eventually it will be moved into the first queue position. When the work station is ready to begin processing this order, PROSIM V first checks to see if the other items needed to manufacture one lot of SN 12 are available. If they are, one lot is moved from queue position one onto the work station. It remains on the work station for a known length of time called the processing time. After one lot has been processed, the program moves it from the work station to the "hold block," which is explained in a
+later paragraph. PROSIM V then determines whether enough of the items needed for SN 12 are available to process another lot. If they are available, another lot is moved from queue position one onto the station. This process continues until the entire order has been processed or until the stock on hand of one of the items needed for this order is less than the number needed to process one lot. After the entire order has been processed, all orders in the queue are moved forward into the next queue position. The same procedure then begins for the new order in queue position one.16
+When PROSIM V encounters an insufficient quantity of an item needed for producing one lot of the stock number occupying queue position one, it then inspects the production order in queue position two. If sufficient inventory quantities exist for producing one lot of this order, the order is moved to queue position one for processing and the order with insufficient inventory quantities is moved back. If insufficient quantities also exist to produce one lot of the order in queue position two, the program continues searching the queue for an order that can be processed. If no such order is found, the work station becomes idle until (1) the necessary inventory becomes available for producing one lot of one of the orders in the queue or (2) a new order for which inventories are sufficient joins the queue.17
+The particular item whose stock-on-hand has dropped below the level needed to produce one lot of the SN that it goes into may be
+1Mize‘s Administrator ‘ s Manual, p.15.
+l7Mize‘s Administrator's Manual, p. 18.either a purchased item or a manufactured item. If it is a purchased item, its inventory level can be replenished only upon the receipt of a purchase order from a supplier. If it is a manufactured item, then its inventory level can be replenished only upon the processing of a production order for that item. Purchase orders may be received only at the end of a day and are available for use at the beginning of the next day. Manufactured items are added to stock-on-hand in lot quantities immediately upon completion of processing at the final work station in their network and are available for use in the same instant the lot is completed.
+Let us now consider the manner in which PROSIM V moves orders off of a work station and to the next work station in the network for the item being processed. It was mentioned earlier that whenever processing of a lot on a work station is completed, it is moved off the work station into a hold block. A hold block is an area adjacent to the work station used to collect items before sending the units either (1) to the next work station in the network or (2) to inventory if this is the last work station in the network.
+The user specifies the hold quantity for each stock number/work station combination. He can if he wishes move each lot of the item as it is made from this work station to the next, or he can accumulate several lots before moving them. This scheme provides flexibility in how partial orders are moved through the sequential work stations. It
+also provides a realistic mechanism for smoothing material flow and for achieving a high utilization of equipment. The user may change any hold quantity at the start of each run.
+
+
+Queue
+3
+2
+1
+
+Work
+Station
+
+Hold Block
+
+
+
+
+
+
+
+
+
+
+
+
+Figure 2. Conceptual view of a work station with its queue and hold block.
+A conceptual view of a work station is shown in Figure 2.20 Production orders arrive at the work station and are placed in the first available queue position. If all queue positions are full and the work station from which the new order came is finished with the current lot, then the work station from which the new order came will become idle until the items in the hold block can be moved to the next work station.
+Let us again consider the example of a work station processing a production order for 30 units of SN 12. Let's suppose that the lot size is 10 units. This means that all production orders for manufactured items must be in multiples of 10. In addition it means that work stations process items 10 units at a time. Suppose that each unit of SN 12 requires 2 units of SN 32 to be added at the work station we are discussing. Before moving 10 units (one lot) of SN 12 from queue position one, the program first checks the inventory level
+20Mize‘s User's Manual, p. 13.of SN 32. Suppose there are 37 units of SN 32 available. Since 20 units of SN 32 are needed to manufacture one lot of SN 12, PROSIM V moves one lot of SN 32 from inventory, leaving 17 units. The work station processes the ten units of SN 12 and moves them to the hold block.
+Let's suppose that a hold quantity of 20 units for SN 12 is specified at this work station. Since the 10 units just completed are less than the hold quantity, the program does not attempt to move another lot of SN 12 forward. The simulator then attempts to move another lot of SN 12 onto the work station, but when it checks the inventory level of SN 32 if finds that only 17 are available and 20 are needed to process one lot of SN 12. The program searches the queue for an order that can be processed. Suppose it finds an order for 40 units of SN 19 and moves this order to queue position one.
+One lot of SN 19 will be moved onto the work station for processing. It will then attempt to move these 10 units to the hold block. In the process it finds that 10 units of SN 12 are in the hold block because the hold quantity of 20 units has not been reached. In this case, the program moves the 10 units of SN 12 out of the hold block and to the next work station in the network of SN 12. The 10 units of SN 19 are then moved into the hold block.
+Suppose that a hold quantity of 30 units for SN had been
+specified at this work station. If sufficient inventories are available, the work station will process three lots of SN 19 before reaching the hold quantity of 30 units. At this point the 30 units are moved to the next work station in the network of SN 19. The last 10 units of SN 19 are moved from queue position one onto the work station. The 10 units are processed and moved to the hold block, and all production orders in the queue are moved up one position. The work station processes one lot of whatever stock number is in queue position one and then attempts to move the 10 units to the hold block. It again finds the hold block occupied with a different stock number and proceeds to move the 10 units of SN 19 to the next work station in its network even though the hold quantity had not been reached.24
+The movement of orders through the queue, onto the work station into the hold block and away from the hold block have been discussed. Let us now examine what happens at the next work station in the network. Before discussing the details of this situation, another feature of PROSIM V must be introduced. Each production order placed by the student is assigned a sequential "order number" by the program. This order number identifies each individual order as it progresses through the production process. It is needed in order to keep two or more production orders for the same stock number separate. This could occur in one of two ways: (1) an order placed one period may not be completely processed that period and another order for the same product could be placed the following period or (2) two or more orders
+2Mize‘s Administrator's Manual, p. 19.30 for the same item may be placed in the same period. Some reasons why a student might want to place more than one production order for the same item during one period are: (1) economic batch sizes, (2) priority assignment to certain orders, and (3) the desire to force production of ”at least a few” of several items.
+Let's suppose that SN 12 is processed first at work station 13 (WS 13) and then at WS 3. Suppose further that a production order has been placed for 30 units of SN 12 and the program assigned order number 64 to this production order. PROSIM V loads this order along with all other production orders placed by the student into the first available queue position at the first work station on the network for SN 12. This initial loading operation occurs only at the beginning of each simulation run (i.e., the beginning of each week). For this case the program loads order number 64 for SN 12 into the first available queue position at WS 13. Order number 64 will eventually be moved into queue position one so that it may be processed on WS 13.
+Let's suppose that WS 13 had processed enough lots of order number 64 so that the hold quantity of 20 units has been reached. The program now attempts to move the 20 units to the next work station in the network of SN 12 which in this case is WS 3. If all queue positions at WS 3 are filled, then the items in the hold block cannot be moved. If WS 13 completes processing the lot it is now working on before the hold block can be moved, then WS 13 is forced to becomeidle .27
+Suppose the first available queue position at US 3 is number two. Then the 20 units of SN 12 are placed into the queue position two as shown in Figure 3.28 Note that in this case order number 64 is on two work stations at the same time. There are still 10 units to be processed on WS 13. If these 10 units are completed at WS 13 before WS 3 completes order number 69 (which it is now processing), the program will move the 10 units even though the hold quantity has not been reached. The simulator places these 10 units into queue position two along with the first twenty units. It does not place them in a different queue position.29
+
+2‘Mize‘s Administrator's Manual, p. 20.
+2Mize‘s User's Manual, p. 16.
+2Mize‘s Administrator's Manual, p. 21.
+Let us now consider the situation shown in Figure 4.30 Work
+station 4 is on two networks. It is preceded by WS 12 on one and WS 2 on the other.
+
+Figure 4. Two work stations preceding a third work station.
+Suppose that the hold quantity for the item being processed at WS 12 is 100 units and the hold quantity for the item being processed at WS 2 is 80 units. Suppose that order number 41 (ON 41) has been assigned to the order being processed at WS 12 and ON 37 has been assigned to the order being processed at WS 2.31
+Suppose that 100 units are completed at WS 12 and moved to queue
+3Mize‘s User's Manual, p. 16.
+"Mize’s Administrator's Manual, p. 21.position one at WS 4. Shortly thereafter 80 units are completed at WS 2 and moved to queue position two at WS 4. One of two things could now happen: (1) another 100 units of ON 41 could be forwarded to WS 4 prior to the completion of processing of the first 100 units (in this case the second 100 units join the remaining units at queue position one) or (2) WS 4 could complete processing the 100 units of ON 41, move ON 37 to queue position one and begin processing this order. When the second 100 units of ON 41 arrive at WS 4, they are assigned to the first available queue position.
+The general rule is that when an order arrives at a work station for processing, the program first searches for an order with the same order number in one of the occupied queue positions. If no such match can be found, the arriving order is assigned to the first available queue position.
+In closing, it should be repeated that when a work station has completed processing an order in queue position number one, the order will be forwarded to the next work station in the network whether or not the hold quantity has been reached.
+3.2.6		PROSIM V’s Operating Period
+The length of the operation period, number of subperiods (up to three shifts are assigned to each subperiod) , and the number of minutes per shift per subperiod are all determined by the
+administrator. The student runs the factory for one period at a time (usually corresponding to one week). A period of one week would contain five subperiods with 480 minutes per shift per subperiod, thus corresponding to a standard five day work week with three shifts, each working 8 hours per day. The administrator could also assign a period of one month with 20 working days per month (20 subperiods).
+PROSIM V divides the operating period into equal subperiods. For example, in the case of the five day week, if ten hours of overtime were assigned for a certain work station, two hours would be assigned to each five days, and one fifth of the total weekly final product demand is incurred at the end of each day.
+3.2.7		PROSIM V’s Hours of Operation
+The student must specify the number of hours of operation for each work station before the start of each period. If a work station is being used, it must operate for a least one full shift. Work stations may also work overtime. The maximum amount of time any work station may operate is three full shifts. It is possible for different work stations to operate for different lengths of time. For example, some work stations may operate for just one shift while others operate for three full shifts, and still others operate for one shift plus overtime or two shifts plus overtime.35
+The time available for a work station is simply the total number of time increments (usually minutes) that the student wants the work station to operate. For example, in the case of eight hours per day,
+35Mize‘s Administrator's Manual, p. 22.five days per week, the student would specify the time available for that work station as 2400 minutes if the work station is to operate exactly one full shift. If the student wants another work station to work ten hours overtime, the time available for that particular work station is 3000 minutes. A time available value of 5000 minutes would indicate two full shifts plus 200 minutes of overtime. Overtime is evenly divided between the five days of the week. In this case, 40 minutes of overtime would be added to the two full shifts for each of the five days in the week.36
+In order to decide how long to operate each work station, the student attempts to estimate the total time requirement for each work station. It is usually not possible to estimate time requirements exactly because of the many uncontrollable variables in the production system. The student may want to estimate that a certain amount of overtime will be needed on a work station without really knowing whether or not all the overtime will be needed.37
+If a work station is operating on overtime and it processes all of the orders in its queue, the program automatically shuts down the work station and no more costs are incurred. However, this could be undesirable if an order arrives at the work station shortly after it was shut down and we would like for this order to be processed. In order to keep a work station operable in this situation, the student must specify a "forced worktime’’ value. The work station will then
+3Mize‘s Administrator's Manual, pp. 22-23.
+37Mize‘s Administrator's Manual, p. 23.
+remain operable for this entire time value, even if it goes idle. PROSIM V maintains a running record of the number of shifts that each work station is operating. At the beginning of each week, the time available is divided by 2400. If more shifts than the running record of the number of shifts for this work station are required, then a "shift change" has occurred and a "shift change cost” is charged. For example, let's suppose that WS 3 had been operating one shift. For a particular week, the student enters a time available value of 5000 for WS 3. The program recognizes that this is two full shifts plus 200 minutes of overtime, and a shift change cost is charged.
+Suppose that the factory has ten work stations and that the expected number of hours of operation at each work station for the next week are as follows:
+Work Station
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Hours of Operation
+35
+46
+98
+73
+40
+38
+105
+22
+44
+65Given that the time increment for this example is in minutes, the
+following values for the work stations for next week are:
+Work
+No.
+Overtime
+Time
+Forced
+Station
+Shifts
+Minutes
+Available
+Worktime
+1
+1
+
+2400
+
+2
+1
+360
+2760
+2760
+3
+2
+1080
+5880
+5500
+4
+2
+
+4800
+
+5
+1
+
+2400
+
+6
+1
+
+2400
+
+7
+3
+
+7200
+
+8
+1
+
+2400
+
+9
+1
+240
+2640
+2400
+10
+2
+
+4800
+
+
+One full shift will be specified for work stations 1, 5, 6, and 8 because they will be used less than or equal to forty hours. Work station 2 might be used 360 minutes more than one shift so it is chosen to force all this time to be used (whether or not the station is busy). Work station 3 is forced to remain operable for 5500 minutes. If it goes idle after 5500 minutes, it will shut down. Work station 9 could be needed for 240 minutes more than one shift.
+However, the station will close if it becomes idle at any time after one shift and no further overtime costs will be assessed. Work stations 4 and 10 will be used for two full shifts, even though they are not expected to be needed for 80 hours. Such a decision would depend on the tradeoff between shift change cost and overtime cost. A similar analysis would be required in deciding to use work station 7 for three full shifts while using work station 3 for only two shifts
+Mize’s User's Manual, p. 19.
+with the remaining work done on overtime.
+A work station will not continue to operate after its time available value. Because PROSIM V divides the weekly operating period into five equal daily periods, all time available and forced overtime values must be specified in multiples of five.
+3.2.8		PROSIM V’s User Decisions
+The student must provide the following information at the beginning of each simulation run (usually one week):
+1.		Demand forecasts for each finished product.
+2.		Purchase orders for raw materials.
+3.		In-process buffer sizes (hold quantities).
+4.		Production orders and their sequence for manufactured items.
+5.		The work times available for each work station (number of shifts, regular time, and overtime).
+The user has the option of bypassing numbers 2, 3, and 4 above, but must input final product forecasts and work station times.
+The above decisions will now be discussed in detail. The discussion assumes a five day week period of operation.
+Demand Forecasts
+The first decision the student must make is to forecast the finished product demand for the upcoming period. The demand for finished products "drives” the system in an actual productionenvironment. Since demand is not generally known, it must be forecasted. No matter how efficiently the finished products are manufactured, if the quantities produced are based on inaccurate forecasts, the overall system will experience excess or out-of-stock inventory conditions (with their costs) caused by those forecasting errors.
+Once the student inputs the forecasted demands, PROSIM V generates the actual demand for the period (week) using Monte Carlo sampling based on the parameters the administrator selects. This demand is divided by the number of subperiods (5 days in the week) and truncated to obtain subperiod (daily) demands. This demand conceptually occurs instantaneously at the end of each subperiod (day) regardless of the number of shifts worked. The forecasted values do not affect the actual final product demands.
+PROSIM V provides various statistical measures at the end of each run pertaining to the accuracy of the forecasts to assist the user in evaluating the forecasting method that was used.
+Purchase Orders
+Purchased items are component items or raw materials required by the production process that must be acquired from outside sources. This is accomplished by placing a purchase order for a specified quantity of the desired stock number.
+The following things happen when a purchase order is submitted:
+1. The order is checked to ensure that it is a purchased item; if not, the order is rejected.
+2.		A check is made to ensure that the user has not exceeded the number of authorized outstanding purchase orders.
+3.		A random lead time for the purchase order is generated using Monte Carlo sampling.
+Conceptually, all purchase orders for the week (period) are placed at the beginning of the period and lead time is measured from the beginning of the week in which the order is placed. For example, suppose that a lead time of 1.71 weeks is generated. This indicates that the order will arrive sometime in the afternoon of the fourth day of the next week. The components can be used in production at the beginning of the day following receipt of the order. Also, no carrying cost is charged for the newly arrived components until the beginning of the day following the receipt. It is possible for a purchase order to arrive during the same week in which it was placed. For example, if a lead time of 0.43 weeks was generated, the order would arrive during the third day of the current week and would be available for use in the production process on the fourth day. The program maintains a running total of the costs to place purchase orders.
+Hold Quantity Changes
+The user can change hold quantities if desired. Any stock number/work station combination can be changed, and the changes remain in effect until changed again.
+Production Orders
+Production orders are orders to "produce" some quantity of aspecified stock number. The program first checks to ensure that the item is an item which is manufactured. A unique order number is then assigned to the production order. This number identifies the order as it progresses through its network stations. Each production order is immediately placed in the first available queue position at the first work station in the network for that stock number. New production orders are placed behind orders in the queues that were carried over from last week. If all available queue positions at a particular work station are full, PROSIM V prints a message to that effect and rejects that order. The sequence by which orders are input is the sequence that they will be loaded into the work station queue. The quantity of a stock number to be produced must be a multiple of the lot size.
+Work Station Times
+The work station times are the final set of user decisions that must be entered. As the work station time available and forced worktime are input, the program checks to ensure that they are within the allowed limits (one to three shifts). The values are then divided by the number of subperiods and the time is assigned equally to all subperiods. A work station operation on overtime must operate until the daily forced overtime value expires. If the work station becomes idle any time after the forced worktime value, it shuts down and no further costs are incurred by that work station for the day.
+3.2.9 PROSIM V’s Activities During a Subperiod
+Once all of the user decisions are entered, PROSIM V proceeds to simulate operations for the period. The status of the factory from
+the previous period is carried forward to this run and the simulation takes up where it ended at the end of the last period. For example, if a particular work station had been processing order number 64 in queue position one at the end of the previous period, it will resume processing the order as though there had been no interruption. As production occurs at the work stations, all items consumed in the manufacturing process (manufactured as well as purchased) are subtracted from stock on hand as they are used. Manufactured items are added to stock on hand as they are completed at the last work station in their networks. They are immediately available for higher- level assemblies or for satisfying customer demand if they are finished goods. If there are not enough components available to produce on lot of an order, the queue is searched for an order that can be produced and this order is placed ahead of the order with the insufficient quantities. The program maintains running totals of the inventory levels, work station idle times, and the value of the materials used in the manufacturing process.
+3.2.10		PROSIM V’s Activities at the End of Each Subperiod
+Once the program simulates a subperiod of production, it attempts to satisfy the demand for each finished product. If the stock on hand of a finished good does not meet demand, then a back order for the item is generated. Back orders must be filled from production before the next demand is satisfied or before stock on hand can move above zero. An out-of-stock cost is assessed when demand cannot be met.
+Units back ordered and out-of-stock costs are calculated after alltransactions (production, demand, receipts) for the day have occurred.
+The carrying cost for each stock number is computed for each subperiod by dividing the carrying cost per period by the number of subperiods and multiplying that value by the stock on hand. The carrying costs are summed at the end of each subperiod.
+The program also checks to see if any purchase orders arrived during the subperiod just completed. The stock on hand and the value of inventory received are then updated accordingly.
+After the above activities are completed, the program either simulates another subperiod or prints the results for the entire period if applicable.
+3.2.11		PROSIM V’s Additional Features
+PROSIM V has several additional features that the administrator has the option of activating. These features will now be discussed.
+Lot Sizes
+PROSIM V is capable of processing production orders through work stations in lots rather than in individual units. The lot size is chosen by the administrator and remains unchanged throughout the entire simulation. The quantity of each production order placed should be in multiples of the lot size. If it is not, the program truncates the order to the next lowest multiple of the lot size.
+For example, if the lot size is ten, that means that production must be in multiples of ten. The user could order 170 units of SN 1 and 320 units of SN 15, and the program would interpret these two orders are 17 lots of SN 1 and 32 lots of SN 15. These items are
+processed on the required work stations one lot at a time.
+Consider the	case where an	order for 127 units	of SN 1 is placed.
+The program	would	truncate this	order of 12 lots or	120 units. If an
+order for 8	units	of SN 15 were	placed, it would be	truncated to zero.
+The program	does not inform the	user if a truncation has occurred.
+Batch Quantities
+There are many industrial processes in which a very large number of units of a basic component (such as nuts and bolts) is required in the manufacturing of finished goods, and the processing time to produce a single unit of this basic component is very small. PROSIM has the capability to use the concept of a "batch quantity” whereby one unit of a particular manufactured item is actually a batch consisting of any desired number of individual units. The administrator selects a batch quantity for each manufactured item. Most items will have a batch quantity of one. However, small items that are manufactured and used in large quantities may have any desired batch quantity.
+Let's consider a case where SN 31 is a high usage item and the batch quantity for this particular item has been set at 5000 individual units. Suppose that the lot size for this problem has been set at 10 units. This translates to 10 batches for SN 31 which means that 50,000 units is the minimum number of individual units of SN 31 for which a production order can be placed. This is because theminimal production order is one lot which consists of 10 batches, each consisting of 5000 individual units. The processing time per unit of SN 31 is actually the processing time per batch.46
+Suppose that the processing time per unit is specified as 7 minutes for SN 31. This means that 5000 individual units of SN 31 can be processed in 7 minutes. The component requirements for SN 31 correspond to a complete batch rather than an individual unit. For example, if 16 units of SN 47 are required at WS 9 for SN 31, this means that 16 units of SN 47 are needed to make 5000 individual units (one batch) of SN 31 at WS 9.47
+Production orders for items such as SN 31 are placed by entering the number of batches that need to be produced. The number of batches must be in multiples of the lot size. Permissible order quantities for a lot size of 10 would be 10, 20, 30, etc. batches. It may be easiest to grasp the meaning of batch quantities by regarding a batch as a unit until it has been processed on the last work station in its network. Then multiply the number of units by the batch quantity for that particular item to yield the actual number of individual units that go into inventory. In fact, this is the way the program handles this situation. The thing to remember is that when a production order for, say, 20, is placed, the number of individual units that will be added to inventory is 20 times that batch quantity for that particular item.
+"Mize’s Administrator's Manual, p. 29.
+"Mize’s Administrator’s Manual, p. 29.
+3.2.12		The PROSIM V Administrator
+The administrator can create a database by supplying the following general information on punched cards:
+1. The number of stock numbers.
+2. The number of work stations.
+3. The maximum number of subcomponents permitted per stock number.
+4. The maximum work station queue length.
+5. The number of finished products.
+6. The maximum number of outstanding purchase orders.
+7. The number of days worked each week.
+8. The number of student runs.
+9. The number of periods of historical demand required.
+10. The time increment.
+11. The variable overhead factor.
+12. The fixed overhead rate.
+13. The shift change cost.
+14. The number of minutes worked per shift per day.
+15. The maximum allowable inventory in dollars.
+16. The penalty cost for excess inventory.
+
+The following information will be entered for each stock number:
+1.		Whether the stock number is purchased or manufactured.
+2.		The lot size in units.
+3.		The carrying cost in dollars per unit period.
+4.		The stock on hand.
+5.		The batch size (manufactured items only).
+6.		The out-of-stock cost per unit per period (final products only).
+The following items refer to purchased items only:
+7.		The reorder cost in dollars per order.
+8.		The discount order quantity in units.
+9.		The discount price per unit.
+10.		The average lead time in periods.
+11.		The standard deviation of the lead time.
+The work station processing sequences must be specified for each manufactured item. Subsequently, the following information is required for each stock number/work station combination:
+1.		Process time in minutes per unit/batch.
+2.		Set-up time in minutes.
+3.		Hold quantity in lots.The following information is required for each manufactured item and parent item:
+1.		The stock number of the component.
+2.		The quantity of that stock number required to produce one unit/batch of the parent item.
+3.		The work station at which the component is input into the production process.
+For each work station, the number of minutes of operation for each work station during the last period of operation must be entered. This initializes the shift change checking procedure. Additionally, for each work station, the following monetary rates (in dollars per minute) must be entered:
+1.		Man rate for the first shift.
+2.		Man rate for the second shift.
+3.		Man rate for the third shift.
+4.		Man rate for overtime.
+5.		Machine rate (working).
+6.		Machine rate (idle).
+For each final product, the following historical demand trend parameters must be entered:48
+1.		"Y" intercept.
+2.		"Straight Line" slope.
+3.		Coefficient of the quadratic growth term.
+4.		Amplitude of the first cyclic trend.
+5.		Coefficient of the period of the first cyclic trend.
+6.		Amplitude of the second cyclic trend.
+7.		Coefficient of the period of the second cyclic trend.
+8.		Amplitude of the third cyclic trend.
+9.		Coefficient of the period of the third cyclic trend.
+10.		Standard deviation of the random deviate.
+The administrator can change any of the values in the database by
+‘Mize's Administrator's Manual, p. 63.
+issuing instructor change cards. The administrator also has the ability to examine a summarization of specified values from the database for evaluation purposes. Graphs of the time series of these values can also be obtained.
+3.2.13 Discussion of PROSIM VI
+In 1981, Dr. Richard E. Ward and James C. Wright at West Virginia University developed PROSIM VI for use in their undergraduate production control class. According to Wright, PROSIM V was the only model that integrated the five functions of production control. PROSIM VI was PROSIM V adapted for a microcomputer and enhanced. PROSIM VI was written in Apple FORTRAN for use on the Apple II Plus, which was a popular microcomputer at the time. Wright's enhancements were:
+1.		Allow the user to expedite any outstanding purchase order by up to three standard deviations of its average lead time. A penalty cost is assessed for each order expedited. This option must be activated by the administrator to be in effect.
+2.		Allow the user to delete an order from a work station queue and/or rearrange the sequence of orders in that queue. A penalty cost is assessed for each work order moved or deleted. Again, this option must be activated by theadministrator.
+3.	This enhancement halts execution, gives feedback, and allows corrective action under the following conditions:
+a)	A work station goes idle while time is still available.
+b)	A finished product is out of stock.
+In either of the above cases, the user would be informed of the particular condition that caused the halt and given the following information:
+a)		The queue, work in process, and hold block status.
+b)		A list of outstanding purchase orders (raw materials).
+c)		Stock on hand.
+The user would be given the following options for corrective action:
+a)		Take no action.
+b)		Place production orders.
+c)		Expedite production orders.
+d)		Place purchase orders.
+e)		Expedite purchase orders.
+A penalty cost would be incurred for every case in which corrective action was taken. And again, this option must also be activated by the administrator.
+Basically, these enhancements allowed the user to initiate, expedite, or delete production and/or purchase orders and reorder work station queues under the following conditions: (1) work station became
+idle, (2) an out-of-stock condition occurs, or (3) information for the beginning of the week is being input. These enhancements highlighted the interactive capability that a microcomputer brought to the simulator.
+Wright lists the restructuring of the program for operation on a microcomputer as Enhancement IV. He states that the enhancements could have been applied to a mainframe, but that the expense and lack of portability would limit the software's usefulness. He also notes that the preponderance of the effort was adapting the modified program to operate on the Apple II Plus.
+Wright also identifies the fact that PROSIM VI cannot address the items of machine breakdowns and quality control problems as areas for potential next enhancements. He also notes that PROSIM VI‘s forty- five to seventy-five minute execution time per run is a weakness in the software's usefulness. However, he points out that this is much better than five to ten hours on a mainframe time sharing system.CHAPTER IV
+STATEMENT OF THE PROBLEM
+As stated in Section 1.1, the goal of this project was to develop a methodology for integrating the different functions of production control as a teaching aid. Chapter II stated the common methods of teaching production control along with their shortcomings. The chapter finished by concluding that a good simulation model would be the answer to the problem of integrating the functions of production control. Chapter III reviewed the current simulation software packages and also examined past efforts to create an integrated teaching aid. Some objectives for developing a simulation model to achieve the goal stated above will now be discussed.
+A good simulation model would be flexible enough to allow an instructor to change different features so that the difficulty of successfully using the model would increase as the course advanced. Specifically, the model should allow the instructor to create variable demand patterns. It should also provide options for stochastic machine process times and machine breakdowns and repair. A quality control package for final product inspection should be included with the instructor having the ability to turn the option on or off and the student deciding on the specific details of the quality control plan. The instructor should also be able to activate an option that allows the students to expedite production and purchase orders whenever a work station is idle, a machine breaks down, or an out-of- stock, condition occurs.
+A good simulation model would be extremely user-friendly and have a reasonable program execution time. The model would also be constructed on a microcomputer in order to maximize user friendliness and insure hardware readily available for the students. An added bonus would be to have the ability to change the parameters of the factory so that totally different production environments could be set up without extensive re-coding. Thus, a different production environment could be simulated in each class in which the software was used. Based on the above discussion, some specific objectives will now be stated:
+1.		The model must be flexible so that its difficulty can be steadily increased. The ability to create variable demand patterns should be included. Options for stochastic process times, quality control, and interaction during a run should be included.
+2.		The model must be user-friendly.
+3.		The model must have a reasonable execution time.
+4.		The model must be flexible from the global standpoint in that different production environments can be set up without extensive re-coding.
+5.		The model must use memory efficiently so that it may be used on computers not having the maximum available memory.
+6.		Improve the teaching of production control by using the model. The simulation packages in the literature that most closely fit the goal stated in Section 1.1 are PROSIM V and PROSIM VI. The problem with PROSIM V is that it is designed for the mainframe usingpunched cards, and PROSIM VI was built for use on the Apple II Plus. Both of these programs obviously use outdated technology. Furthermore and most importantly, neither of these programs incorporate all of the functions of production control. Therefore, the problem is that there is no software currently available which covers all seven functions of production control and is designed to give the student a ready-to-run factory.
+Wright has noted that PROSIM VI cannot provide machine breakdowns and quality control features. He also states that the software's forty-five to seventy-five minute execution time per run is a weakness. The author has decided to study and expand upon these issues, thus continuing where Wright finished. The addition of optional administrator-controlled stochastic process times would also be an improvement. Furthermore, the use of copious edits and other human factor details along with some logistical changes such as sending weekly production reports to disk instead of to the printer and allowing the student the ability to obtain updated printouts of the information in the PROSIM database would create a total simulation system with the quality being very close to today's professional software standards. The ensuing software package will henceforth be appropriately referred to as PROSIM VII.
+Specifically, the author proposes to completely rewrite the FORTRAN code from PROSIM VI to True Basic for use on the IBM Personal Computer and compatibles. This re-coding will be considered the seventh objective. Justification for rewriting the program will be provided in the next chapter. He also proposes the following
+enhancements:
+1.		Allow for stochastic process times for every manufactured stock number on every machine.
+2.		Allow for machines to breakdown with a choice of stochastic or deterministic repair times selected by the administrator.
+3.		Allow for defectives in both incoming material and outgoing final products.
+4.		Allow for a student-selected quality control plan (either inspect every item or use sampling) to discover defective products before they leave the factory.
+5.		Enhance the PROSIM VI administrator's graphics package by providing more available scales on the y-axis.
+6.		Write the weekly production reports generated by PROSIM VI to a diskette file instead of sending them to the printer, as they occur while the simulation is running.
+7.		Modify the WRITE subroutines in PROSIM VI that provide a hardcopy printout of the information in the PROSIM database so that the student can select this option from his/her menu instead of having the administrator create a class handout from this information.
+8.		Check every piece of information that the student is required to enter to ensure that the input data is valid.
+9.		Give the student the option to add or delete purchase and production orders in addition to making changes to them when the program allows them to review their orders during the input
+process.55
+10.		Allow the capability for easily editing recently entered information.
+11.		Add the newly-generated final product demands after every PROSIM run to the list of historical final product demands.
+12.		Allow the user to choose the disk drive containing the data disk.CHAPTER V
+SOLUTION METHODOLOGY
+Although the Apple II Plus was very popular in the early 1980s, the most popular microcomputer today is the IBM Personal Computer (all versions) and IBM PC clones. In fact, the Microsoft Disk Operating System (MS-DOS) ’’drives nearly all of the world's 70 million I.B.M. and I .B.M.-compatible personal computers.’’ This equates to ninety percent of the world operation-systems market, with the other ten percent being held by Apple. The advances in microcomputer hardware technology since 1981 when PROSIM VI was introduced would greatly benefit the project. The most enticing of these benefits from a programmer's point of view would be a higher clock speed, more random access memory (RAM), and faster peripheral storage devices.
+PROSIM VI was written in Apple FORTRAN which is based on FORTRAN 77. As stated in Chapter IV, a secondary goal of this project was to use the latest technology. This project began in October 1987, and at that time, True Basic was the only language capable of using the full 640K of RAM available under DOS. Microsoft BASIC, Turbo Pascal, and Microsoft FORTRAN were all limited to 64K. In fact, in a recent article in Dr. Dobb's Journal, John Bradberry reported that the scientific community historically used FORTRAN on mainframe and minicomputers because of the limited clock speed, extended precision
+computing power, and compiler sophistication of PCs. Given the critical advantage of the full use of 640K of RAM, an additional advantage of True Basic was that it is also portable to Macintosh computers. At that time, it was still questionable whether the IBM PC or the Macintosh would become the predominant personal computer. Other pluses were that True Basic is a structured language, and it also has a runtime package that would allow for distribution of an executable version of the simulation program to students without loaning copies of True Basic. The executable version is also faster than an uncompiled basic program.
+The first task was to translate the PROSIM VI FORTRAN program into True Basic. All of the GO TO statements in the FORTRAN program had to be eliminated. The procedure for creating/retrieving data files in Apple FORTRAN differed from that of True Basic, and consequently many subroutines had to be written in order to store the data files in IEEE 8-bit format so that they could be properly read by any PC clone. These subroutines also packed the data before writing it to the data diskette.
+The PROSIM VII system consists of six separate sections that are called by the master program as needed. Each section contains a submaster program that calls other subroutines in that section as needed. All sections have access to the subroutines that are common to the majority of the sections. These commonly-used subroutines reside in a True Basic library called PROLIB. True Basic "modules”are similar to COMMON statements in FORTRAN, but can encompass many separate subroutines. They are used where appropriate. This modularized method is based on the PROSIM VI design which mirrors PROSIM V fairly well. The fact that the integrity of the logic was generally maintained throughout PROSIM VI and VII is advantageous to debugging and future work on the programs since Mize's literature could always be helpful in resolving questions or problems .
+Specifically, the structure of the PROSIM VII system is shown in Table 5.1:
+Table 5.1 - PROSIM System Structure
+Program/Section
+Type
+Other
+programs in that
+section
+PROSIM
+master
+
+none
+
+CREATE*
+submaster
+
+CREATEl - CREATES
+
+CHANGE*
+submaster
+
+CHANGE1 - CHANGE6
+
+HCOPY*#
+submaster
+
+HCOPYl - HCOPY4
+
+SIM*#
+submaster
+
+SIMI - SIM7
+
+RECAP*
+submaster
+
+CAP1 - CAP3
+
+GRAPH*
+submaster
+
+GRAFT - GRAF5
+
+
+*denotes a section
+is included in the student version
+In Table 5.1, PROSIM is the menu shell which calls the other sections. This shell is called SIM in the administrator's version. The second shell is necessary because the administrator has exclusive use of the CREATE, CHANGE, RECAP, and GRAPH programs. A section refers to a series of programs. The CREATE section allows the administrator to create the database of the factory to be simulated. The CHANGE section allows the administrator to change any or all
+values in the database. Changes to the database or activation of special features, namely PROSIM VI or PROSIM VII enhancements, can be implemented between simulation runs. HCOPY provides a hard copy printout of the database information. SIM is the actual simulation program. RECAP provides the administrator with summaries of the runs from different student groups, and GRAPH gives the administrator the ability to graphically compare some of the data from the student groups.
+Although the Apple II Plus system uses a scrolling screen, it is common to use a fixed screen in True Basic. Therefore, many special subroutines and other programming adjustments had to be made to allow the fixed screen to be at least as user-friendly as the previous scrolling screen setup. The fact that a fixed screen was used also forced the author to design the layout of every screen in the program. Great care was taken to ensure that the final screens would have a professional appearance and be easily understandable.
+The conversion of the FORTRAN code to True Basic took months to complete. The elimination of the GO TO statements in subroutine SIM3 in the PROSIM module was so detailed that it had to be done by "evolution" rather than by redesign. Comment statements were added after the "evolutionary" process was complete so that the logic flow could be understood by another programmer. The GO TO statements in all other parts of the FORTRAN program were eliminated by redesign of the code. GO TO statements were not the only hurdle in the code conversion process. Special subroutines had to be designed that would pack the information stored in the PROSIM database in IEEE 8-bitformat for storage on the diskette and unpack the information when it was read from the disk. The problems of which subroutines should be put in True Basic modules, which variables should be global, and the question of whether some existing PROSIM VI subroutines could be combined to speed execution were all part of the experimental process of developing this software. The author made every possible attempt to make the program memory efficient so that a 256K machine could be used. This was going well during the development process until some of the enhancements added enough code to make this goal impossible. A machine with 640K is now required. However, with the advent of more complex software packages and Microsoft Windows, a 640K personal computer is now commonplace.
+The specific enhancements the author made to PROSIM are discussed in Sections 5.1 to 5.12.
+5.1 Stochastic Process Times
+The administrator has the option to select stochastic process times from various probability density functions for every manufactured part on every machine. The selection of only a few process times being stochastic and the rest being deterministic is also allowed.
+Stochastic process times can be chosen from a uniform, normal, exponential, or gamma distribution. The necessary statistical information needed to define a particular distribution is asked for immediately after the distribution for a specific part on a machine is requested.
+The administrator chooses the part, machine, distribution, and the information needed to define the distribution in the CREATE section of the program. He/she has the option of changing any or all of this information in the CHANGE section of the program. The students will receive a table listing the stock number and the machine number and a sample of five hundred process times for that part so that they can use the information in creating a manufacturing strategy. This information is automatically included in the HCOPY program.
+The actual stochastic process time for every part is chosen at random during the simulation whenever a new part is initially loaded onto a machine for processing. Typically, processing times are determined for each item in a lot, and the sum of these individual times is combined with the current clock time to denote the finish time for the entire lot. Negative and zero process times are not allowed, so the program will choose random times until it receives one that is greater than zero. If the administrator accidently creates a situation where most of the process times are negative or zero, a message stating that no useable process times were generated during the last 500 attempts will be printed by the HCOPY program. This feedback allows the administrator to correct the problem before the simulator gets stuck in an infinite loop.
+It is possible for the finish time described earlier not to be a multiple of the time increment. It was discovered during testing that this particular situation causes the program to permanently lose products. This flaw was remedied by forcing finish times that are nottime increment multiples to finish at the next higher time increment (i.e., the finish time is essentially rounded up to a valid time increment).
+5.2 Machine Breakdown and Repair Times
+The administrator has the option to specify stochastic interbreakdown times chosen from an exponential distribution that can be different for every machine. The selection of allowing only certain machines to break down while the rest are always reliable is possible.
+Repair times can be deterministic or they can be chosen from a uniform, normal, exponential, or gamma distribution that can be customized for each machine.
+The administrator chooses the machines that will break down and defines an exponential distribution for the interbreakdown times as well as a specific distribution for the repair times during the CREATE section of the program. He/she has the option of changing any or all of this information in the CHANGE section of the program. The students will receive a sample of 500 interbreakdown times and 500 repair times for every machine that will break down. Again, this information is automatically included in the HCOPY program, and it will be useful in planning a manufacturing strategy.
+The actual interbreakdown time for each machine that will break down is chosen when that machine is first used at the beginning of the simulation. The interbreakdown time is based on busy (processing)
+time as recommended by Law. Future interbreakdown times are chosen as needed.
+The actual repair times for each machine (if not deterministic) are chosen as soon as the particular machine breaks down. Negative and zero repair times are not allowed, so the program will choose random times until it receives one that is greater than zero. Again, messages similar to the ones for stochastic process times are printed for cases in which the statistical information was poorly chosen and will create an infinite loop situation.
+The repair time is actually incorporated into the program by combining it with the finish time for the lot which is on that particular machine. Similar to the description in the previous section, repair times are not necessarily multiples of the time increment, and this again leads to the loss of items. The problem was fixed as before by "rounding up” the finish time to the next time increment.
+5.3 Defective Incoming Material and Outgoing Final Products
+The administrator has the option to specify a percent defective for each incoming part and each final product. The items are tested individually by drawing random numbers from a uniform distribution. If the random variate was less than the defective percentage, the item would be defective; otherwise the item is good.
+The administrator chooses the incoming material and finalproducts that will be defective and defines a defective percentage during the CREATE section of the program. He/she has the option of changing any or all of this information in the CHANGE section of the program. The student will receive a sample of 500 purchase and/or production orders for those items that have defectives. The order quantity for all of the orders in the sample will be 100 units.
+5.4 Student Selected Quality Control Plan
+The student will be able to select a quality control plan for every final product at the beginning of each week of simulation. If the student decides to change a quality control plan in future weeks after it has been selected, a penalty cost determined by the administrator will be automatically assessed by the program. The student will have a choice of inspecting every final product or to use lot sampling to inspect the final products, or to inspect no final products. The cost of inspecting an item will be determined by the administrator and will be automatically assessed by the program. If lot sampling is chosen, then the student must specify the lot size and the number of defectives necessary to fail the lot. The student must bear in mind that a penalty cost determined by the administrator will be assessed for each bad final product that leaves the factory. The printout created by the HCOPY program will indicate if the quality control option is activated.
+The penalty cost to change the quality control plan for a particular final product is chosen by the administrator in the CREATE section of the program and can be changed in the CHANGE section of the
+program. The student will receive feedback about his/her quality control plan at the end of each week of simulation. The following information is presented for each final product in the weekly production report:
+1)		The number of bad products leaving the plant during the current period.
+2)		The total cost incurred for letting bad products leave the plant during the current period.
+3)		The number of bad products leaving the plant since the beginning of the simulation.
+4)		The total cost incurred for letting bad products leave the plant since the beginning of the simulation.
+5)		The total inspection cost incurred during the current period.
+6)		The total inspection cost incurred since the beginning of the simulation.
+7)		The total number of items currently in the final product lot buffer if lot inspection is used.
+The quality control option was carefully designed for maximum realism and flexibility. Although a debit would not immediately occur on the income statement in the real world for a bad product leaving the factory, this situation occurring with regularity over time would have the same effect (i.e., a loss in demand due to a deteriorating reputation for quality). Also, situations often occur where the nature of the product dictates the appropriate quality control plan. For example, a bicycle manufacturer would probably want to inspect every bicycle, whereas a manufacturer of lawn rakes would probably want to use sampling. In the case of the rakes, the gambling student may not want to use inspection, depending on the past quality history. Finally, the inspection cost per item and the cost for changing aquality control plan reflect the fact that these items would indeed be real expenses.
+5.5 Graphics Enhancements
+PROSIM VII provides automatic selection of the appropriate y-axis scale in the graphing section of the program. The items that may be graphed are selected from a menu containing the following:
+1.		Idle time.
+2.		Idle man costs.
+3.		Idle machine costs.
+4.		Labor costs (not idle).
+5.		Machine costs (not idle).
+6.		Materials used costs.
+7.		Total production time.
+8.		Shift change costs.
+9.		Order costs.
+10.		Carrying costs.
+11.		Out-of-stock costs.
+12.		Value of materials received.
+13.		Value of inventory on-hand.
+14.		Excess inventory penalty cost.
+15.		Expediting penalty cost (not running).
+16.		Expediting penalty cost (when running).
+17.		Total plant cost.
+18.		Total cost.
+Up to three student groups may appear on the same graph. This limitation is due to problems with defining colors on different hardware. The graphs can be weekly or weekly and cumulative. The x- axis represents the period in weeks. The available axis scales are: 0-200	800-2,000	8,000-20,000
+200-400	2,000-4,000	20,000-40,000
+400-800	4,000-8,000	40,000-80,000
+These scales were chosen by the author after testing the graphing sections and realizing the need for improvement. The new breakdowns were derived and tested using data from actual PROSIM runs.
+The axis scales that were available in PROSIM VI are:
+0-200 200-2,000 2,000-20,000
+The addition of the new scales tends to do a fine job of filling up the space available for graphing on the screen.
+5.6		Weekly Production Reports
+PROSIM VI was set up to send the results of the weekly simulation to the printer as they occurred. This tied up the printer for the entire simulation run and is a totally unacceptable method for many personal computer labs. PROSIM VII writes these reports on the data disk.
+At the end of the simulation, the program informs the student of the file name containing the results for that particular week and gives the student the option to exit the program so that he/she can print the file and analyze it before running the next week of simulation. The files for each week are named RESULT1.TRU through RESULT20.TRU with a maximum of twenty weeks of simulation allowed.
+5.7		Student Access to the Database Information Subroutine
+PROSIM VI included a subroutine that would provide a hard copy printout of the information in the PROSIM database. This subroutine was not included in the student's diskette, and thus the instructor had to provide the hard copy information to the class. PROSIM VII was modified to include this database printing subroutine (HCOPY) in the student's PROSIM module. This saves the instructor the task of reproducing the information for the class. However, the HCOPYsubroutine had to be modified to be included on the student's disk because the original code included a section that printed the demand trend parameters for the final product demand function. This section was removed from the student version because it would give a student who managed to discover the demand function in PROSIM literature an unfair advantage. The particular subroutine where this code was removed was called HCOPY4S with the S standing for the student version. The unaltered HCOPY4 subroutine resides in the SIM module on the administrator's database initialization diskette.
+5.8		Edit Checks for Valid Information
+PROSIM VI contained provisions for some user input validation such as checking for valid stock numbers for purchased parts. Actually, it contained all of the necessary reasonable edit checks for a user who was familiar with the program. However, certain typographical errors had the potential to cause the program to “crash” at some point. Furthermore, one wouldn't want to run the simulation with invalid data anyway because it would be a waste of time. Consequently, PROSIM VII was designed so that absolutely every piece of information that the student inputs into the computer is checked for validity. Specifically, values are checked to ensure that they are positive and integer (if required). Specialized checks (such as making sure the input data is below some maximum value) are also included on a customized basis. True Basic automatically checks to ensure that a string variable is a character and vice versa for numeric data. If the user inputs bogus data that passes the True
+Basic character/numeric check, the enhanced edit checks are designed to sound a 440 Hz tone for one half second, erase the question that prompted the user for information plus some extra space to erase the bogus data, retype the question, and prompt the user again. This validation process continues until acceptable data is input. Specific error messages are printed in cases where the reason that the data is invalid may not be obvious upon further inspection. The new data validation checks in the PROSIM module work very well and the procedure of sounding a tone, erasing the question, and reprompting is similar to the methods which professional software manufacturers use. Since absolutely every input statement in the PROSIM module is carefully checked for valid data, the simulation program should theoretically never "crash."5.9		Option to Add or Delete Purchase and Production Orders in Review The PROSIM simulator is not the type of program where the user makes decisions regarding a week of simulation at the spur of the moment while at the computer. Formulations of plans for a week of simulated production should be carefully thought out ahead of time. Consequently, when the user is ready to input his/her decisions into the computer at the beginning of a new simulation period, it should just be a matter of transferring the information written on a piece of paper or standardized decision entry form into the computer.
+PROSIM VI allowed the user to review and make changes in his/her purchase and production orders after they have been input. However, if an extra order had been erroneously input, there was no way to delete it. Also, there was no means of adding a missed order. PROSIM VII takes this purchase and production order review process one step further by allowing the user to add or delete an entire order. The deletion process is accomplished by prompting the user about the change (i.e., Is it a correction or deletion?) during the review process. The addition process occurs after the present orders have been reviewed. These new features work very well.
+5.10		Editing Recent Information
+As mentioned in the previous section, PROSIM VII gives the user the ability to review and change information recently entered. This editing process was available in PROSIM VI, but the methodology has significantly changed in PROSIM VII. In general, the editing process has gone from "acceptable” to "extremely user-friendly.” The
+71 motivation for this was spurred by the fixed screen process and the challenge to have PROSIM VII resemble modern professional software packages as closely as possible.
+Specifically, the editing process was significantly improved for the forecasted demand, purchase orders, production orders, and work times. In addition, on line verification was made available for hold quantity changes. This feature was not in the previous version. In general, the student may go through the review process as many times as necessary in order to have the correct information ready for the production run. An actual test of the program would provide quicker insight into the editing process design than further explanation in the text.
+5.11		Addition of New Final Product Demand to Historical Demand
+Section 5.7 described the enhancement that gives the students access to the database information subroutine (i.e., HCOPY and its modules). A listing of historical demand for the final products is included with this information. The computer generates new final product demand values during each week of simulation. These new demand values are considered ’’historical” after the current week of simulation is over. PROSIM VII was specially enhanced to increment the historical simulation period on the historical demand printout and include all subsequent final product demands. This will give the student the opportunity to obtain an up-to-date, comprehensive listing of all historical demand.
+This enhancement was accomplished by creating a new database filecalled NEWDEM. The information in the NEWDEM file corresponds to the array NEWDEM in the program. NEWDEM is updated when the demand is determined during each week of simulation. The HCOPY4 and HCOPY4S routine use the number of weeks simulated to read the new historical information from NEWDEM and attach it to the old historical demand information.
+5.12		Choice of Disk Drive
+PROSIM VII allows the choice of disk drives A through E. This enhancement was suggested by Dr. Cutright during the pilot tests. The program asks for the disk drive containing the data after an option is chosen from the main menu. The letter of the drive must be followed by a colon as if it were being used as a DOS command. Even though the drive is determined after an option is chosen from the main menu, the enhancement was designed to ask for the disk drive containing the data only once per software session when using the student version.CHAPTER VI DISCUSSION OF RESULTS
+PROSIM VII was carefully tested against PROSIM VI using the same database. The author believes that except for the differences in the generation of random numbers, both programs will yield the same results if given the same information and run side by side. However, the user will have to wait for the Apple II Plus to finish because the author has found PROSIM VII to be more than twice as fast as PROSIM VI when using machines with two floppy disk drives. The author has clocked PROSIM VI with a test problem using the bicycle database at 37 minutes of total time. The same problem using PROSIM VII on a Proteus IBM PC XT clone with a 4.77 MHz clock will finish in 14 minutes. However, PROSIM VI‘s time also includes the time needed to print a hardcopy of the results because PROSIM VI does not store them on the data disk like PROSIM VII.
+6.1 Validation of the Model
+PROSIM VII was run in parallel with PROSIM VI using the three weeks of test data for the bicycle database given is Mize's literature. Initially, many adjustments were made. For the testing, random numbers in both programs were held at the same constant. The discrepancies were eventually eliminated until the only discernable differences between the two versions could be attributed to rounding in different sections of the accounting programs. Based on the
+results of these tests, the author believes that PROSIM VII is functioning properly. However, a side by side comparison is merely a lab benchmark. The field testing is described below.
+PROSIM VII underwent pilot testing in ISE 432, the undergraduate inventory control, class during Fall Quarter 1988. The program was supposed to be used as a quarter long project until a particular malfunction caused it to be sent back to the debugging stages. Specifically, the program lost parts of production orders in certain cases. PROSIM VI was found to have the same problem, and after careful examination and experimentation, the author believes that PROSIM V would probably also fail using these particular test problems.
+After lengthy and tedious investigation of the malfunction, the author found that the problem started with production orders that were on a work station at the end of a day. A new finish time had to be calculated so that these orders would finish the next day. If this new finish time turned out to be a multiple of the time increment, everything was fine. If not, the finished orders would slip through some of the inventory update code and never get labeled as finished. Hence they ended up lost. The author corrected this problem by adding time minute by minute to the newly calculated finish times that were not time increment multiples until they became multiples of the time increment. This was an acceptable solution that would not distort the output because simulations only check for conditions incrementally.
+The PROSIM VII pilot test also brought about many suggestions by Dr. Cutright and the students in the class that allowed the author tofine tune the program. One of the suggestions was to include a message stating that the simulation had started. Another suggestion required that some of the questions asked by the program be rewritten so that the answers that they requested were all uniform (i.e., a "yes" answer now always indicates that the user wants to take action). Another suggestion was to change the work station time available table on the result printouts from time increments to minutes so that it would be consistent with the way that the time is input. Dr. Cutright also wanted to adjust the time input section so that a work station must work at least one full shift if it is to be used during a particular week. Code was also written to check the time available for each work station to ensure that it is a multiple of the time increment. All of the above suggestions were included in the final version of PROSIM VII.
+Feedback from the pilot test also created enhancement 8 (the edit checks described in Section 5.8), enhancement 9 (the purchase and production order deletion capability described in Section 5.9), and enhancement 11 (the addition of the new final product demand to the historical demand described in Section 5.11).
+PROSIM VII underwent pilot testing again in Ohio University's undergraduate inventory control class during Fall Quarter 1989. The students in this class discovered that in certain instances machines were not using all of their non-forced overtime when they were busy one hundred percent of the time. Specifically, a work station would shut down before the end of the regular work day when they were working on an item. After careful investigation, the author
+discovered that the array which contained the number of available minutes per work station per day also was used to keep the time when each work station shut down at the end of the week. However, this array was being updated every day with the shutdown time instead of at the end of the week. Hence, if a work station shut down early on a Monday because it was idle, it would never work past that shutdown time for the rest of the week. The problem was corrected by only noting the shutdown time on Friday. The author believes that this problem also would have occurred in all previous versions of PROSIM.
+PROSIM VII underwent its third round of pilot testing during Spring Quarter 1990. This turned out to be the first test with no major problems. For the record, PROSIM VII underwent testing again during winter quarter 1991. This time the testing was conducted in the Ohio University College of Business. The software makes its eighth appearance as a teaching aid and its fifth appearance in the College of Business at the time of this writing, Winter Quarter 1992. At this point, the program is pretty well customized and continues to run smoothly.
+6.2 An Example Problem
+Appendix A contains a sample of the complete output that the administrator would see if he/she printed the information in the database. A sample run using the bicycle database is also included. This Appendix is intended to give the reader a more complete understanding of the level of detail in the program. However, it is not a substitute for running the program.6.3		Validation of Enhancements to the Model
+The enhancements involving stochastic process times, machine breakdown and repairs, defective incoming material/outgoing final products, and the student selected quality control plan add many new dimensions to the software. The enhancements were added after PROSIM VII was compatible with PROSIM VI. Each of these enhancements was carefully tested individually. Testing was also done with different options and combinations of enhancements turned on to test for any unexpected incompatibility. All tests were satisfactorily completed, and the enhancements to the model appear to be working well.
+6.4		An Example Problem with Enhancements
+The addition of stochastic process times, machine breakdown and repairs, defective incoming material/outgoing final products, and the student-selected quality control plan greatly augment PROSIM from the modeling point of view. Appendix B provides an example with all of these enhancements activated. Again, the HCOPY printout is provided followed by an example (a simulated printout of RESULTI).
+6.5		Verification of Objectives
+Seven objectives of the project were stated in Chapter IV. The first dealt with flexibility. PROSIM VII contains a menu-drive administrator's package that allows the activation or deactivation of options for stochastic process times, quality control, machine breakdowns, and user interaction during a run. Variable demand patterns can also be created and changed. This objective of microflexibility was definitely met.
+The second objective cited user-friendliness. Attainment of this objective can be shown in a few different areas. The successful completion of Enhancement 8 created edit checks that ensured valid input data. This eliminated obvious typographical errors. Enhancement 9 exemplifies PROSIM VII’s user-friendliness by allowing the student to easily add, delete, or change purchase and production orders in review. All changes are verified on the screen by the user before continuing with the review list. Enhancement 10 allows the user to review recently entered information as many times as necessary. All of these enhancements contribute to the objective of user-friendliness. The fact that some user-input questions were rewritten so that a "yes” answer always indicates that the user wants to take action also added to PROSIM VII‘s user-friendliness.
+The third objective was that the model should have a reasonable execution time. PROSIM VII will finish a week of simulation in under five minutes when using a machine with a hard disk and an 80386 microprocessor. There is no doubt that this is a reasonable amount of time. Further information on execution times is included in Section 7.2.
+The fourth objective was that the model must be flexible from the global standpoint in that different production environments can be set up without extensive re-coding. As briefly discussed in the verification of the first objective, PROSIM VII contains a menu-driven administrator's package. This package also allows the administrator to create a completely new factory (database) with the following general constraints: maximum of 25 work stations, maximum of 75 stocknumbers, and no stock number may tour more than 5 work stations. This feature certainly satisfies the objective of macro-flexibility.
+The fifth objective was that the model must use memory efficiently so that it may be used on computers not having the maximum available memory. PROSIM VII requires 640K of memory, so this objective was not met. Further discussion about the quest for minimal memory appears in Section 7.1.
+The sixth objective was that the model would improve the teaching of production control. Dr. Cutright claims that PROSIM allows the student to observe relationships such as how a careful production plan will minimize idle machine time. The software also amplifies obvious errors such as forgetting to order a certain part. Many students will write "PROSIM” on course evaluation forms when asked about the most beneficial part of the course. Dr. Thomas Lacksonen also reports beneficial use of PROSIM VII in ISE 432, Inventory and Manufacturing Control. The positive feedback provides verification of this obj ective.
+The seventh objective was to completely rewrite the FORTRAN code from PROSIM VI to True Basic for use on the IBM Personal Computer and compatibles. This objective was discussed in Section 6.1, and was successfully met.CHAPTER VII CONCLUSIONS AND RECOMMENDATIONS
+As previously discussed, PROSIM is an interactive production simulation program used to complement the teaching of production control. PROSIM VII is PROSIM VI enhanced from FORTRAN to True Basic to run on the IBM PC. Major enhancements to PROSIM VII include the capability for stochastic process times, machine breakdown and repair, defective incoming and outgoing final products, and quality control. Specific objectives of the project were verified in Section 6.5, and the fact that the software has successfully been used as a part of courses in production control confirms the fact that the original goal to build a model to aid in the teaching of production control was successfully met. The author believes that PROSIM VII is an accurate, fast, and reliable educational simulation program. The enhancements make the factory even more realistic than PROSIM VI. Given PROSIM VII*s successful pilot test record, the author concludes that the major objectives of this thesis have been accomplished.
+7.1 The Most Significant Achievements
+Although the enhancements included in PROSIM VII serve to make the simulation more realistic in some cases and more user-friendly in others, the most significant work on this project was the conversion of the FORTRAN code to True Basic.
+PROSIM VII turned out to be a software package of respectable size with the combination of all modules currently totaling 13,687 lines of code. In addition, the PROSIM module is so large that it is
+close to the edge of the amount of memory that True Basic needs for it to be compiled. The author solved the most recent occurrence of this situation by creating the PROLIB library, thus making the PROSIM module somewhat smaller. However, major additions to the code would undoubtedly give rise to the same problem. The most logical remedy in this case would be to break PROSIM into two separate modules. This separation would be most easily made at the end of the SIM2 subroutine since this is the last subroutine that requires the student to submit information at the beginning of the week of simulation.
+Advances in technology have brought simulation from the stage where it was a dream into a reality. Further advances in technology enabled PROSIM V to be re-coded for the Apple II Plus. According to Wright, this took the time required for one simulation run from 5 to 10 hours on a time sharing system to between 45 and 75 minutes on the Apple II Plus. The PROSIM V system required 192,000 bytes of core storage, a card punch, card reader, and printer along with a disk or tape for storage of the database. PROSIM VI required an Apple II Plus with two disk drives and a printer that sold for under $3500.00 in 1981. PROSIM VII requires an IBM PC or PC clone with 640K of random access memory (RAM), two disk drives, and a printer. The database initially uses about 200K of disk space, and will use 385K if the full twenty weeks are simulated. This is mainly due to the size of the ASCII results files that occupy approximately 10K for each week. The results files can be transferred to other disks and erased if space becomes a problem. The student version of the software utilizes 280K of disk space, and the administrator's version uses 583K. A PC clonewith the specifications described above would sell for under $1500.00 today. Assuming a 4.77 MHz clock, a typical PROSIM VII run on such a hardware system would take fifteen to twenty minutes. Better results will be obtained by using a hard disk and/or a machine with a faster clock speed. In fact, the author has clocked PROSIM VII at under five minutes using an AT&T 6386 SX (16 MHz clock) with a hard disk drive, yet this machine is not even the state-of-the-art at the time of this writing. The author suspects that a significant improvement in the five minute time could be obtained by using a file caching program, due to the fact that the software reads from and writes to the disk much of the time.
+As this project draws to a close, it is interesting to look back at the history of PROSIM development: PROSIM V - 1971, PROSIM VI - 1981, and PROSIM VII - 1992. These dates refer to the release of the finished product.
+7.2 Recommendations for Further Study
+Two enhancements were suggested by Dr. Cutright during his testing of the program. One is to allow the user to specify the amount of forced worktime on a per day basis rather than have the software automatically divide the worktime equally among the days of the week. The other enhancement would be to allow the user to add more time to a machine during the week when the feedback options were activated.
+One enhancement that could be added to PROSIM VII would be a feature to rework defective final products. Also, if a lot fails83 inspection, even the good products are lost. The problems of rework and the loss of good products would complicate the quality control plan and require careful thought in the design stage to ensure that the student could adequately track the products which were reworked and pay for inspection of the good products. Another enhancement would be to create defective subassemblies and include them in the quality control option. This would be rather difficult given the current structure of the program; however, closer examination may yield some insightful solutions.
+A limitation of the quality control plan cited by Dr. Robert Williams was that even one-hundred percent inspection does not mean that every final product will be perfect. A method to incorporate this observation could certainly be devised.
+Wright suggested that PROSIM VI had the potential to be modified and used as a specialized optimization process, but he had no specific ideas. He referred to the fact that PROSIM is an evaluation tool and does not give an "optimal" or even a "good" solution, but it does model the system with its complex interrelationships. Likewise, the same thought could be applied to PROSIM VII. The author agrees that this is a possible area of further research, but he will also leave this as a vague thought.
+PROSIM VII has attained success in the classroom, but with its database flexibility, it also has potential to be used as a management evaluation, experimentation, and decision support tool in a factory setting. This would undoubtedly be the ultimate test. It would also be a tedious project for the experimenter, especially in terms ofcollecting accurate data. Dr. Thomas Lacksonen pointed out that automated data from a CIM setting could be used.
+Future advances in software languages and hardware will undoubtedly allow a quicker and possibly more enhanced version of PROSIM at some later date. However, at this point in time the possibility of easily adapting the PROSIM VII code for use on future machines would seem logical because of the fact that Microsoft DOS is an extremely popular operating system and True Basic is a multiplatform language.
+The author believes that some other versions of BASIC may be just as structured as True Basic and may provide an executable version of code that takes up less space than the True Basic version of PROSIM VII. However, this would require some investigation. The program may also run a little slower or faster in another version of BASIC. This would also involve some investigation.
+The size of the arrays in PROSIM VII could be increased and other minor modifications could be made to allow more work stations, more stock numbers, more final products, and/or more work station tours for each stock number. These changes may be useful for someone who wanted to model something beyond PROSIM VII‘s constraints.
+The idea of using graphics during the simulation has intrigued the author. One idea would be to have a box representing each work station on the screen. The box could be turned different colors to represent different states of the work station (i.e., idle, broken down, etc.). Numbers representing current information about the work station could be displayed inside or near the work station boxes.85 Other graphics, such as inventory levels, could also be shown. A speed control could be provided to slow down the simulation if it was too fast to watch the graphics. It has been shown that watching a model evolve over time on the screen facilitates the generation of ideas and suggestions from the observers. This would only strengthen the learning process for the students. The author has not given much thought to the mechanics of such an enhancement, but believes that it would be possible. However, the animation of PROSIM VII would be a major endeavor and may not be worth the time required to complete it.
+Examining other thoughts about further study, PROSIM VII could represent the manufacturing component of a general business simulation. For example, many MBA programs require students to take a semester long course in which they use high-level "market oriented” packages to make strategic business decisions. Structured from the general business standpoint, the object of these simulation packages is for a team of students to maximize profits while figuring out how much money to spend on research and development, advertising, labor, expansion, etc. Expanding the level of detail, PROSIM VII might be modified to be used as the manufacturing component of a similar macro simulation. This would greatly expand the scope of the simulation and force students to also focus on the tactical decisions necessary in running a factory.
+Taking a look at new technology, artificial intelligence andPROSIM VII might be able to be combined to create a "smart” factory. The author has no specific ideas, but it would be interesting if PROSIM VII could be given rules (such as heuristics) and learn from its decisions.
+Also, PROSIM VII might somehow be changed to simulate a flexible manufacturing system. The major work in this endeavor would be to define the system (problem).
+Finally, in the manufacture of certain products, it might be helpful to have the specifications for certain military standards built into the quality control system. This is more of an application specific area for possible study.
+In closing, the author believes that PROSIM VII will be a welcome addition to the teaching of production control courses and hopes that it will be used for many years to come.BIBLIOGRAPHY
+Almodovar, Angel R. ’’Manufacturing Simulators Save Time, Provide Good Data for Layout Evaluation,” Industrial Engineering, June 1988, pp. 28-33.
+AT&T ISTEL. WITNESS Simulation Systems Features. Cleveland, Ohio: AT&T ISTEL, 1992.
+AutoSimulations. AutoMod II: The Most Accurate and Powerful Simulation Software Available. Bountiful, Utah: AutoSimulations, 1992.
+Bradberry, John L. ’’Porting FORTRAN Programs from Minis to PCs,” Dr. Dobb’s Journal. September 1990, pp. 26-32.
+CACI Products Company. Major Applications of SIMFACTORY II. 5. La Jolla, California: CACI Products Company, 1992.
+CACI Products Company. A Quick Look at SIMFACTORY II. 5. La Jolla, California: CACI Products Company, 1992.
+Creative Output, Inc. The OPT Game Manual. Milford, Connecticut: Creative Output, Inc., 1985.
+Elliott, Brig. True BASIC Reference Manual. Reading, Massachusetts: Addison-Wesley, 1985.
+Evans, James R., David R. Anderson, Dennis J. Sweeney, and Thomas A. Williams. Applied Production and Operations Management. New York: West Publishing Company, 1987.
+Fearon, Harold E., William A. Ruch, and C. David Wieters.
+Fundamentals of Production/Operations Management. New York: West Publishing Company, 1989.
+Felder, Richard M. and Linda K. Silverman. "Learning and Teaching Styles in Engineering Education,” Engineering Education. April 1988, pp. 674-681.
+Gould, F.J., G.D. Eppen, and C.P. Schmidt. Introductory Management Science. Englewood Cliffs, New Jersey: Prentice Hall, 1991.
+Grant, John W. and Steven A. Weiner. "Factors to Consider in Choosing a Graphically Animated Simulation System," Industrial Engineering. August 1986, pp. 37-40 and 65-68.
+Haider, S. Wali and Jerry Banks. "Simulation Software Products for Analyzing Manufacturing Systems," Industrial Engineering. July 1986, pp. 98-103.
+H.J. Steudel & Associates, Inc. Demo User’s Guide for Star Cell: A Simulator For Manufacturing Workcells. Madison, Wisconsin: H.J. Steudel & Associates, Inc., 1992.
+Juran, J. M. and Frank M. Gryna, Jr. Quality Planning and Analysis. New York: McGraw-Hill, 1980.
+Keller, L. , C. Harrell and J. Leary. "The Three Reasons Why Simulation Fails," Industrial Engineering. April 1991, pp. 27-31.
+Kemeny, John G. and Thomas E. Kurtz. True BASIC Statistics Graphics Toolkit Manual. West Lebanon, New Hampshire: True BASIC, 1990.
+Law, A. M. "Introduction to Simulation: A Powerful Tool for Analyzing Complex Manufacturing Systems," Industrial Engineering. May 1986, pp. 46-63.
+Law, A. M. "Models of Random Machine Downtimes for Simulation," Part 1, Industrial Engineering. August 1990, pp. 58-59.
+Law, A. M. and S. Wali Haider. "Selecting Simulation Software for Manufacturing Applications: Practical Guidelines & Software Survey," Industrial Engineering. May 1989, pp. 33-46.
+Law, A. M. and W. David Kelton. Simulation Modeling & Analysis. New York: McGraw-Hill, 1991.
+Law, A. M. and M. G. McComas. "How to Select Simulation Software for Manufacturing Applications", Industrial Engineering. July 1992, pp. 29-35.
+Law, A. M. and M. G. McComas. "Secrets of Successful Simulation Studies," Industrial Engineering. May 1990, pp. 47-53.
+Micro Analysis & Design. Micro Saint and Action View Simulation Software. Boulder, Colorado: Micro Analysis & Design, 1992.
+Minuteman Software. GPSS/PC Fact Sheet. Stow, Massachusetts: Minuteman Software, 1992.
+Mize, Joe H. Production System Simulator (PROSIM V): A User's Manual. Englewood Cliffs, New Jersey: Prentice Hall, 1971.
+Mize, Joe H. PROSIM V Administrator's Manual: Production System Simulator. Englewood Cliffs, New Jersey: Prentice Hall, 1971.
+Mize, Joe H., Charles R. White, and George H. Brooks. Operations Planning and Control. Englewood Cliffs, New Jersey: Prentice Hall, 1971.Moody, Fred. "Mr. Software," The New York Times Magazine. August 25, 1991, pp. 26-30 and pp. 54-59.
+Pfau, Loren D. "Total Quality Management Gives Companies a Way to Enhance Position in Global Marketplace," Industrial Engineering. April 1989, pp. 17-21.
+Pritsker Corporation. SLAMSYSTEM Puts the Answers Right Before Your Eyes. Indianapolis, Indiana: Pritsker Corporation, 1992.
+Pritsker Corporation. There's One Thing Everyone Likes About FACTOR/ AIM Manufacturing Simulation Software. Indianapolis, Indiana: Pritsker Corporation, 1992.
+ProModel Corporation. ProModelPC: Incredibly Simple, Simply Incredible. Orem, Utah: ProModel Corporation, 1992.
+Schmenner, Roger W. Production/Operations Management Concepts and Situations. Chicago: Science Research Associates, 1984.
+Shannon, Robert E. Systems Simulation: The Art and Science. Englewood Cliffs, New Jersey: Prentice Hall, 1975, pp. 347-366.
+Stice. "A First Step Towards Improved Teaching," Engineering Education. February 1976, pp. 394-398.
+Systems Modeling Corporation. SIMAN IV: Simulation Software for the Future. Sewickley, Pennsylvania: Systems Modeling Corporation, 1992.
+Thesen, Arne and Laurel E. Travis. Simulation for Decision Making. St. Paul, Minnesota: West Publishing Company, 1992.
+Vasilash, Gary S. "A Tool of the Trade," Production. July 1992, pp. 46-48.
+Wright, James C. Enhancements to a Production Simulation Model, Master's Thesis, West Virginia University, 1981.APPENDIX AThe production system is as follows:
+There are 59 stock number items.
+There are 15 work stations.
+There is a maximum of 5 subcomponents permitted per stock number.
+The queue length for all work stations is 20 orders.
+There are 3 finished products.
+The maximum number of outstanding purchase orders is 100
+There are 5 days worked each week.
+A maximum of 20 student runs are projected.
+The number of periods of historical demand data requested is 130
+The time increment is 5 minutes.
+The variable overhead factor is .5
+The fixed overhead rate is 1000 dollars.
+The shift change cost is 50 dollars.
+There are 480 minutes worked per shift.
+The maximum allowed inventory level is 25000 dollars.
+The penalty factor for excess inventory is .25
+The user is not allowed to expedite production orders.
+The user is not allowed to expedite a purchase order.
+The user is not allowed to have feedback or to take corrective action during operating periods.
+Inventory Information:
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+1
+2
+10
+1.10000
+.00
+300
+5.50
+0
+.0000
+.000
+.000
+1
+1
+2
+2
+10
+1.20000
+.00
+300
+6.00
+0
+.0000
+.000
+.000
+1
+2
+3
+2
+10
+1.30000
+.00
+250
+6.50
+0
+.0000
+.000
+.000
+1
+3
+4
+2
+10
+.01800
+.00
+500
+.90
+0
+.0000
+.000
+.000
+1
+4
+5
+2
+10
+.01850
+.00
+150
+.93
+0
+.0000
+.000
+.000
+1
+5
+6
+2
+10
+.01900
+.00
+150
+.95
+0
+.0000
+.000
+.000
+1
+6
+7
+2
+10
+.01100
+.00
+100
+.55
+0
+.0000
+.000
+.000
+1
+7
+8
+2
+10
+.01100
+.00
+150
+.55
+0
+.0000
+.000
+.000
+1
+8
+9
+2
+10
+.01250
+.00
+150
+.63
+0
+.0000
+.000
+.000
+1
+9
+10
+2
+10
+.01000
+.00
+150
+.50
+0
+.0000
+.000
+.000
+1
+10
+11
+2
+10
+.00800
+.00
+200
+.40
+0
+.0000
+.000
+.000
+1
+11
+12
+2
+10
+.00800
+.00
+400
+.40
+0
+.0000
+.000
+.000
+1
+12
+13
+2
+10
+.00800
+.00
+200
+.40
+0
+.0000
+.000
+.000
+1
+13
+14
+2
+10
+.01000
+.00
+200
+.50
+0
+.0000
+.000
+.000
+1
+14
+15
+2
+10
+.00800
+.00
+300
+.40
+0
+.0000
+.000
+.000
+1
+15
+16
+2
+10
+.00800
+.00
+700
+.40
+0
+.0000
+.000
+.000
+1
+16
+17
+2
+10
+.00300
+.00
+600
+.15
+0
+.0000
+.000
+.000
+1
+17
+18
+2
+10
+.01100
+.00
+200
+.55
+0
+.0000
+.000
+.000
+1
+18
+19
+2
+10
+.01200
+.00
+200
+.60
+0
+.0000
+.000
+.000
+1
+19
+20
+2
+10
+.01300
+.00
+300
+.65
+0
+.0000
+.000
+.000
+1
+20
+21
+1
+1
+.00400
+.00
+750
+.20
+490
+.1800
+.180
+.400
+0
+21
+22
+1
+1
+.00500
+1.50
+650
+.25
+350
+.2250
+1.700
+.400
+0
+22
+23
+1
+1
+.00500
+1.50
+600
+.25
+350
+.2250
+1.200
+.200
+0
+23
+24
+1
+1
+.00004
+3.00
+30000
+.00 21000
+.0022
+3.200
+.300
+0
+24
+25
+1
+1
+.00004
+1.70
+3000
+.00 14000
+.0022
+.900
+.200
+0
+25
+26
+2
+10
+.00750
+.00
+700
+.37
+0
+.0000
+.000
+.000
+1
+26
+27
+1
+1
+.00010
+2.30
+2000
+.01
+7000
+.0045
+.900
+.200
+0
+27
+28
+1
+1
+.00100
+1.80
+4000
+.05
+3500
+.0450
+1.700
+.400
+0
+28
+29
+2
+10
+.04000
+.00
+200
+2.00
+0
+.0000
+.000
+.000
+1
+29
+30
+2
+10
+.07500
+.00
+200
+3.75
+0
+.0000
+.000
+.000
+1
+30
+31
+2
+10
+.10000
+.00
+200
+5.00
+0
+.0000
+.000
+.000
+1
+31
+32
+1
+1
+.00150
+1.50
+4000
+.08
+2100
+.0675
+2.100
+.500
+0
+32
+33
+1
+1
+.00200
+2.00
+5000
+1.10
+700 1
+.0900
+1.900
+.500
+0
+33
+34
+1
+1
+.00005
+1.50
+90000
+.01 75000
+.0040
+1.600
+.300
+0
+34
+35
+1
+1
+.00100
+2.10
+10000
+.05
+3500
+.0450
+2.200
+.400
+0
+35
+36
+1
+1
+.00800
+3.00
+1800
+.40
+7000
+.3600
+1.200
+.100
+0
+36
+37
+1
+1
+.00100
+1.70
+1000
+.05
+1400
+.0450
+1.500
+.300
+0
+37
+38
+1
+1
+.00050
+1.70
+1000
+.03
+2100
+.0225
+1.700
+.400
+0
+38
+39
+1
+1
+.00300
+2.50
+2000
+.15
+1400
+.1350
+1.500
+.300
+0
+39
+40
+1
+1
+.00100
+1.70
+2000
+.05
+1400
+.0450
+1.700
+.200
+0
+40
+41
+1
+1
+.00004
+2.00
+1200
+.00
+4900
+.0022
+.900
+.200
+0
+41
+42
+1
+1
+.00004
+1.50
+3000
+.0014000
+.0018
+1.200
+.300
+0
+42
+43
+1
+1
+.00050
+2.70
+2000
+.03 23000
+.0225
+2.000
+.500
+0
+43
+44
+1
+1
+.00050
+2.00
+2000
+.03
+3500
+.0225
+1.000
+.200
+0
+44
+45
+1
+1
+.00004
+2.10
+1000
+.00
+7000
+.0022
+1.700
+.300
+0
+45
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+46
+1
+1
+.00010
+2.10
+1500
+.01
+5000 ,
+.0045
+.900
+.300
+0
+46
+47
+1
+1
+.00070
+1.70
+3000
+.04
+1800 .
+.315
+1.100
+.100
+0
+47
+48
+1
+1
+.00100
+2.30
+5000
+.05
+2500
+.0450
+1.000
+.200
+0
+48
+49
+2
+10
+.03500
+.00
+200
+1.75
+0
+.0000
+.000
+.000
+1
+49
+50
+2
+10
+.07500
+.00
+200
+3.75
+0 ,
+.0000
+.000
+.000
+1
+50
+51
+2
+10
+.09500
+.00
+150
+4.75
+0 .
+.0000
+.000
+.000
+1
+51
+52
+1
+1
+.00200
+1.50
+1300
+1.10
+700 1
+.0900
+1.600
+.400
+0
+52
+53
+1
+1
+.00005
+1.50
+90000
+.01 75000
+.0040
+1.600
+.200
+0
+53
+54
+2
+10
+.04000
+.00
+200
+2.00
+0
+.0000
+.000
+.000
+1
+54
+55
+2
+10
+.07500
+.00
+200
+3.75
+0
+.0000
+.000
+.000
+1
+55
+56
+2
+10
+.10000
+.00
+200
+5.00
+0
+.0000
+.000
+.000
+1
+56
+57
+1
+1
+.00200
+1.70
+5000
+1.10
+700 1
+.0900
+1.700
+.300
+0
+57
+58
+1
+1
+.00005
+1.50
+90000
+.0175000
+.0040
+1.600
+.500
+0
+58
+59
+1
+1
+.00030
+2.00
+2000
+.02
+4000
+.0135
+.700
+.200
+0
+59
+The codes used in the above table are:
+
+Column
+Description
+1
+Stock Number
+2
+1 = purchased
+2 = manufactured
+3
+Lot size (units)
+4
+Carrying cost (dollars/unit/period)
+5*
+Reorder cost (dollars per order)
+6
+Stock on hand (units)
+7
+Unit cost (dollars)
+8*
+Discount order quantity (units)
+9*
+Discount price (dollars per unit)
+10*
+Average lead time (periods)
+11*
+Standard deviation of the lead time (periods)
+12
+Batch quantity (units)
+13
+Stock Number	* Applies only to purchased items
+
+Finished Out of Stock Product	Cost per Unit
+Number per Period
+1	15.0000
+2	15.0000
+3	15.0000
+Work station process times in minutes per unit/batch:
+Stock No.
+1
+2
+3
+4
+Work Station
+12
+13
+14
+15
+5
+6
+7
+8
+9
+10
+11
+
+
+
+
+1
+0
+0
+0
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+2
+0
+0
+0
+7
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+0
+7
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+3
+0
+0
+0
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+3
+0
+0
+0
+0
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+3
+0
+0
+0
+0
+7
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+3
+0
+0
+0
+0
+8
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+3
+0
+0
+0
+0
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+3
+0
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+2
+1
+3
+0
+0
+3
+2
+0
+0
+11
+0
+0
+0
+0
+0
+0
+2
+2
+3
+0
+0
+3
+2
+0
+0
+12
+0
+0
+0
+0
+0
+0
+2
+2
+3
+0
+0
+3
+2
+0
+0
+13
+0
+0
+0
+0
+0
+0
+2
+1
+3
+0
+0
+3
+2
+0
+0
+14
+0
+0
+0
+0
+0
+0
+2
+2
+3
+0
+0
+3
+2
+0
+0
+15
+0
+0
+0
+0
+0
+0
+2
+2
+3
+0
+0
+3
+2
+0
+0
+16
+0
+0
+0
+0
+0
+2
+0
+0
+0
+0
+0
+0
+0
+3
+0
+17
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+18
+0
+0
+0
+0
+0
+3
+2
+3
+2
+0
+0
+0
+0
+0
+0
+19
+0
+0
+0
+0
+0
+3
+2
+3
+2
+0
+0
+0
+0
+0
+0
+20
+0
+0
+0
+0
+0
+3
+2
+3
+2
+0
+0
+0
+0
+0
+0
+26
+0
+0
+0
+0
+0
+0
+2
+0
+0
+0
+0
+0
+0
+0
+3
+29
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+30
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+31
+0
+0
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+49
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+50
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+51
+0
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+54
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+55
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+56
+0
+0
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+Work station set up times (in minutes)
+Stock No.
+Work Station
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+1
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+2
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+5
+0
+0
+0
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+5
+0
+0
+0
+0
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+7
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+8
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+11
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+12
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+13
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+14
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+15
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+16
+0
+0
+0
+0
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+17
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+18
+0
+0
+0
+0
+0
+5
+10
+10
+5
+0
+0
+0
+0
+0
+0
+19
+0
+0
+0
+0
+0
+5
+10
+15
+10
+0
+0
+0
+0
+0
+0
+20
+0
+0
+0
+0
+0
+5
+10
+10
+5
+0
+0
+0
+0
+0
+0
+26
+0
+0
+0
+0
+0
+0
+15
+0
+0
+0
+0
+0
+0
+0
+5
+29
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+30
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+31
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+49
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+50
+0
+15
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+51
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+54
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+55
+0
+15
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+56
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+Work station hold quantities (in lots)
+Stock	Work Station
+No. 123456789	10
+12	13	14	15
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0 0
+0
+0
+0
+0
+0 0
+0
+0
+0
+0
+1
+0 0
+1
+0
+0
+1
+0
+0 0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0 0
+0
+0
+0
+0 0
+0
+1
+0
+0
+1
+0
+0
+1
+10	0
+10	0
+10	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	1
+0	0	0
+0	0	1
+0	0	1
+0	0	1
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+111 111 ill
+111 111 111 0 0 0 0 0 0 111 111 ill
+10	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0
+0	0
+0	0
+1	1
+1	1
+1	1
+1	1
+1	1
+1	1
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0	0
+0 0
+0 0
+0
+0
+0
+0
+0
+1
+1
+1
+1
+1
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+10	0
+10	0
+10	0
+10	0
+10	0
+10	0
+0	10
+0	0	1
+0	0	0
+0	0	0
+0	0	0
+0	0	1
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0Work station sequence numbers
+Stock	Work Station
+No. 1	2	3	4	5	6	7	8	9	10	11	12	13	14	1510	0
+2	0	0
+3	0	0
+4	0	0
+5		0	0
+6		0	0
+7		0	0
+8		0	0
+9		0	0
+10	0	0
+11	0	0
+12	0	0
+13	0	0
+14	0	0
+15	0	0
+16	0	0
+17	0	0
+18	0	0
+19	0	0
+20	0	0
+26	0	0
+29	1	0
+30	0	1
+31	0	0
+49	1	0
+50	0	1
+51	0	0
+54	1	0
+55	0	1
+56	0	0
+0	10	0
+0	10	0
+0	10	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	1
+0	0	0	0
+0	0	0	1
+0	0	0	1
+0	0	0	1
+0	0	0	0
+0	0	0	0
+0	0	0	0
+10	0	0
+0	0	0	0
+0	0	0	0
+10	0	0
+0	0	0	0
+0	0	0	0
+10	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+4	3	5
+4	3	5
+4	3	5
+4	3	5
+4	3	5
+4	3	5
+0	0	0
+0	0	0
+3	2	4
+3	2	4
+3	2	4
+10	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+12	0
+12	0
+12	0
+12	0
+12	0
+12	0
+0	0	2
+0	0	2
+0	0	2
+0	0	2
+0	0	2
+0	0	2
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 0 10 0 10 0 10 0 10 0 10 0 0 2 0
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0Component Requirements
+Parent Stock Number
+A
+1
+B c
+11
+ABC
+A
+III
+B C
+A
+IV
+B C
+A
+V
+B C
+1
+51
+1 4
+26 1 4
+21
+1 4
+24
+1 4
+27
+1 4
+2
+56
+1 4
+26 1 4
+22
+1 4
+24
+1 4
+27
+1 4
+3
+31
+1 4
+26 1 4
+23
+1 4
+24
+1 4
+27
+1 4
+4
+52
+1 10
+53 36 10
+35
+2 11
+36
+1 11
+0
+0 0
+5
+57
+1 10
+58 36 10
+35
+2 11
+36
+1 11
+0
+0 0
+6
+33
+1 10
+34 36 10
+35
+2 11
+36
+1 11
+0
+0 0
+7
+52
+1 10
+53 36 10
+35
+2 11
+37
+1 11
+38
+1 11
+8
+57
+1 10
+58 36 10
+35
+2 11
+37
+1 11
+38
+1 11
+9
+33
+1 10
+34 36 10
+35
+2 11
+37
+1 11
+38
+1 11
+10
+39
+1 13
+32 1 9
+0
+0 0
+0
+0 0
+0
+0 0
+11
+39
+1 13
+32 1 9
+0
+0 0
+0
+0 0
+0
+0 0
+12
+39
+1 13
+32 1 9
+0
+0 0
+0
+0 0
+0
+0 0
+13
+39
+1 13
+32 1 9
+0
+0 0
+0
+0 0
+0
+0 0
+14
+39
+1 13
+32 1 9
+0
+0 0
+0
+0 0
+0
+0 0
+15
+39
+1 13
+32 1 9
+0
+0 0
+0
+0 0
+0
+0 0
+16
+28
+1 6
+40 1 14
+24
+1 14
+42
+2 14
+41
+1 14
+17
+43
+1 15
+44 1 15
+45
+1 15
+46
+1 15
+0
+0 0
+18
+28
+3 6
+59 2 7
+32
+1 9
+0
+0 0
+0
+0 0
+19
+28
+4 6
+59 2 7
+32
+1 9
+0
+0 0
+0
+0 0
+20
+28
+5 6
+59 2 7
+32
+1 9
+0
+0 0
+0
+0 0
+26
+48
+2 7
+44 2 7
+47
+1 15
+0
+0 0
+0
+0 0
+29
+20
+1 1
+9 11
+15
+1 1
+24
+2 1
+25
+2 1
+30
+29
+1 2
+6 12
+12
+1 2
+24
+2 2
+25
+2 2
+31
+30
+1 3
+16 1 3
+17
+1 3
+24
+1 3
+27
+1 3
+49
+18
+1 1
+13 1 1
+7
+1 1
+24
+2 1
+25
+2 1
+50
+49
+1 2
+4 12
+10
+1 2
+24
+2 2
+25
+2 2
+51
+50
+1 3
+16 1 3
+17
+1 3
+24
+1 3
+27
+1 3
+54
+19
+1 1
+8 11
+14
+1 1
+24
+2 1
+25
+2 1
+55
+54
+1 2
+5 12
+11
+1 2
+24
+2 2
+25
+2 2
+56
+55
+1 3
+16 1 3
+17
+1 3
+24
+1 3
+27
+1 3
+
+The codes for the above table are:
+Code
+Roman Numbers
+A
+B
+C
+Description
+Order components are input Component stock number
+Quantity required per unit/batch Work station where component is input
+The number of minutes per day that each work station was operating at the end of last week:
+Work Station
+Number of Minutes
+1
+480
+2
+480
+3
+480
+4
+480
+5
+480
+6
+480
+7
+480
+8
+480
+9
+480
+10
+480
+11
+480
+12
+480
+13
+480
+14
+480
+15
+480
+
+Monetary Rates (All values are in dollars per minute.):
+Work
+Station
+Code 3	4
+1
+.0450
+.0460
+.0480
+.0690
+.0030
+.0010
+2
+.0460
+.0470
+.0490
+.0700
+.0030
+.0010
+3
+.0470
+.0480
+.0500
+.0720
+.0030
+.0010
+4
+.0430
+.0440
+.0460
+.0660
+.0050
+.0010
+5
+.0000
+.0000
+.0000
+.0000
+.0000
+.0000
+6
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+7
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+8
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+9
+.0430
+.0440
+.0460
+.0660
+.0800
+.0600
+10
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+11
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+12
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+13
+.0450
+.0460
+.0480
+.0690
+.0400
+.0300
+14
+.0430
+.0440
+.0460
+.0660
+.0020
+.0010
+15
+.0430
+.0440
+.0460
+.0660
+.0020
+.0010
+The codes for the above table are:
+Code
+Description1	Man	rate	for	the	1st	shift
+2	Man	rate	for	the	2nd	shift
+3	Man	rate	for	the	3rd	shift
+4		Man	rate	for	overtime
+5		Working machine rate
+6		Idle machine rate
+Historical final product demands:
+
+Final
+Product Number
+Final
+Product
+Number
+Period
+1
+2
+3
+Period	1
+2
+3
+1
+86
+108
+148
+34
+67
+112
+184
+2
+78
+120
+158
+35
+70
+115
+168
+3
+73
+117
+153
+36
+84
+118
+191
+4
+61
+120
+169
+37
+88
+115
+192
+5
+57
+116
+152
+38
+98
+119
+202
+6
+54
+119
+182
+39
+101
+119
+159
+7
+59
+121
+166
+40
+91
+122
+285
+8
+57
+116
+164
+41
+94
+115
+150
+9
+64
+121
+150
+42
+83
+126
+185
+10
+75
+126
+150
+43
+75
+107
+194
+11
+85
+122
+162
+44
+64
+129
+196
+12
+98
+106
+158
+45
+71
+136
+198
+13
+94
+85
+156
+46
+65
+131
+176
+14
+92
+114
+123
+47
+70
+122
+178
+15
+84
+112
+177
+48
+65
+135
+191
+16
+87
+110
+178
+49
+86
+143
+184
+17
+81
+108
+167
+50
+94
+122
+208
+18
+58
+109
+165
+51
+101
+133
+206
+19
+50
+107
+170
+52
+100
+134
+223
+20
+56
+114
+171
+53
+104
+130
+234
+21
+61
+114
+191
+54
+100
+137
+207
+22
+65
+93
+175
+55
+90
+135
+184
+23
+79
+94
+156
+56
+82
+132
+227
+24
+85
+106
+151
+57
+71
+129
+207
+25
+95
+94
+182
+58
+69
+159
+207
+26
+100
+109
+168
+59
+68
+148
+204
+27
+96
+104
+181
+60
+72
+130
+232
+28
+85
+106
+165
+61
+81
+124
+189
+29
+77
+113
+162
+62
+82
+98
+182
+30
+69
+112
+198
+63
+99
+129
+172
+31
+65
+67
+180
+64
+104
+128
+223
+32
+56
+107
+181
+65
+109
+133
+195
+33
+62
+107
+182
+66
+106
+143
+228
+
+
+Final
+Product
+Number
+Final
+Product
+Number
+Period
+1
+2
+3
+Period	1
+2
+3
+67
+105
+127
+225
+116
+128
+147
+269
+68
+94
+125
+231
+117
+125
+145
+283
+69
+95
+134
+209
+118
+120
+143
+260
+70
+74
+118
+223
+119
+120
+148
+270
+71
+68
+130
+241
+120
+102
+132
+258
+72
+72
+130
+207
+121
+99
+145
+254
+73
+78
+120
+222
+122
+89
+142
+259
+74
+81
+116
+209
+123
+88
+145
+259
+75
+96
+113
+232
+124
+88
+142
+269
+76
+104
+133
+239
+125
+93
+142
+255
+77
+112
+126
+250
+126
+113
+142
+285
+78
+113
+134
+240
+127
+110
+150
+284
+79
+112
+122
+235
+128
+109
+131
+268
+80
+105
+123
+226
+129
+128
+141
+283
+81
+97
+124
+242
+130
+129
+135
+275
+82
+82
+126
+197
+
+
+
+
+83
+81
+121
+249
+
+
+
+
+84
+81
+126
+246
+
+
+
+
+85
+89
+126
+235
+
+
+
+
+86
+77
+132
+227
+
+
+
+
+87
+90
+186
+229
+
+
+
+
+88
+97
+143
+228
+
+
+
+
+89
+106
+128
+233
+
+
+
+
+90
+117
+135
+237
+
+
+
+
+91
+118
+137
+223
+
+
+
+
+92
+114
+98
+228
+
+
+
+
+93
+109
+121
+250
+
+
+
+
+94
+100
+129
+243
+
+
+
+
+95
+93
+137
+245
+
+
+
+
+96
+77
+140
+249
+
+
+
+
+97
+76
+129
+249
+
+
+
+
+98
+75
+191
+222
+
+
+
+
+99
+85
+149
+246
+
+
+
+
+100
+82
+145
+250
+
+
+
+
+101
+104
+152
+238
+
+
+
+
+102
+109
+153
+252
+
+
+
+
+103
+117
+139
+246
+
+
+
+
+104
+114
+153
+290
+
+
+
+
+105
+120
+150
+259
+
+
+
+
+106
+114
+168
+260
+
+
+
+
+107
+104
+152
+232
+
+
+
+
+108
+98
+142
+261
+
+
+
+
+109
+86
+155
+225
+
+
+
+
+110
+87
+145
+241
+
+
+
+
+111
+82
+152
+261
+
+
+
+
+112
+86
+151
+257
+
+
+
+
+113
+94
+150
+246
+
+
+
+
+114
+102
+148
+263
+
+
+
+
+115
+113
+138
+256
+
+
+
+
+A-13
+Welcome to run number 1
+Your forecasts are:
+Final
+Product Number 1 2 3
+Quantity
+94
+148
+275
+
+You have submitted the following purchase orders:
+Stock
+Number Quantity
+25
+27
+28
+32
+37
+38
+39
+44
+45
+46
+14000
+7000
+2845
+2157
+1400
+1874
+1400
+3522
+7367
+4659
+
+Hold quantity change(s) in lots:
+Work	Stock	New Hold
+Station	Number	Quantity
+4	1	20
+You have submitted the following production work orders:
+Order Stock Number of
+Number Number Units/Batches
+1	2	110
+2	3	50A-14
+Work station available times:
+Work
+Time
+Forced
+Station
+Available
+Worktime
+1
+2400
+0
+2
+2400
+0
+3
+2400
+0
+4
+2400
+0
+5
+0
+0
+6
+2400
+0
+7
+2400
+0
+8
+2400
+0
+9
+2400
+0
+10
+2400
+0
+11
+2400
+0
+12
+2400
+0
+13
+2400
+0
+14
+2400
+0
+15
+2400
+0
+
+
+Purchase order
+for 4659
+units of stock
+number 46
+arrived on day
+2
+
+
+Results of forecasts for run number
+1:
+Final Product Number
+Forecast
+Actual
+Demand
+Error
+Absolute
+Sum Errors
+Sum Errors Squared
+1
+94
+127
+-33
+33
+1089
+2
+148
+140
+8
+8
+64
+3
+275
+262
+13
+13
+169
+
+Status of the production system at the end of run number 1:
+Waiting lines at time 2400:
+Work	Stock	Order Queue
+Station Number Quantity Number	PositionWork in process:
+Work Stock	Order
+Station Number Quantity Number
+Hold block status:
+Work Stock	Order
+Station Number Quantity Number
+Idle time results in minutes:
+Work Station
+Time Idle
+Man Idle Cost
+Machine Idle Cost
+1
+2400
+108.00
+2.40
+2
+2400
+110.40
+2.40
+3
+2400
+112.80
+2.40
+4
+1260
+54.18
+1.26
+6
+2400
+108.00
+48.00
+7
+2400
+108.00
+48.00
+8
+2400
+108.00
+48.00
+9
+2400
+103.20
+144.00
+10
+2400
+108.00
+48.00
+11
+2400
+108.00
+48.00
+12
+2400
+108.00
+48.00
+13
+2400
+108.00
+72.00
+14
+2400
+103.20
+2.40
+15
+2400
+103.20
+2.40
+Totals
+32460
+1450.98
+517.26
+Grand total:
+1968.24
+
+
+Work station usages:
+
+
+Work Station
+Number of Setups
+Shutdown Time on Day 5
+1
+0
+480
+2
+0
+480
+3
+0
+480
+4
+2
+480
+5
+0
+0
+6
+0
+480
+7
+0
+480
+8
+0
+480
+9
+0
+480
+10
+0
+480
+11
+0
+480
+12
+0
+480
+13
+0
+480
+14
+0
+480
+15
+0
+480
+
+Summary of inventory activities
+for the period:
+Stock
+Unit
+On Order/
+Carry
+Stock
+Stock
+Number
+Cost
+Issues
+Receipts
+Back Order
+Cost
+on Hand
+Number
+1
+5.500
+127
+0
+0
+246.180
+173
+1
+2
+6.693
+140
+110
+0
+79.200
+20
+2
+3
+9.275
+262
+50
+0
+164.840
+38
+3
+4
+.900
+0
+0
+0
+9.000
+500
+4
+5
+.925
+0
+0
+0
+2.775
+150
+5
+6
+.950
+0
+0
+0
+2.850
+150
+6
+7
+.550
+0
+0
+0
+1.100
+100
+7
+8
+.550
+0
+0
+0
+1.650
+150
+8
+9
+.625
+0
+0
+0
+1.875
+150
+9
+10
+.500
+0
+0
+0
+1.500
+150
+10
+11
+.400
+0
+0
+0
+1.600
+200
+11
+12
+.400
+0
+0
+0
+3.200
+400
+12
+13
+.400
+0
+0
+0
+1.600
+200
+13
+14
+.500
+0
+0
+0
+2,000
+200
+14
+15
+.400
+0
+0
+0
+2.400
+300
+15
+16
+.400
+0
+0
+0
+5.600
+700
+16
+17
+.150
+0
+0
+0
+1.800
+600
+17
+18
+.550
+0
+0
+0
+2.200
+200
+18
+19
+.600
+0
+0
+0
+2.400
+200
+19
+20
+.650
+0
+0
+0
+3.900
+300
+20
+21
+.200
+0
+0
+0
+3.000
+750
+21
+22
+.250
+110
+0
+0
+2.740
+540
+22
+23
+.250
+50
+0
+0
+2.820
+550
+23
+24
+.003
+160
+0
+0
+1.194
+29840
+24
+25
+.003
+0
+0
+14000
+.120
+3000
+25
+26
+.375
+160
+0
+0
+4.215
+540
+26
+27
+.005
+160
+0
+7000
+.186
+1840
+27
+28
+.050
+0
+0
+2845
+4.000
+4000
+28
+29
+2,000
+0
+0
+0
+8.000
+200
+29
+30
+3.750
+0
+0
+0
+15.000
+200
+30
+31
+5,000
+50
+0
+0
+16.400
+150
+31
+32
+.075
+0
+0
+2157
+6.000
+4000
+32
+33
+1.100
+0
+0
+0
+10.000
+5000
+33
+34
+.005
+0
+0
+0
+4.500
+90000
+34
+35
+.050
+0
+0
+0
+10,000
+10000
+35
+36
+.400
+0
+0
+0
+14.400
+1800
+36
+37
+.050
+0
+0
+1400
+1.000
+1000
+37
+38
+.025
+0
+0
+1874
+.500
+1000
+38
+39
+.150
+0
+0
+1400
+6.000
+2000
+39
+40
+.050
+0
+0
+0
+2.000
+2000
+40
+41
+.003
+0
+0
+0
+.048
+1200
+41
+42
+.002
+0
+0
+0
+.120
+3000
+42
+43
+.025
+0
+0
+0
+1.000
+2000
+43
+44
+.025
+0
+0
+3522
+1.000
+2000
+44
+45
+.003
+0
+0
+7367
+.040
+1000
+45
+46
+.006
+0
+4659
+0
+.523
+6159
+46
+47
+.035
+0
+0
+0
+2.100
+3000
+47
+48
+.050
+0
+0
+0
+5.000
+5000
+48
+(continued from previous page)
+Stock
+Unit
+
+
+On Order/
+Carry
+Stock
+Stock
+Number
+Cost
+Issues
+Receipts
+Back Order
+Cost
+on Hand
+Number
+49
+1.750
+0
+0
+0
+7.000
+200
+49
+50
+3.750
+0
+0
+0
+15.000
+200
+50
+51
+4.750
+0
+0
+0
+14.250
+150
+51
+52
+1.100
+0
+0
+0
+2.600
+1300
+52
+53
+.005
+0
+0
+0
+4.500
+90000
+53
+54
+2.000
+0
+0
+0
+8.000
+200
+54
+55
+3.750
+0
+0
+0
+15.000
+200
+55
+56
+5.000
+110
+0
+0
+9.800
+90
+56
+57
+1.100
+0
+0
+0
+10.000
+5000
+57
+58
+.005
+0
+0
+0
+4.500
+90000
+58
+59
+.015
+0
+0
+0
+.600
+2000
+59
+
+A-17
+Direct manufacturing costs (this run):
+Labor cost (not idle) is Machine cost (not idle) is
+Materials used cost is
+49.02
+5.70
+41.20
+Total
+direct manufacturing cost this period is
+95.92Total direct manufacturing cost to date is
+95.92
+Total manufacturing cost (this run):
+Total machine cost is	522.96
+Total labor cost is	1500.00
+Materials used cost	is	41.20
+Total overhead cost	is	1750.00
+Total shift change cost is	.00
+Total manufacturing	cost	this	period is	3814.16
+Total manufacturing	cost	to	date	is	3814.16
+A-18
+Inventory costs (this run):
+Total order cost is	19.40
+Total carrying cost is	750.83
+Total out of stock cost is	.00
+Total inventory cost this period is	770.23
+Total inventory cost to date is	770.23
+Summary of cost report after 1 run(s) :
+Total plant cost this period is	4584.39
+Total plant cost to date	is	4584.39
+Value of materials received this period is	23.30
+Total value of current inventory on hand is	26344.87
+Excess inventory penalty	cost	this	period is	336.22
+Excess inventory penalty	cost	to	date	is	336.22
+Total cost this period is
+4920.60
+Total cost to date is
+4920.60
+Total cost after 1 runs is
+4920.60 dollars
+
+Simulation number 1 is complete.APPENDIX BB-2
+The production system is as follows:
+There are 59 stock number items.
+There are 15 work stations.
+There is a maximum of 5 subcomponents permitted per stock number.
+The queue length for all work stations is 20 orders.
+There are 3 finished products.
+The maximum number of outstanding purchase orders is 100.
+There are 5 days worked each week.
+A maximum of 20 student runs are projected.
+The number of periods of historical demand data requested is 130.
+The time increment is 5 minutes.
+The variable overhead factor is .5.
+The fixed overhead rate is 1000 dollars.
+The shift change cost is 50 dollars.
+There are 480 minutes worked per shift.
+The maximum allowed inventory level is 25000 dollars.
+The penalty factor for excess inventory is .25.
+The user is not allowed to expedite production orders.
+The user is not allowed to expedite a purchase order.
+The user is not allowed to have feedback or to take corrective action during operating periods.Inventory Information:
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+1
+2
+10
+1.10000
+.00
+300
+5.50
+0
+.0000
+.000
+.000
+1
+1
+2
+2
+10
+1.20000
+.00
+300
+6.00
+0
+.0000
+.000
+.000
+1
+2
+3
+2
+10
+1.30000
+.00
+250
+6.50
+0
+.0000
+.000
+.000
+1
+3
+4
+2
+10
+.01800
+.00
+500
+.90
+0
+.0000
+.000
+.000
+1
+4
+5
+2
+10
+.01850
+.00
+150
+.93
+0
+.0000
+.000
+.000
+1
+5
+6
+2
+10
+.01900
+.00
+150
+.95
+0
+.0000
+.000
+.000
+1
+6
+7
+2
+10
+.01100
+.00
+100
+.55
+0
+.0000
+.000
+.000
+1
+7
+8
+2
+10
+.01100
+.00
+150
+.55
+0
+.0000
+.000
+.000
+1
+8
+9
+2
+10
+.01250
+.00
+150
+.63
+0
+.0000
+.000
+.000
+1
+9
+10
+2
+10
+.01000
+.00
+150
+.50
+0
+.0000
+.000
+.000
+1
+10
+11
+2
+10
+.00800
+.00
+200
+.40
+0
+.0000
+.000
+.000
+1
+11
+12
+2
+10
+.00800
+.00
+400
+.40
+0
+.0000
+.000
+.000
+1
+12
+13
+2
+10
+.00800
+.00
+200
+.40
+0
+.0000
+.000
+.000
+1
+13
+14
+2
+10
+.01000
+.00
+200
+.50
+0
+.0000
+.000
+.000
+1
+14
+15
+2
+10
+.00800
+.00
+300
+.40
+0
+.0000
+.000
+.000
+1
+15
+16
+2
+10
+.00800
+.00
+700
+.40
+0
+.0000
+.000
+.000
+1
+16
+17
+2
+10
+.00300
+.00
+600
+.15
+0
+.0000
+.000
+.000
+1
+17
+18
+2
+10
+.01100
+.00
+200
+.55
+0
+.0000
+.000
+.000
+1
+18
+19
+2
+10
+.01200
+.00
+200
+.60
+0
+.0000
+.000
+.000
+1
+19
+20
+2
+10
+.01300
+.00
+300
+.65
+0
+.0000
+.000
+.000
+1
+20
+21
+1
+1
+.00400
+.00
+750
+.20
+490
+.1800
+.180
+.400
+0
+21
+22
+1
+1
+.00500
+1.50
+650
+.25
+350
+.2250
+1.700
+.400
+0
+22
+23
+1
+1
+.00500
+1.50
+600
+.25
+350
+.2250
+1.200
+.200
+0
+23
+24
+1
+1
+.00004
+3.00
+30000
+.00 21000
+.0022
+3.200
+.300
+0
+24
+25
+1
+1
+.00004
+1.70
+3000
+.0014000
+.0022
+.900
+.200
+0
+25
+26
+2
+10
+.00750
+.00
+700
+.37
+0
+.0000
+.000
+.000
+1
+26
+27
+1
+1
+.00010
+2.30
+2000
+.01
+7000
+.0045
+.900
+.200
+0
+27
+28
+1
+1
+.00100
+1.80
+4000
+.05
+3500
+.0450
+1.700
+.400
+0
+28
+29
+2
+10
+.04000
+.00
+200
+2.00
+0
+.0000
+.000
+.000
+1
+29
+30
+2
+10
+.07500
+.00
+200
+3.75
+0
+.0000
+.000
+.000
+1
+30
+31
+2
+10
+.10000
+.00
+200
+5.00
+0
+.0000
+.000
+.000
+1
+31
+32
+1
+1
+.00150
+1.50
+4000
+.08
+2100
+.0675
+2.100
+.500
+0
+32
+33
+1
+1
+.00200
+2.00
+5000
+1.10
+700 1
+.0900
+1.900
+.500
+0
+33
+34
+1
+1
+.00005
+1.50
+90000
+.01 75000
+.0040
+1.600
+.300
+0
+34
+35
+1
+1
+.00100
+2.10
+10000
+.05
+3500
+.0450
+2.200
+.400
+0
+35
+36
+1
+1
+.00800
+3.00
+1800
+.40
+7000
+.3600
+1.200
+.100
+0
+36
+37
+1
+1
+.00100
+1.70
+1000
+.05
+1400
+.0450
+1.500
+.300
+0
+37
+38
+1
+1
+.00050
+1.70
+1000
+.03
+2100
+.0225
+1.700
+.400
+0
+38
+39
+1
+1
+.00300
+2.50
+2000
+.15
+1400
+.1350
+1.500
+.300
+0
+39
+40
+1
+1
+.00100
+1.70
+2000
+.05
+1400
+.0450
+1.700
+.200
+0
+40
+41
+1
+1
+.00004
+2.00
+1200
+.00
+4900
+.0022
+.900
+.200
+0
+41
+42
+1
+1
+.00004
+1.50
+3000
+.00 14000
+.0018
+1.200
+.300
+0
+42
+43
+1
+1
+.00050
+2.70
+2000
+.03 23000
+.0225
+2,000
+.500
+0
+43
+44
+1
+1
+.00050
+2.00
+2000
+.03
+3500
+.0225
+1.000
+.200
+0
+44
+45
+1
+1
+.00004
+2.10
+1000
+.00
+7000
+.0022
+1.700
+.300
+0
+45
+46
+1
+1
+.00010
+2.10
+1500
+.01
+5000
+.0045
+.900
+.300
+0
+46
+
+1
+2 3
+4	5	6	7	8	9
+10	11
+12 13
+47
+1 1
+.00070	1.70 3000	.04 1800 .315
+1.100 .100
+0 47
+48
+1 1
+.00100	2.30 5000	.05 2500 .0450
+1.000 .200
+0 48
+49
+2 10
+.03500	.00	200	1.75	0 .0000
+.000 .000
+1 49
+50
+2 10
+.07500	.00	200	3.75	0 .0000
+.000 .000
+1 50
+51
+2 10
+.09500	.00	150	4.75	0 .0000
+.000 .000
+1 51
+52
+1 1
+.00200	1.50 1300	1.10	700 1.0900
+1.600 .400
+0 52
+53
+1 1
+.00005	1.5090000	.0175000 .0040
+1.600 .200
+0 53
+54
+2 10
+.04000	.00	200	2.00	0 .0000
+.000 .000
+1 54
+55
+2 10
+.07500	.00	200	3.75	0 .0000
+.000 .000
+1 55
+56
+2 10
+.10000	.00	200	5.00	0 .0000
+.000 .000
+1 56
+57
+1 1
+.00200	1.70 5000	1.10	700 1.0900
+1.700 .300
+0 57
+58
+1 1
+.00005	1.5090000	.0175000 .0040
+1,600 .500
+0 58
+59	1	1
+The codes
+Column
+1
+2
+3
+4
+5*
+6
+7
+8*
+9*
+10*
+11*
+12
+13
+.00030	2.00 2000	.02 4000 .0135	.700 .200
+; used in the above table are:
+Description
+Stock Number
+1		= purchased
+2		= manufactured
+Lot size (units)
+Carrying cost (dollars/unit/period)
+Reorder cost (dollars per order)
+Stock on hand (units)
+Unit cost (dollars)
+Discount order quantity (units)
+Discount price (dollars per unit)
+Average lead time (periods)
+Standard deviation of the lead time (periods)
+Batch quantity (units)
+Stock Number * Applies only to purchased items.
+0 59
+Finished Out of Stock
+Product	Cost per Unit
+Number	per Period
+1	15.0000
+2	15.0000
+3	15.0000
+Some of the incoming material for stock number 25 is defective. The following is a listing of the amount of bad material received for the last 500 orders. The lot size for all of the orders was 100 units.21403024133432 154302031132 32 23030101121432 42130132534321 121043122102 13 11334201102323 45364332623432 20321023140321 142042332012 34 214432253642 13 453364431112 15 242543303223 15 144345446323 14 214233210023 15 322324331102 34 332544321222 64 344223435312 51
+4 2 1 0 3 6 2
+332313322100212 321221112425322 153423102315323 432134333232124 214324325435143 410342632432341 123565423212003 431020303221132 543213453423431 215426342125433 423403416523413 420345203124513 542130430241546 423765243211103 236412043103214 162040234134254 365233423615341Some of the incoming material for stock number 37 is defective. The following is a listing of the amount of bad material received for the last 500 orders. The lot size for all of the orders was 100 units.144345446323 14 032102314032 14 42130132534321 23030101121432 45364332623432 113342011023 23 242543303223 15 332544321222 64 214233210023 15 214432253642 13 203210231403 21 21403024133432 421301325343 21 45364332623432 142042332012 34 154302031132 32 32232433110234
+3 4 2 1 5 0 3
+542130430241546 310203032211321 432134333232124 153423102315323 123565423212003 410342632432341 420345203124513 162040234134254 423765243211103 215426342125433 431020303221132 332313322100212 432134333232124 123565423212003 543213453423431 321221112425322 236423426105651The following are the parameters for the quality control option for outgoing final products:
+The penalty cost per item for letting a bad final product leave the factory is 200.00 dollars.
+The cost incurred for inspecting an item is 1.00 dollar.
+The cost incurred for switching quality control plans or parameters is 50.00 dollars for each final product number changed.
+Some of the outgoing final products for final product number 3 are defective. The following is a listing of the number of bad final products manufactures from a sample of 500 orders. The lot size for all of the orders was 100 units.
+6
+7
+8
+6
+9
+8
+7
+6
+9
+8
+5
+7
+8
+4
+8
+7
+9
+8
+7
+9
+8
+7
+6
+8
+8
+10
+8
+9
+9
+6
+1
+6
+9
+7
+8
+5
+7
+8
+9
+7
+9
+8
+8
+6
+6
+9
+9
+11
+13
+11
+10
+9
+9
+7
+8
+8
+9
+12
+11
+5
+8
+9
+7
+8
+8
+9
+9
+10
+11
+12
+12
+12
+14
+11
+9
+9
+8
+7
+9
+9
+10
+9
+7
+7
+4
+5
+8
+7
+7
+5
+5
+0
+9
+8
+5
+8
+6
+0
+9
+6
+5
+9
+8
+6
+7
+4
+9
+8
+5
+3
+6
+8
+7
+4
+5
+9
+8
+6
+7
+4
+6
+7
+8
+9
+6
+7
+8
+4
+5
+9
+7
+9
+7
+8
+5
+6
+9
+7
+7
+5
+6
+12
+11
+13
+11
+10
+9
+6
+8
+7
+7
+8
+5
+6
+8
+7
+3
+6
+4
+8
+6
+9
+6
+7
+5
+6
+8
+7
+4
+5
+9
+6
+7
+5
+8
+7
+10
+11
+9
+6
+9
+8
+9
+6
+8
+7
+6
+7
+5
+0
+9
+8
+5
+6
+8
+4
+9
+8
+5
+7
+6
+5
+3
+7
+8
+5
+9
+7
+8
+4
+1
+0
+12
+9
+7
+8
+5
+6
+7
+4
+9
+8
+7
+4
+7
+8
+7
+6
+9
+8
+4
+6
+5
+8
+9
+8
+7
+5
+7
+8
+9
+8
+6
+4
+9
+8
+5
+7
+8
+9
+8
+7
+4
+12
+11
+10
+13
+6
+7
+8
+4
+9
+8
+7
+4
+6
+7
+8
+12
+8
+6
+1
+1
+5
+9
+8
+4
+6
+7
+9
+8
+5
+8
+7
+4
+5
+9
+8
+5
+6
+9
+8
+4
+2
+8
+7
+4
+5
+9
+8
+11
+15
+9
+8
+6
+9
+8
+8
+5
+7
+8
+7
+7
+6
+4
+6
+8
+9
+8
+7
+8
+7
+5
+8
+7
+4
+5
+3
+8
+7
+6
+3
+5
+7
+6
+5
+9
+3
+6
+9
+8
+7
+5
+7
+9
+8
+9
+8
+6
+7
+8
+6
+9
+8
+5
+6
+4
+9
+8
+7
+6
+7
+9
+9
+0
+9
+6
+7
+8
+9
+8
+7
+9
+8
+7
+5
+6
+9
+8
+7
+12
+14
+9
+8
+7
+5
+12
+11
+10
+7
+5
+6
+9
+8
+7
+5
+9
+8
+5
+6
+9
+8
+7
+4
+5
+9
+8
+6
+7
+9
+8
+7
+13
+8
+8
+6
+11
+10
+7
+8
+9
+8
+5
+8
+9
+8
+5
+6
+8
+9
+8
+7
+6
+5
+3
+5
+9
+8
+7
+4
+5
+7
+9
+8
+11
+10
+12
+9
+6
+8
+9
+8
+7
+9
+9
+0
+9
+9
+8
+7
+6
+5
+7
+8
+9
+8
+7
+8
+9
+8
+5
+6
+8
+10
+10
+11
+13
+12
+9
+8
+9
+7
+9
+7
+8
+7
+6
+5
+4
+8
+7
+6
+4
+9
+8
+6
+7
+5
+10
+9
+
+
+
+
+Work station process times in minutes per unit/batch:
+The process times for stock number
+2 at work
+station 4 are stochastic.
+A sample
+of 500 process times from this work station
+follows:5.26
+6.34
+7.12
+3.65
+4.56
+6.76
+6.37
+5.43
+6.74
+5.57
+8.52
+4.63
+6.49
+5.68
+2.89
+6.49
+5.79
+6.87
+8.49
+6.75
+4.61
+8.13
+6.19
+5.49
+6.19
+6.84
+5.37
+4.97
+8.28
+9.15
+7.26
+6.43
+6.28
+6.19
+5.27
+5.94
+6.24
+5.38
+4.59
+6.48
+5.87
+6.29
+7.29
+7.34
+8.13
+5.46
+6.75
+6.24
+7.26
+5.94
+5.86
+6.74
+7.34
+5.26
+6.49
+6.46
+6.23
+6.84
+5.26
+6.43
+6.35
+5.89
+6.84
+6.49
+6.86
+5.34
+6.76
+6.35
+5.78
+5.64
+5.38
+6.94
+5.64
+6.26
+6.95
+6.84
+5.67
+5.38
+5.84
+5.67
+6.19
+6.49
+6.57
+6.34
+5.94
+7.34
+4.37
+6.15
+6.45
+6.37
+5.38
+5.94
+6.54
+6.48
+6.45
+6.84
+5.34
+5.19
+5.64
+6.37
+7.15
+6.48
+7.29
+4.67
+4.08
+5.09
+5.64
+6.90
+6.04
+6.15
+5.49
+6.84
+5.67
+6.04
+5.04
+5.40
+6.10
+6.19
+6.64
+5.48
+6.40
+4.90
+5.16
+6.19
+6.34
+6.84
+6.75
+5.94
+5.86
+6.81
+6.45
+6.05
+6.44
+5.84
+7.26
+6.84
+5.16
+5.66
+6.84
+5.77
+6.83
+6.97
+5.79
+5.82
+5.22
+4.67
+5.88
+6.48
+5.97
+5.77
+6.13
+5.06
+6.10
+5.46
+6.38
+6.11
+5.44
+6.64
+5.59
+6.37
+5.68
+6.31
+6.02
+6.50
+6.38
+6.94
+6.45
+6.30
+5.02
+5.31
+5.99
+6.94
+7.13
+7.22
+6.55
+6.34
+6.58
+6.94
+6.48
+6.33
+6.55
+5.37
+6.98
+5.46
+5.67
+5.98
+6.88
+7.25
+7.16
+6.54
+6.83
+6.28
+6.04
+6.58
+5.05
+6.55
+5.38
+6.49
+6.31
+6.77
+5.86
+6.94
+7.21
+5.34
+5.84
+5.99
+5.38
+6.44
+5.64
+5.98
+4.97
+5.66
+6.40
+6.05
+5.64
+5.01
+5.38
+5.97
+5.97
+6.44
+5.99
+6.75
+6.04
+5.60
+5.18
+6.50
+6.08
+6.99
+5.68
+5.67
+6.18
+6.05
+6.05
+6.34
+5.16
+6.48
+7.13
+6.54
+6.34
+5.98
+6.98
+6.45
+6.01
+6.34
+5.20
+6.50
+6.24
+7.16
+6.34
+5.15
+6.85
+6.34
+5.78
+6.98
+6.15
+6.34
+6.30
+5.10
+5.06
+6.31
+4.90
+5.19
+6.84
+6.24
+6.34
+6.58
+6.94
+5.38
+5.68
+6.37
+6.94
+5.02
+6.10
+6.55
+6.44
+6.59
+6.37
+5.31
+5.99
+6.37
+6.54
+6.44
+5.66
+6.38
+6.10
+5.34
+5.99
+6.88
+5.64
+5.68
+6.97
+5.68
+5.02
+6.34
+5.06
+6.34
+6.10
+5.30
+6.07
+6.45
+6.84
+6.48
+5.98
+5.02
+6.33
+6.54
+5.88
+6.24
+6.85
+6.94
+6.66
+5.58
+6.67
+5.01
+6.54
+6.18
+5.68
+6.94
+5.35
+5.02
+9.04
+6.64
+5.59
+6.30
+6.33
+5.68
+6.94
+5.66
+6.33
+5.34
+7.01
+5.34
+5.06
+6.33
+6.94
+5.88
+6.54
+6.88
+6.34
+5.02
+6.67
+5.59
+6.54
+6.15
+6.02
+6.34
+6.65
+5.55
+5.00
+6.34
+6.38
+6.14
+5.34
+5.39
+6.67
+6.20
+6.03
+6.34
+6.34
+5.59
+6.34
+5.68
+6.68
+5.05
+6.34
+5.02
+6.03
+6.31
+5.60
+6.64
+5.02
+6.34
+5.39
+6.34
+5.25
+6.68
+6.69
+6.97
+5.67
+5.95
+4.96
+6.94
+5.64
+5.38
+6.65
+5.38
+5.06
+6.94
+5.86
+6.67
+5.48
+6.34
+5.02
+6.31
+5.30
+6.50
+4.96
+6.94
+5.67
+6.34
+5.36
+6.66
+5.38
+6.34
+5.95
+6.68
+6.35
+6.29
+6.30
+6.51
+6.67
+5.96
+6.68
+5.48
+5.59
+6.62
+5.84
+5.26
+6.31
+5.24
+5.67
+6.34
+5.68
+6.15
+6.02
+6.31
+5.02
+6.60
+5.35
+5.68
+5.94
+5.31
+5.02
+5.34
+4.96
+6.67
+5.59
+5.61
+5.05
+5.61
+5.62
+5.34
+6.15
+6.68
+5.94
+5.64
+5.16
+6.38
+4.98
+5.67
+6.34
+6.15
+6.84
+5.59
+6.05
+6.34
+5.06
+6.34
+5.60
+6.34
+5.19
+6.94
+6.34
+5.16
+6.68
+6.94
+5.59
+6.30
+6.34
+5.64
+9.67
+5.34
+5.12
+6.02
+6.90
+5.86
+6.94
+6.94
+5.56
+6.05
+6.90
+5.64
+5.05
+6.31
+5.60
+5.83
+6.67
+6.48
+7.15
+7.00
+6.95
+6.74
+5.98
+5.94
+5.67
+6.34
+5.19
+6.97
+7.03
+6.34
+
+
+
+
+The
+above
+stochastic
+process
+times
+appear
+’ as
+zeroes
+in the
+table
+
+below:Work station process time in minutes per unit/batch:
+Stock	Work StationNo.
+1
+2
+3
+4
+1
+0
+0
+0
+6
+2
+0
+0
+0
+0
+3
+0
+0
+0
+7
+4
+0
+0
+0
+0
+5
+0
+0
+0
+0
+6
+0
+0
+0
+0
+7
+0
+0
+0
+0
+8
+0
+0
+0
+0
+9
+0
+0
+0
+0
+10
+0
+0
+0
+0
+11
+0
+0
+0
+0
+12
+0
+0
+0
+0
+13
+0
+0
+0
+0
+14
+0
+0
+0
+0
+15
+0
+0
+0
+0
+16
+0
+0
+0
+0
+17
+0
+0
+0
+0
+18
+0
+0
+0
+0
+19
+0
+0
+0
+0
+20
+0
+0
+0
+0
+26
+0
+0
+0
+0
+29
+6
+0
+0
+0
+30
+0
+5
+0
+0
+31
+0
+0
+6
+0
+49
+6
+0
+0
+0
+50
+0
+5
+0
+0
+51
+0
+0
+5
+0
+54
+6
+0
+0
+0
+55
+0
+5
+0
+0
+56
+0
+0
+6
+0
+5	6	7	8	9	10
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	4
+0	0	0	0	0	4
+0	0	0	0	0	4
+0	0	0	0	0	4
+0	0	0	0	0	4
+0	0	0	0	0	4
+0	0	2	1	3	0
+0	0	2	2	3	0
+0	0	2	2	3	0
+0	0	2	1	3	0
+0	0	2	2	3	0
+0	0	2	2	3	0
+0	2	0	0	0	0
+0	0	0	0	0	0
+0	3	2	3	2	0
+0	3	2	3	2	0
+0	3	2	3	2	0
+0	0	2	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+0	0	0	0	0	0
+11	12	13	14	15
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+3	0	0	0	0
+3	0	0	0	0
+3	0	0	0	0
+3	0	0	0	0
+3	0	0	0	0
+3	0	0	0	0
+0	3	2	0	0
+0	3	2	0	0
+0	3	2	0	0
+0	3	2	0	0
+0	3	2	0	0
+0	3	2	0	0
+0	0	0	3	0
+0	0	0	0	3
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	3
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0
+0	0	0	0	0Work station set up times (in minutes)
+Stock No.
+Work Station
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+1
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+2
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+5
+0
+0
+0
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+5
+0
+0
+0
+0
+6
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+7
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+8
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+10
+0
+0
+0
+0
+10
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+11
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+12
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+13
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+14
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+15
+0
+0
+0
+0
+0
+0
+10
+5
+5
+0
+0
+0
+0
+0
+0
+16
+0
+0
+0
+0
+0
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+17
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+18
+0
+0
+0
+0
+0
+5
+10
+10
+5
+0
+0
+0
+0
+0
+0
+19
+0
+0
+0
+0
+0
+5
+10
+15
+10
+0
+0
+0
+0
+0
+0
+20
+0
+0
+0
+0
+0
+5
+10
+10
+5
+0
+0
+0
+0
+0
+0
+26
+0
+0
+0
+0
+0
+0
+15
+0
+0
+0
+0
+0
+0
+0
+5
+29
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+30
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+31
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+49
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+50
+0
+15
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+51
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+54
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+55
+0
+15
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+56
+0
+0
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+Work station hold quantities (in lots)
+Stock	Work Station
+No. 1	2	3	4	5	6	7	8	9	10	11	12	13	14	1510	0
+2		0	0
+3		0	0
+4		0	0
+5		0	0
+6		0	0
+7		0	0
+8		0	0
+9		0	0
+10	0	0
+11	0	0
+12	0	0
+13	0	0
+14	0	0
+15	0	0
+16	0	0
+17	0	0
+18	0	0
+19	0	0
+20	0	0
+26	0	0
+29	1	0
+30	0	1
+31	0	0
+49	1	0
+50	0	1
+51	0	0
+54	1	0
+55	0	1
+56	0	0
+0	10	0
+0	10	0
+0	10	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	1
+0	0	0	0
+0	0	0	1
+0	0	0	1
+0	0	0	1
+0	0	0	0
+0	0	0	0
+0	0	0	0
+10	0	0
+0	0	0	0
+0	0	0	0
+10	0	0
+0	0	0	0
+0	0	0	0
+10	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+111 111 ill
+111 111 111
+0 0 0 0 0 0
+111 111 ill 10	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0	0	0
+0 0 0 0 0 0 0 0 0 110
+110 110 110 110 110 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+10 0 10 0 10 0
+10 0 10 0
+10 0 0 10 0 0 1
+0 0 0 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0Work station sequence numbers
+Stock	Work StationNo. 12	3	4	5	6	7
+8	9	10	11	12	13	14	151	0001000
+2	0001000
+3	0001000
+4	0000000
+5	0000000
+6	0000000
+7	0000000
+8	0000000
+9	0000000
+10	0000004
+11	0000004
+12	0000004
+13	0000004
+14	0000004
+15	0000004
+16	0000010
+17	0000000
+18	0000013
+19	0000013
+20	0000013
+26	0000001
+29	1000000
+30	0100000
+31	0010000
+49	1000000
+50	0100000
+51	0010000
+54	1000000
+55	0100000
+56	0010000 00000000 00000000 00000000 00120000 00120000 00120000 00120000 00120000 00120000 35002	100
+35002	100
+35002100 35002	100
+35002	100
+35002	100
+00000020 00000001 24000000 24000000 24000000 00000002 00000000 00000000 00000000 00000	000
+00000000 00000000 00000000 00000000 00000	000The following is a sample of machine number 4
+of the
+time
+between breakdowns
+(in hours)
+
+42.35
+6.84
+53.15
+23.54
+6.89
+28.45
+34.28
+16.37
+18.27
+5.19
+35.28
+
+4.58
+26.34
+34.18
+2.67
+9.37
+6.48
+16.64
+7.64
+2.34
+1.37
+6.37
+
+12.54
+6.34
+13.48
+18.34
+5.34
+2.06
+20.09
+4.67
+6.37
+24.18
+19.34
+
+1.94
+6.34
+17.25
+7.94
+9.34
+2.59
+8.05
+4.48
+9.09
+21.08
+45.39
+
+32.18
+1.86
+34.28
+27.95
+20.38
+61.20
+8.64
+4.29
+6.37
+7.04
+32.07
+
+20.09
+3.25
+8.49
+6.34
+19.28
+6.37
+16.27
+2.04
+8.09
+9.99
+16.34
+
+14.67
+5.28
+7.94
+9.60
+4.39
+26.37
+16.46
+18.86
+44.38
+36.28
+50.01
+
+6.79
+9.49
+10.55
+29.37
+13.26
+6.04
+4.32
+9.99
+10.25
+18.62
+11.02
+
+52.39
+16.39
+14.95
+12.64
+20.94
+30.45
+25.34
+41.18
+16.34
+4.85
+7.86
+
+2.49
+15.55
+34.20
+21.19
+20.96
+4.65
+6.57
+12.65
+8.86
+4.38
+16.37
+
+4.78
+24.26
+13.27
+31.15
+12.58
+9.64
+6.84
+17.28
+16.37
+42.09
+6.48
+
+5.38
+16.48
+37.18
+12.64
+9.37
+42.01
+30.19
+24.73
+25.19
+10.16
+9.94
+
+6.75
+8.12
+4.44
+6.12
+41.02
+19.56
+13.42
+27.13
+22.10
+21.45
+18.23
+
+9.35
+8.15
+4.26
+5.38
+9.94
+8.86
+6.05
+10.02
+6.10
+4.35
+7.02
+
+13.05
+23.34
+21.02
+23.51
+29.34
+24.05
+26.31
+28.63
+24.16
+16.34
+15.25
+
+6.48
+8.64
+7.25
+7.74
+4.58
+69.15
+6.60
+5.03
+6.48
+6.04
+50.12
+
+46.34
+21.08
+29.15
+28.34
+34.02
+42.15
+31.05
+20.18
+23.34
+19.18
+5.34
+
+4.18
+8.67
+6.48
+5.48
+4.81
+9.18
+8.84
+2.06
+5.14
+5.07
+21.05
+
+6.185
+9.34
+5.18
+6.48
+7.68
+8.48
+10.18
+10.28
+18.54
+28.34
+24.18
+
+50.13
+24.03
+21.00
+21.18
+34.02
+23.34
+18.54
+1.12
+2.64
+8.64
+7.05
+
+6.48
+9.95
+8.17
+10.05
+12.18
+17.54
+06.18
+18.24
+31.28
+36.51
+21.05
+
+8.37
+6.01
+5.01
+9.64
+8.15
+2.37
+4.59
+6.15
+6.37
+8.14
+14.05
+
+13.38
+17.05
+2.43
+17.64
+16.27
+34.28
+62.03
+45.31
+2.64
+5.37
+9.15
+
+6.34
+5.38
+31.24
+15.38
+16.34
+5.34
+36.18
+63.45
+60.04
+23.38
+28.49
+
+34.25
+16.34
+10.05
+6.48
+5.64
+8.67
+7.21
+31.28
+5.02
+43.64
+49.65
+
+15.67
+18.64
+25.38
+17.62
+45.37
+23.15
+34.25
+3.35
+6.04
+5.18
+9.64
+
+7.15
+16.34
+24.05
+29.35
+28.14
+24.16
+26.15
+26.34
+27.34
+16.34
+10.09
+
+6.34
+5.05
+1.38
+7.15
+9.45
+6.27
+8.61
+20.04
+31.20
+6.64
+5.15
+
+9.95
+6.34
+1.15
+5.48
+8.82
+6.31
+5.36
+7.34
+16.34
+28.34
+41.05
+
+52.34
+61.05
+32.05
+34.31
+20.39
+61.31
+26.34
+36.34
+31.02
+19.34
+4.35
+
+16.34
+17.25
+23.34
+29.25
+21.17
+10.26
+13.34
+15.05
+16.02
+16.34
+15.15
+
+2.02
+3.15
+6.34
+4.05
+8.38
+5.59
+31.05
+60.02
+23.21
+42.05
+5.12
+
+30.3
+40.12
+5.31
+29.34
+27.05
+12.24
+15.06
+30.28
+50.20
+13.34
+32.05
+
+29.35
+27.18
+30.18
+4.15
+6.34
+1.35
+19.34
+21.02
+63.21
+34.05
+39.34
+
+40.05
+33.34
+26.62
+15.52
+11.15
+32.26
+31.21
+20.28
+22.05
+3.15
+1.32
+
+33.51
+43.12
+16.34
+23.34
+13.05
+12.28
+30.12
+13.35
+14.25
+28.29
+30.05
+
+14.35
+21.03
+13.02
+21.34
+3.56
+4.02
+5.15
+5.20
+5.56
+66.31
+22.12
+
+3.34
+5.02
+5.36
+60.12
+3.24
+5.47
+7.81
+7.77
+9.64
+9.28
+31.25
+
+63.25
+43.31
+21.12
+3.58
+6.15
+5.34
+4.18
+5.39
+6.17
+7.68
+8.89
+
+5.46
+3.51
+9.37
+5.68
+4.95
+5.68
+1.35
+10.35
+16.05
+16.37
+18.85
+
+10.09
+13.45
+21.28
+5.18
+4.35
+29.67
+41.37
+32.35
+6.02
+5.37
+87.14
+
+16.34
+18.36
+19.58
+50.12
+34.05
+39.34
+22.29
+6.51
+6.79
+9.49
+10.55
+
+28.37
+13.26
+7.04
+4.32
+8.99
+20.25
+15.62
+11.02
+15.67
+18.64
+22.38
+
+17.62
+45.37
+23.15
+34.25
+3.35
+6.04
+5.18
+9.64
+8.37
+6.01
+5.01
+
+8.64
+32.15
+4.15
+12.58
+2.37
+7.64
+6.59
+6.84
+8.15
+17.28
+6.37
+6.14
+14.05
+9.95
+6.34
+1.15
+23.15
+21.35
+25.34
+26.34
+28.34
+24.15
+26.34
+27.25
+22.26
+21.02
+20.34
+26.34
+27.05
+24.02
+26.34
+29.01
+22.24
+26.34
+24.45
+23.84
+56.34
+24.31
+27.02
+20.34
+21.31
+24.32
+26.35
+20.34
+20.16
+23.31
+21.02
+25.68
+29.94
+21.34
+27.34
+26.15
+24.83
+26.34
+24.15
+29.56
+26.48
+23.15
+26.34
+24.15
+20.31
+21.26
+22.35
+24.05
+26.37
+24.59
+29.94
+22.04
+20.35
+21.05
+29.67
+24.09
+29.84
+23.15
+21.05
+24.05
+28.05
+26.34
+20.15
+26.34
+26.37
+28.34
+29.34
+21.05
+26.34
+28.34
+26.34
+21.02
+29.35
+28.04
+27.34
+29.06
+24.26
+25.34
+26.34
+27.06
+25.34
+26.31
+24.02
+27.15
+26.37
+25.16
+24.05
+26.15
+23.34
+25.52
+20.31
+22.15
+23.07
+27.64
+29.34
+24.05
+26.34
+22.31
+20.15
+25.34
+26.34
+26.38
+29.64
+24.35
+21.02
+22.03
+26.37
+29.06
+26.48
+23.05
+27.68
+20.34
+26.00
+28.67
+29.46
+24.05
+26.37
+29.57
+26.37
+27.39
+26.24
+23.18
+26.34
+27.68
+29.96
+26.04
+25.70
+26.34
+26.31
+24.05
+26.15
+26.37
+29.45
+27.64
+29.36
+24.15
+25.38
+28.05
+24.06
+24.15
+28.18
+28.84
+29.64
+27.58
+24.87
+24.15
+28.54
+29.34
+27.15
+24.68
+29.64
+23.18
+26.34
+27.05
+28.39
+26.34
+28.64
+25.15
+26.37
+20.06
+25.31
+23.00
+23.10
+24.03
+26.30
+25.04
+28.09
+29.90
+24.68
+27.05
+26.34
+29.64
+28.12
+23.31
+29.58
+26.37
+24.58
+29.34
+24.26
+29.64
+27.51
+20.34
+26.31
+24.30
+24.31
+26.31
+26.34
+25.02
+29.68
+28.84
+25.67
+29.46
+26.35
+21.38
+21.02
+26.34
+29.03
+26.90
+28.84
+27.64
+24.57
+27.06
+26.34
+28.09
+24.37
+24.06
+25.34
+26.34
+21.56
+20.35
+26.34
+21.25
+26.34
+29.64
+28.64
+26.34
+21.03
+25.34
+23.04
+21.38
+29.67
+27.15
+28.64
+29.67
+27.26
+27.64
+26.39
+25.06
+29.67
+27.15
+24.85
+26.32
+20.64
+23.68
+22.14
+26.34
+26.34
+21.05
+23.35
+27.64
+29.64
+26.34
+27.64
+29.64
+24.67
+26.33
+27.38
+24.18
+29.64
+24.36
+26.31
+20.34
+26.30
+20.31
+22.26
+22.35
+23.00
+27.06
+29.34
+28.15
+26.34
+24.38
+28.03
+24.06
+29.64
+26.34
+21.05
+25.38
+26.04
+27.04
+21.28
+22.28
+20.95
+21.06
+25.06
+26.95
+27.85
+28.64
+24.15
+21.05
+26.85
+27.74
+25.59
+24.15
+28.58
+24.27
+22.27
+21.12
+20.95
+22.38
+28.54
+21.07
+24.38
+27.68
+26.48
+26.34
+25.16
+29.64
+26.64
+27.58
+29.67
+24.02
+28.67
+24.15
+29.67
+28.64
+25.15
+29.67
+24.18
+25.05
+29.67
+22.04
+23.05
+27.54
+29.05
+26.34
+27.19
+24.39
+26.38
+27.05
+26.34
+29.05
+28.84
+24.48
+26.68
+20.39
+21.34
+26.37
+29.84
+28.48
+24.57
+27.08
+29.61
+20.15
+23.64
+29.56
+24.58
+27.34
+24.37
+27.58
+29.64
+24.16
+26.37
+28.85
+20.18
+29.67
+27.64
+27.59
+26.84
+24.68
+26.69
+23.14
+21.05
+25.02
+23.16
+24.59
+27.68
+24.68
+29.64
+21.28
+27.64
+29.65
+26.14
+22.02
+20.34
+21.03
+22.35
+26.34
+20.12
+20.38
+22.35
+26.34
+25.31
+20.35
+26.34
+21.35
+20.15
+21.05
+25.34
+20.36
+23.31
+23.51
+24.18
+26.34
+25.58
+22.06
+26.15
+21.05
+29.97
+27.34
+27.05
+28.64
+24.16
+25.35
+26.15
+20.34
+26.15
+26.34
+29.68
+28.15
+29.64
+28.48
+27.18
+29.64
+25.05
+24.06
+26.38
+29.64
+28.51
+26.54
+24.16
+26.38
+29.64
+28.15
+27.15
+26.31
+21.02
+20.35
+22.26
+23.02
+25.31
+20.02
+22.03
+21.65
+29.68
+27.35
+26.75
+21.95
+25.84
+23.85
+20.18
+26.79
+20.89
+23.87
+21.08
+29.65
+26.38
+24.08
+26.38
+26.15
+26.98
+20.05
+25.68
+24.19
+27.68
+29.64
+25.39
+29.64
+21.05
+26.03
+23.32
+22.06
+26.33
+21.95
+29.26
+26.24
+23.05
+29.64
+21.04
+23.34
+25.52
+20.31
+22.15
+23.07
+27.64
+29.34
+24.05
+26.34
+22.31
+20.15
+27.18
+22.05
+29.67
+22.04
+23.15
+27.57
+29.05
+26.34
+27.19
+24.39
+26.38
+27.64
+29.64
+24.67
+26.33
+27.38
+24.18
+29.64
+24.36
+26.31
+20.34
+26.30
+24.31
+22.26
+22.37
+23.02
+27.06
+29.54
+28.15
+26.34
+
+
+
+
+
+
+The following is a sample
+machine number 4
+of previous
+repair times
+(in minutes)
+for
+Component Requirements
+Parent
+
+
+
+Stock
+1
+II	III	IV
+V
+Number
+ABC
+ABC	ABC	ABC
+ABC
+
+
+1
+51
+1
+4
+26
+1
+4
+21
+1
+4
+24
+1
+4
+27
+1
+4
+2
+56
+1
+4
+26
+1
+4
+22
+1
+4
+24
+1
+4
+27
+1
+4
+3
+31
+1
+4
+26
+1
+4
+23
+1
+4
+24
+1
+4
+27
+1
+4
+4
+52
+1
+10
+53
+36
+10
+35
+2
+11
+36
+1
+11
+0
+0
+0
+5
+57
+1
+10
+58
+36
+10
+35
+2
+11
+36
+1
+11
+0
+0
+0
+6
+33
+1
+10
+34
+36
+10
+35
+2
+11
+36
+1
+11
+0
+0
+0
+7
+52
+1
+10
+53
+36
+10
+35
+2
+11
+37
+1
+11
+38
+1
+11
+8
+57
+1
+10
+58
+36
+10
+35
+2
+11
+37
+1
+11
+38
+1
+11
+9
+33
+1
+10
+34
+36
+10
+35
+2
+11
+37
+1
+11
+38
+1
+11
+10
+39
+1
+13
+32
+1
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+11
+39
+1
+13
+32
+1
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+12
+39
+1
+13
+32
+1
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+13
+39
+1
+13
+32
+1
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+14
+39
+1
+13
+32
+1
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+15
+39
+1
+13
+32
+1
+9
+0
+0
+0
+0
+0
+0
+0
+0
+0
+16
+28
+1
+6
+40
+1
+14
+24
+1
+14
+42
+2
+14
+41
+1
+14
+17
+43
+1
+15
+44
+1
+15
+45
+1
+15
+46
+1
+15
+0
+0
+0
+18
+28
+3
+6
+59
+2
+7
+32
+1
+9
+0
+0
+0
+0
+0
+0
+19
+28
+4
+6
+59
+2
+7
+32
+1
+9
+0
+0
+0
+0
+0
+0
+20
+28
+5
+6
+59
+2
+7
+32
+1
+9
+0
+0
+0
+0
+0
+0
+26
+48
+2
+7
+44
+2
+7
+47
+1
+15
+0
+0
+0
+0
+0
+0
+29
+20
+1
+1
+9
+1
+1
+15
+1
+1
+24
+2
+1
+25
+2
+1
+30
+29
+1
+2
+6
+1
+2
+12
+1
+2
+24
+2
+2
+25
+2
+2
+31
+30
+1
+3
+16
+1
+3
+17
+1
+3
+24
+1
+3
+27
+1
+3
+49
+18
+1
+1
+13
+1
+1
+7
+1
+1
+24
+2
+1
+25
+2
+1
+50
+49
+1
+2
+4
+1
+2
+10
+1
+2
+24
+2
+2
+25
+2
+2
+51
+50
+1
+3
+16
+1
+3
+17
+1
+3
+24
+1
+3
+27
+1
+3
+54
+19
+1
+1
+8
+1
+1
+14
+1
+1
+24
+2
+1
+25
+2
+1
+55
+54
+1
+2
+5
+1
+2
+11
+1
+2
+24
+2
+2
+25
+2
+2
+56
+55
+1
+3
+16
+1
+3
+17
+1
+3
+24
+1
+3
+27
+1
+3
+
+The codes for the above table are:
+Code	Description
+Roman Numbers Order components are input
+A	Component stock number
+B	Quantity required per unit/batch
+C	Work station where component
+is input
+The number of minutes per day that each
+work station was operating at the end last week:
+Work Station
+Number of Minutes
+1
+480
+2
+480
+3
+480
+4
+480
+5
+0
+6
+480
+7
+480
+8
+480
+9
+480
+10
+480
+11
+480
+12
+480
+13
+480
+14
+480
+15
+480
+
+Monetary Rates (All values are
+in dollars per minute.):
+Work
+Station
+Code 3	4
+1
+.0450
+.0460
+.0480
+.0690
+.0030
+.0010
+2
+.0460
+.0470
+.0490
+.0700
+.0030
+.0010
+3
+.0470
+.0480
+.0500
+.0720
+.0030
+.0010
+4
+.0430
+.0440
+.0460
+.0660
+.0050
+.0010
+5
+.0000
+.0000
+.0000
+.0000
+.0000
+.0000
+6
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+7
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+8
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+9
+.0430
+.0440
+.0460
+.0660
+.0800
+.0600
+10
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+11
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+12
+.0450
+.0460
+.0480
+.0690
+.0300
+.0200
+13
+.0450
+.0460
+.0480
+.0690
+.0400
+.0300
+14
+.0430
+.0440
+.0460
+.0660
+.0020
+.0010
+15
+.0430
+.0440
+.0460
+.0660
+.0020
+.0010
+The codes for the above table are:
+Code
+Description1	Man	rate	for	the	1st	shift
+2	Man	rate	for	the	2nd	shift
+3	Man	rate	for	the	3rd	shift
+4		Man	rate	for	overtime
+5		Working machine rate
+6		Idle machine rate
+Historical final product demands:
+
+Final
+Product
+Number
+Final
+Product
+Number
+Period
+1
+2
+3
+Period
+1
+2
+3
+1
+86
+108
+148
+32
+56
+107
+181
+2
+78
+120
+158
+33
+62
+107
+182
+3
+73
+117
+153
+34
+67
+112
+184
+4
+61
+120
+169
+35
+70
+115
+168
+5
+57
+116
+152
+36
+84
+118
+191
+6
+54
+119
+182
+37
+88
+115
+192
+7
+59
+121
+166
+38
+98
+119
+202
+8
+57
+116
+164
+39
+101
+119
+159
+9
+64
+121
+150
+40
+91
+122
+285
+10
+75
+126
+150
+41
+94
+115
+150
+11
+85
+122
+162
+42
+83
+126
+185
+12
+98
+106
+158
+43
+75
+107
+194
+13
+94
+85
+156
+44
+64
+129
+196
+14
+92
+114
+123
+45
+71
+136
+198
+15
+84
+112
+177
+46
+65
+131
+176
+16
+87
+110
+178
+47
+70
+122
+178
+17
+81
+108
+167
+48
+65
+135
+191
+18
+58
+109
+165
+49
+86
+143
+184
+19
+50
+107
+170
+50
+94
+122
+208
+20
+56
+114
+171
+51
+101
+133
+206
+21
+61
+114
+191
+52
+100
+134
+223
+22
+65
+93
+175
+53
+104
+130
+234
+23
+79
+94
+156
+54
+100
+137
+207
+24
+85
+106
+151
+55
+90
+135
+184
+25
+95
+94
+182
+56
+82
+132
+227
+26
+100
+109
+168
+57
+71
+129
+207
+27
+96
+104
+181
+58
+69
+159
+207
+28
+85
+106
+165
+59
+68
+148
+204
+29
+77
+113
+162
+60
+72
+130
+232
+30
+69
+112
+198
+61
+81
+124
+189
+31
+65
+67
+180
+62
+82
+98
+182
+
+
+Final
+Product
+Number
+Final
+Product
+Number
+Period
+1
+2
+3
+Period
+1
+2
+3
+63
+99
+129
+172
+113
+94
+150
+246
+64
+104
+128
+223
+114
+102
+148
+263
+65
+109
+133
+195
+115
+113
+138
+256
+66
+106
+143
+228
+116
+128
+147
+269
+67
+105
+127
+225
+117
+125
+145
+283
+68
+94
+125
+231
+118
+120
+143
+260
+69
+95
+134
+209
+119
+120
+148
+270
+70
+74
+118
+223
+120
+102
+132
+258
+71
+68
+130
+241
+121
+99
+145
+254
+72
+72
+130
+207
+122
+89
+142
+259
+73
+78
+120
+222
+123
+88
+145
+259
+74
+81
+116
+209
+124
+88
+142
+269
+75
+96
+113
+232
+125
+93
+142
+255
+76
+104
+133
+239
+126
+113
+142
+285
+77
+112
+126
+250
+127
+110
+150
+284
+78
+113
+134
+240
+128
+109
+131
+268
+79
+112
+122
+235
+129
+128
+141
+283
+80
+105
+123
+226
+130
+129
+135
+275
+81
+97
+124
+242
+
+
+
+
+82
+82
+126
+197
+
+
+
+
+83
+81
+121
+249
+
+
+
+
+84
+81
+126
+246
+
+
+
+
+85
+89
+126
+235
+
+
+
+
+86
+77
+132
+227
+
+
+
+
+87
+90
+186
+229
+
+
+
+
+88
+97
+143
+228
+
+
+
+
+89
+106
+128
+233
+
+
+
+
+90
+117
+135
+237
+
+
+
+
+91
+118
+137
+223
+
+
+
+
+92
+114
+98
+228
+
+
+
+
+93
+109
+121
+250
+
+
+
+
+94
+100
+129
+243
+
+
+
+
+95
+93
+137
+245
+
+
+
+
+96
+77
+140
+249
+
+
+
+
+97
+76
+129
+249
+
+
+
+
+98
+75
+191
+222
+
+
+
+
+99
+85
+149
+246
+
+
+
+
+100
+82
+145
+250
+
+
+
+
+101
+104
+152
+238
+
+
+
+
+102
+109
+153
+252
+
+
+
+
+103
+117
+139
+246
+
+
+
+
+104
+114
+153
+290
+
+
+
+
+105
+120
+150
+259
+
+
+
+
+106
+114
+168
+260
+
+
+
+
+107
+104
+152
+232
+
+
+
+
+108
+98
+142
+261
+
+
+
+
+109
+86
+155
+225
+
+
+
+
+110
+87
+145
+241
+
+
+
+
+ill
+82
+152
+261
+
+
+
+
+112
+86
+151
+257
+
+
+
+
+B-19
+Welcome to run number 1
+Your forecasts are:
+Final
+Product Number
+1
+2
+3
+Quantity
+94
+148
+275
+
+You have submitted the following purchase orders:
+Stock
+Number
+Quantity
+25
+14000
+27
+7000
+28
+2845
+32
+2157
+37
+1400
+38
+1874
+39
+1400
+44
+3522
+45
+7367
+46
+4659
+
+Hold quantity change(s) in lots:
+Work	Stock	New Hold
+Station	Number	Quantity
+4	1	20
+You have submitted the following production work orders:
+Order Stock Number of
+Number Number Units/Batches
+1	2	110
+2	3	50B-20
+Work station available times:
+Work
+Time
+Forced
+Station
+Available
+Worktime
+1
+2400
+0
+2
+2400
+0
+3
+2400
+0
+4
+2400
+0
+5
+0
+0
+6
+2400
+0
+7
+2400
+0
+8
+2400
+0
+9
+2400
+0
+10
+2400
+0
+11
+2400
+0
+12
+2400
+0
+13
+2400
+0
+14
+2400
+0
+15
+2400
+0
+
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.
+On day 1 out of 10 units of stock number 2 just finished, 0 were bad.B-21
+On day
+2
+out of 10 units
+of stock
+number
+2
+just finished,
+0 were bad
+On day
+2
+out of 10 units
+of stock
+number
+2
+just finished,
+0 were bad
+On day
+2
+out of 10 units
+of stock
+number
+2
+just finished,
+0 were bad
+On day
+2
+out of 10 units
+of stock
+number
+2
+just finished,
+0 were bad
+On day
+2
+out of 10 units
+of stock
+number
+3
+just finished,
+0 were bad
+
+Machine 4 broke down on day 2 at time 345 minutes.
+Repairs on machine 4 were completed on day 2 at time 370 minutes.
+On day 2 out of 10 units of stock number 3 just finished, 0 were bad.
+On day 2 out of 10 units of stock number 3 just finished, 1 were bad.
+On day 3 out of 10 units of stock number 3 just finished, 0 were bad.
+On day 3 out of 10 units of stock number 3 just finished, 1 were bad.
+Purchase order for 14000 units of stock number 25 arrived on day 3. Only 13724 units from the order were good.
+Purchase order for 7000 units of stock number 27 arrived on day 4B-22
+Purchase order for 1874 units of stock number 38 arrived on day 4
+Purchase order for 4659 units of stock number 46 arrived on day 4
+Purchase order for 3522 units of stock number 44 arrived on day 5
+Final product number 3 is out of stock 3 units on day 5
+Results of forecasts for run number 1:
+Final
+Product
+Number
+Forecast
+Actual
+Demand
+Error
+Absolute Sum Errors
+Sum Errors Squared
+1
+94
+132
+-38
+38
+1444
+2
+148
+125
+23
+23
+529
+3
+275
+301
+-26
+26
+676
+
+Status of the production system at the end of run number 1:
+Waiting lines at time 2400:
+Work	Stock	Order	Queue
+Station Number Quantity Number Position
+
+Work in process:
+Work
+Stock
+Order
+Station
+Number
+Quantity Number
+Hold block
+status:
+
+Work Stock	Order
+Station Number Quantity NumberIdle time results in minutes:
+Work Station
+Time Idle
+Man Idle Cost
+Machine Idle Cost
+1
+2400
+108.00
+2.40
+2
+2400
+110.40
+2.40
+3
+2400
+112.80
+2.40
+4
+1330
+57.19
+1.33
+6
+2400
+108.00
+48.00
+7
+2400
+108.00
+48.00
+8
+2400
+108.00
+48.00
+9
+2400
+103.20
+144.00
+10
+2400
+108.00
+48.00
+11
+2400
+108.00
+48.00
+12
+2400
+108.00
+48.00
+13
+2400
+108.00
+72.00
+14
+2400
+103.20
+2.40
+15
+2400
+103.20
+2.40
+Totals
+32530
+1453.99
+517.33
+Grand total:
+1971.32
+
+
+
+Work station usages:
+Work Station
+Number
+of Setups
+Shutdown
+Time
+on Day 5
+1
+
+0
+
+480
+
+2
+
+0
+
+480
+
+3
+
+0
+
+480
+
+4
+
+2
+
+480
+
+5
+
+0
+
+0
+
+6
+
+0
+
+480
+
+7
+
+0
+
+480
+
+8
+
+0
+
+480
+
+9
+
+0
+
+480
+
+10
+
+0
+
+480
+
+11
+
+0
+
+480
+
+12
+
+0
+
+480
+
+13
+
+0
+
+480
+
+14
+
+0
+
+480
+
+15
+
+0
+
+480
+
+Summary of inventory activities
+for the period:
+Stock
+Unit
+On Order/
+Carry
+Stock
+Stock
+Number
+Cost
+Issues
+Receipts
+Back Order
+Cost
+on Hand
+Number
+1
+5.500
+132
+0
+0
+242.880
+168
+1
+2
+6.771
+125
+110
+0
+92.400
+35
+2
+3
+9.060
+301
+48
+3
+135.980
+0
+3
+4
+.900
+0
+0
+0
+9.000
+500
+4
+5
+.925
+0
+0
+0
+2.775
+150
+5
+6
+.950
+0
+0
+0
+2.850
+150
+6
+7
+.550
+0
+0
+0
+1.100
+100
+7
+8
+.550
+0
+0
+0
+1.650
+150
+8
+9
+.625
+0
+0
+0
+1.875
+150
+9
+10
+.500
+0
+0
+0
+1.500
+150
+10
+11
+.400
+0
+0
+0
+1.600
+200
+11
+12
+.400
+0
+0
+0
+3.200
+400
+12
+13
+.400
+0
+0
+0
+1.600
+200
+13
+14
+.500
+0
+0
+0
+2.000
+200
+14
+15
+.400
+0
+0
+0
+2.400
+300
+15
+16
+.400
+0
+0
+0
+5.600
+700
+16
+17
+.150
+0
+0
+0
+1.800
+600
+17
+18
+.550
+0
+0
+0
+2.200
+200
+18
+19
+.600
+0
+0
+0
+2.400
+200
+19
+20
+.650
+0
+0
+0
+3.900
+300
+20
+21
+.200
+0
+0
+0
+3.000
+750
+21
+22
+.250
+110
+0
+0
+2.730
+540
+22
+23
+.250
+50
+0
+0
+2.810
+550
+23
+24
+.003
+160
+0
+0
+1.194
+29840
+24
+25
+.002
+0
+13724
+276
+.449
+16724
+25
+26
+.375
+160
+0
+0
+4.185
+540
+26
+27
+.005
+160
+7000
+0
+.466
+8840
+27
+28
+.050
+0
+0
+2845
+4.000
+4000
+28
+29
+2,000
+0
+0
+0
+8.000
+200
+29
+30
+3.750
+0
+0
+0
+15.000
+200
+30
+31
+5,000
+50
+0
+0
+16.200
+150
+31
+32
+.075
+0
+0
+2157
+6.000
+4000
+32
+33
+1.100
+0
+0
+0
+10.000
+5000
+33
+34
+.005
+0
+0
+0
+4.500
+90000
+34
+35
+.050
+0
+0
+0
+10.000
+10000
+35
+36
+.400
+0
+0
+0
+14.400
+1800
+36
+37
+.050
+0
+0
+1400
+1.000
+1000
+37
+38
+.026
+0
+1874
+0
+.875
+2874
+38
+39
+.150
+0
+0
+1400
+6.000
+2000
+39
+40
+.050
+0
+0
+0
+2.000
+2000
+40
+41
+.003
+0
+0
+0
+.048
+1200
+41
+42
+.002
+0
+0
+0
+.120
+3000
+42
+43
+.025
+0
+0
+0
+1.000
+2000
+43
+44
+.023
+0
+3522
+0
+1.352
+5522
+44
+45
+.003
+0
+0
+7367
+.040
+1000
+45
+46
+.006
+0
+4659
+0
+.336
+6159
+46
+47
+.035
+0
+0
+0
+2.100
+3000
+47
+
+Stock
+Unit
+
+
+On Order/
+Carry
+Stock
+Stock
+Number
+Cost
+Issues
+Receipts
+Back Order
+Cost
+on Hand
+Number
+48
+.050
+0
+0
+0
+5.000
+5000
+48
+49
+1.750
+0
+0
+0
+7,000
+200
+49
+50
+3.750
+0
+0
+0
+15.000
+200
+50
+51
+4.750
+0
+0
+0
+14.250
+150
+51
+52
+1.100
+0
+0
+0
+2.600
+1300
+52
+53
+.005
+0
+0
+0
+4.500
+90000
+53
+54
+2.000
+0
+0
+0
+8.000
+200
+54
+55
+3.750
+0
+0
+0
+15.000
+200
+55
+56
+5.000
+110
+0
+0
+9.600
+90
+56
+57
+1.100
+0
+0
+0
+10,000
+5000
+57
+58
+.005
+0
+0
+0
+4.500
+90000
+58
+59
+.015
+0
+0
+0
+.600
+2000
+59
+
+Quality control
+Final
+Product
+Number 1
+information:
+2	3
+Code
+4
+5
+6
+7
+1	0
+.00	0
+.00
+.00
+.00
+0
+2	0
+.00	0
+.00
+.00
+.00
+0
+3	0
+.00	0
+.00
+50.00
+50.00
+0
+
+The codes for the above table are: (all costs are in dollars)
+Code	Description
+1		The number of bad products leaving the plant during the current period
+2		The total cost incurred for letting bad products leave the plant during the current period
+3		The number of bad products leaving the plant since the beginning of the simulation4		The total cost incurred for letting bad products leave the plant since the beginning of the simulation
+5		The total inspection cost incurred during the current period
+6		The total inspection cost incurred since the beginning of the simulation
+7		The total number of items currently in the final product lot buffer if lot inspection is used
+The following were the parameters used for the quality control option for outgoing final products:
+For
+final product number
+1,
+no final products were inspected.
+For
+final product number
+2,
+no final products were inspected.
+For
+final product number
+3,
+every final product was inspected
+
+Direct manufacturing costs (this run):
+Labor cost (not idle) is Machine cost (not idle) is Materials used cost is
+44.94
+5.23
+41.20
+
+Total
+direct manufacturing cost this period is
+91.36
+Total
+direct manufacturing cost to date is
+91.36
+
+Total manufacturing cost (this run):
+Total machine cost is Total labor cost is Materials used cost is Total overhead cost is
+Total shift change cost is
+522.56
+1498.92
+41.20
+1749.46 .00
+Total manufacturing cost this period is
+3812.14
+Total manufacturing cost to date is
+3812.14
+
+Inventory costs (this run):
+Total order cost is
+Total carrying cost is
+Total out of stock cost is
+Total inventory cost this period is
+Total inventory cost to date is
+Summary of cost report after 1 run(s):
+Total plant cost this period is
+Total plant cost to date is
+Value of materials received this period is Total value of current inventory on hand is Excess inventory penalty cost this period is Excess inventory penalty cost to date is
+Total cost incurred for letting bad products leave the plant this period is
+Total inspection cost incurred this period is
+Total cost this period is
+Total cost to date is
+Total cost after 1 runs is
+19.40
+732.57
+9.00
+760.97
+760.97
+4573.11
+4573.11
+211.08
+26264.10
+316.02
+316.02
+.00
+50.00
+4939.13
+4939.13
+4939.13 dollars.
+
+Simulation number 1 is complete."Mize, Joe H., Production System Simulator (PROSIM V): A User's
