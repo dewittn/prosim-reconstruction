@@ -144,9 +144,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for operator in company.workforce.operators %}
+            {% for operator in company.workforce.operators.values() %}
             <tr>
-                <td>{{ operator.name }}</td>
+                <td>{{ operator.display_name }}</td>
                 <td>{{ operator.department.value }}</td>
                 <td>{{ operator.training_status.value }}</td>
             </tr>
