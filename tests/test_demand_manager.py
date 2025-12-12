@@ -29,7 +29,7 @@ class TestDemandManagerInit:
         """Test initialization with default configuration."""
         manager = DemandManager()
         assert manager.config is not None
-        assert manager.base_demand == {"X": 600.0, "Y": 400.0, "Z": 200.0}
+        assert manager.base_demand == {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
 
     def test_init_with_custom_config(self):
         """Test initialization with custom configuration."""
@@ -124,13 +124,13 @@ class TestForecastGeneration:
         )
 
         # With 0 std dev, should be exactly base demand
-        assert forecast.estimated_demand == 600.0
+        assert forecast.estimated_demand == 8467.0
 
     def test_forecast_all_product_types(self):
         """Test forecast generation for all product types."""
         manager = DemandManager(random_seed=42)
 
-        for product_type, expected_base in [("X", 600.0), ("Y", 400.0), ("Z", 200.0)]:
+        for product_type, expected_base in [("X", 8467.0), ("Y", 6973.0), ("Z", 5475.0)]:
             forecast = manager.generate_forecast(
                 product_type=product_type,
                 shipping_week=4,
@@ -152,10 +152,10 @@ class TestActualDemand:
         )
         assert isinstance(result, DemandGenerationResult)
         assert result.product_type == "X"
-        assert result.base_demand == 600.0
-        assert result.actual_demand == 600.0  # Base demand at shipping
+        assert result.base_demand == 8467.0
+        assert result.actual_demand == 8467.0  # Base demand at shipping
         assert result.variation == 0.0
-        assert result.total_demand == 600.0
+        assert result.total_demand == 8467.0
 
     def test_reveal_actual_demand_with_carryover(self):
         """Test actual demand with carryover from previous period."""
@@ -165,15 +165,15 @@ class TestActualDemand:
             shipping_week=4,
             carryover=100.0,
         )
-        assert result.actual_demand == 400.0  # Base Y demand
+        assert result.actual_demand == 6973.0  # Base Y demand
         assert result.carryover_from_previous == 100.0
-        assert result.total_demand == 500.0  # 400 + 100
+        assert result.total_demand == 7073.0  # 6973 + 100
 
     def test_reveal_actual_demand_all_products(self):
         """Test actual demand revelation for all products."""
         manager = DemandManager()
 
-        for product_type, expected in [("X", 600.0), ("Y", 400.0), ("Z", 200.0)]:
+        for product_type, expected in [("X", 8467.0), ("Y", 6973.0), ("Z", 5475.0)]:
             result = manager.reveal_actual_demand(product_type, shipping_week=4)
             assert result.actual_demand == expected
 
@@ -206,9 +206,9 @@ class TestShippingPeriodDemand:
         assert result.demands["Z"].carryover_from_previous == 10.0
 
         # Total demand should include carryover
-        assert result.demands["X"].total_demand == 650.0  # 600 + 50
-        assert result.demands["Y"].total_demand == 430.0  # 400 + 30
-        assert result.demands["Z"].total_demand == 210.0  # 200 + 10
+        assert result.demands["X"].total_demand == 8517.0  # 8467 + 50
+        assert result.demands["Y"].total_demand == 7003.0  # 6973 + 30
+        assert result.demands["Z"].total_demand == 5485.0  # 5475 + 10
 
     def test_total_demand_by_product_property(self):
         """Test total_demand_by_product property."""
@@ -220,9 +220,9 @@ class TestShippingPeriodDemand:
         )
 
         totals = result.total_demand_by_product
-        assert totals["X"] == 700.0  # 600 + 100
-        assert totals["Y"] == 450.0  # 400 + 50
-        assert totals["Z"] == 225.0  # 200 + 25
+        assert totals["X"] == 8567.0  # 8467 + 100
+        assert totals["Y"] == 7023.0  # 6973 + 50
+        assert totals["Z"] == 5500.0  # 5475 + 25
 
 
 class TestShippingWeekHelpers:
@@ -318,7 +318,7 @@ class TestDemandScheduleManagement:
         schedule = manager.initialize_demand_schedule(start_week=1, periods_ahead=2)
 
         # Ship some products at week 4
-        units_shipped = {"X": 500.0, "Y": 400.0, "Z": 200.0}
+        units_shipped = {"X": 8367.0, "Y": 6973.0, "Z": 5475.0}
         updated_schedule, demand, carryover = manager.process_shipping_week(
             schedule=schedule,
             shipping_week=4,
@@ -328,8 +328,8 @@ class TestDemandScheduleManagement:
         assert isinstance(demand, ShippingPeriodDemand)
         assert demand.shipping_week == 4
 
-        # X shipped less than demand (600), so carryover
-        assert carryover["X"] == 100.0  # 600 - 500
+        # X shipped less than demand (8467), so carryover
+        assert carryover["X"] == 100.0  # 8467 - 8367
         # Y and Z fully shipped
         assert carryover["Y"] == 0.0
         assert carryover["Z"] == 0.0
@@ -347,9 +347,9 @@ class TestDemandScheduleManagement:
         )
 
         # All demand becomes carryover
-        assert carryover["X"] == 600.0
-        assert carryover["Y"] == 400.0
-        assert carryover["Z"] == 200.0
+        assert carryover["X"] == 8467.0
+        assert carryover["Y"] == 6973.0
+        assert carryover["Z"] == 5475.0
 
     def test_add_next_period_forecasts(self):
         """Test adding forecasts for the next period."""
@@ -383,20 +383,20 @@ class TestDemandPenalty:
     def test_calculate_demand_penalty_units_basic(self):
         """Test basic demand penalty unit calculation."""
         manager = DemandManager()
-        demand = {"X": 600.0, "Y": 400.0, "Z": 200.0}
-        shipped = {"X": 500.0, "Y": 400.0, "Z": 150.0}
+        demand = {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
+        shipped = {"X": 8367.0, "Y": 6973.0, "Z": 5425.0}
 
         shortage = manager.calculate_demand_penalty_units(demand, shipped)
 
-        assert shortage["X"] == 100.0  # 600 - 500
+        assert shortage["X"] == 100.0  # 8467 - 8367
         assert shortage["Y"] == 0.0    # Fully shipped
-        assert shortage["Z"] == 50.0   # 200 - 150
+        assert shortage["Z"] == 50.0   # 5475 - 5425
 
     def test_calculate_demand_penalty_units_no_shortage(self):
         """Test when there's no shortage."""
         manager = DemandManager()
-        demand = {"X": 600.0, "Y": 400.0, "Z": 200.0}
-        shipped = {"X": 600.0, "Y": 400.0, "Z": 200.0}
+        demand = {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
+        shipped = {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
 
         shortage = manager.calculate_demand_penalty_units(demand, shipped)
 
@@ -407,8 +407,8 @@ class TestDemandPenalty:
     def test_calculate_demand_penalty_units_overship(self):
         """Test that overshipping doesn't result in negative shortage."""
         manager = DemandManager()
-        demand = {"X": 600.0, "Y": 400.0, "Z": 200.0}
-        shipped = {"X": 700.0, "Y": 500.0, "Z": 300.0}  # Shipped more than demand
+        demand = {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
+        shipped = {"X": 9000.0, "Y": 7500.0, "Z": 6000.0}  # Shipped more than demand
 
         shortage = manager.calculate_demand_penalty_units(demand, shipped)
 
@@ -447,7 +447,7 @@ class TestGetDemandForWeek:
         schedule = manager.initialize_demand_schedule(start_week=1, periods_ahead=2)
 
         # Process shipping week to set actual demand
-        units_shipped = {"X": 600.0, "Y": 400.0, "Z": 200.0}
+        units_shipped = {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
         updated_schedule, _, _ = manager.process_shipping_week(
             schedule=schedule,
             shipping_week=4,
@@ -513,7 +513,7 @@ class TestIntegration:
         assert manager.is_shipping_week(4)
 
         # Process shipping with partial fulfillment
-        units_shipped = {"X": 500.0, "Y": 350.0, "Z": 200.0}
+        units_shipped = {"X": 8367.0, "Y": 6923.0, "Z": 5475.0}
         updated_schedule, demand, carryover = manager.process_shipping_week(
             schedule=schedule,
             shipping_week=4,
@@ -521,8 +521,8 @@ class TestIntegration:
         )
 
         # Verify carryover
-        assert carryover["X"] == 100.0  # 600 - 500
-        assert carryover["Y"] == 50.0   # 400 - 350
+        assert carryover["X"] == 100.0  # 8467 - 8367
+        assert carryover["Y"] == 50.0   # 6973 - 6923
         assert carryover["Z"] == 0.0    # Fully shipped
 
         # Add next period forecasts
@@ -549,9 +549,9 @@ class TestIntegration:
         )
 
         # All demand carries over
-        assert carryover1["X"] == 600.0
-        assert carryover1["Y"] == 400.0
-        assert carryover1["Z"] == 200.0
+        assert carryover1["X"] == 8467.0
+        assert carryover1["Y"] == 6973.0
+        assert carryover1["Z"] == 5475.0
 
         # Period 2 (Week 8): Ship some, but less than accumulated demand
         period2_demand = manager.generate_shipping_period_demand(
@@ -560,9 +560,9 @@ class TestIntegration:
         )
 
         # Total demand should be base + carryover
-        assert period2_demand.demands["X"].total_demand == 1200.0  # 600 + 600
-        assert period2_demand.demands["Y"].total_demand == 800.0   # 400 + 400
-        assert period2_demand.demands["Z"].total_demand == 400.0   # 200 + 200
+        assert period2_demand.demands["X"].total_demand == 16934.0  # 8467 + 8467
+        assert period2_demand.demands["Y"].total_demand == 13946.0  # 6973 + 6973
+        assert period2_demand.demands["Z"].total_demand == 10950.0  # 5475 + 5475
 
     def test_demand_penalty_integration(self):
         """Test demand penalty calculation in context of shipping."""

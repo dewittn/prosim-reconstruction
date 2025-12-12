@@ -142,7 +142,7 @@ To calculate actual **DECS→REPT accuracy** (not component accuracy), we would 
 |---------|--------|------------|--------|
 | Machine repair probability | ❓ UNKNOWN | 40% | ~10-15% estimated |
 | Maintenance budget effect | ❓ UNKNOWN | 20% | No data |
-| Demand base values | ✅ VERIFIED | 85% | PPT materials |
+| Demand base values (8467/6973/5475) | ✅ VERIFIED | 100% | ProSim_intro.ppt, week1.txt |
 | Demand variance by week | ⚠️ PARTIAL | 70% | PPT materials |
 
 ### Game Mechanics
@@ -446,12 +446,14 @@ VERIFIED_COSTS = {
 
 ### 9. Demand Generation
 
-**Status**: ⚠️ PARTIAL (70% confidence)
+**Status**: ✅ VERIFIED (95% confidence for base values)
 
-**Verified Base Demands** (from PPT):
+**Verified Base Demands** (from ProSim_intro.ppt and week1.txt):
 ```python
-BASE_DEMAND = {"X": 600, "Y": 400, "Z": 200}
+BASE_DEMAND = {"X": 8467, "Y": 6973, "Z": 5475}
 ```
+
+Note: The original 600/400/200 values were incorrectly attributed - 600 was actually the maintenance budget in DECS files, not demand.
 
 **Documented Variance** (uncertainty decreases approaching shipping):
 ```python

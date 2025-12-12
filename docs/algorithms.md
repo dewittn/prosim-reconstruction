@@ -351,7 +351,7 @@ Demand follows a forecasting model with decreasing uncertainty:
 ```python
 class DemandManager:
     def generate_forecast(self, product: str, weeks_until_shipping: int) -> DemandForecast:
-        base_demand = self.config.demand.base_demand[product]  # X=600, Y=400, Z=200
+        base_demand = self.config.demand.base_demand[product]  # X=8467, Y=6973, Z=5475
         std_dev = self.config.demand.forecast_std_dev_weeks_out[weeks_until_shipping]
 
         # Generate actual demand (revealed at shipping)

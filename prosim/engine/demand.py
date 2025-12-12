@@ -8,7 +8,7 @@ This module handles:
 - Shipping period coordination
 
 The demand system uses:
-- Base demand per product (configurable, defaults from presentations: X=600, Y=400, Z=200)
+- Base demand per product (configurable, defaults from ProSim_intro.ppt: X=8467, Y=6973, Z=5475)
 - Forecast uncertainty based on weeks until shipping (std dev: 4w=300, 3w=300, 2w=200, 1w=100, 0w=0)
 - Shipping every N weeks (default: 4 weeks = monthly)
 """
@@ -69,8 +69,8 @@ class DemandManager:
     5. Random variation is applied using configurable standard deviations
     """
 
-    # Default base demand per product (from presentations: 600/400/200 typical starting point)
-    DEFAULT_BASE_DEMAND = {"X": 600.0, "Y": 400.0, "Z": 200.0}
+    # Default base demand per product per shipping period (verified from ProSim_intro.ppt and week1.txt)
+    DEFAULT_BASE_DEMAND = {"X": 8467.0, "Y": 6973.0, "Z": 5475.0}
 
     def __init__(
         self,

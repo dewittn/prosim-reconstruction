@@ -811,7 +811,7 @@ _Status: Complete_
 Implemented demand management module in `prosim/engine/demand.py`:
 - `DemandManager` class for demand generation and tracking
 - Demand forecasting with uncertainty that decreases as shipping approaches
-- Configurable base demand per product (defaults: X=600, Y=400, Z=200)
+- Configurable base demand per product (defaults: X=8467, Y=6973, Z=5475 per ProSim_intro.ppt)
 - Standard deviation by weeks until shipping (4w=300, 3w=300, 2w=200, 1w=100, 0w=0)
 - Actual demand revelation at shipping weeks
 - Carryover/backlog tracking from unfulfilled demand
