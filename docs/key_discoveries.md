@@ -67,6 +67,7 @@
 | 8 | [week1.txt is Rosetta Stone for REPT Format](#8-week1txt-is-rosetta-stone-for-rept-format) | Dec 2025 | Important - Format understanding |
 | 9 | [Game Efficiency vs Operator Efficiency](#9-game-efficiency-vs-operator-efficiency) | Dec 2025 | Important - Terminology |
 | 10 | [Nelson.xls Structure Reconstructed](#10-nelsonxls-structure-reconstructed) | Dec 2025 | Data recovery |
+| 11 | [ProsimTable.xls Evolution Traced](#11-prosimtablexls-evolution-traced) | Dec 2025 | Archive insight |
 
 ---
 
@@ -96,6 +97,23 @@ In a sequential game, cumulative costs can only increase. The decrease proves th
 - Different operator assignments visible in production sections
 - Different inventory levels that don't flow logically
 - The spreadsheet Entry tab shows columns labeled "andy" and "Shorty"
+
+**XLS↔DAT file linkage verified (December 2025)**:
+| XLS File | DAT File | First Row Match |
+|----------|----------|-----------------|
+| `AndyREPT.xls` | `REPT12.DAT` | `12.0, 2.0, 4.0, 4.0, 5.0` = Week 12, Company 2 |
+| `ShortyREPT.xls` | `REPT13.DAT` | `13.0, 2.0, 4.0, 4.0, 5.0` = Week 13, Company 2 |
+| `REPT.xls` | `REPT14.DAT` | `14.0, 2.0, 4.0, 4.0, 5.0` = Week 14, Company 2 |
+
+**report.doc ownership confirmed**:
+- File metadata: Author = "Nelson de Wilt", Created May 20, 2004
+- Content matches REPT14.DAT exactly (field-by-field)
+- Proves REPT14.DAT belongs to Nelson
+
+**week1.txt ownership UNKNOWN**:
+- Week 1 data (weekly costs = cumulative costs, proving no prior weeks)
+- No author metadata in text format
+- Likely instructor-provided sample or from different game context
 
 ### Implications
 
@@ -305,7 +323,7 @@ Starting operators (1-9) have **fixed profiles** that are consistent across ALL 
 
 ### The Discovery
 
-The `.xtc` files (prosim.xtc, prosim1.xtc) are **PROSIM game state save files** containing hidden operator statistics not visible in REPT files.
+The `.xtc` files (prosim.xtc, prosim1.xtc) are **PROSIM game state save files** containing hidden operator statistics not visible in REPT files. These files were obtained from Professor Rourke's computer during the **Summer 2005 senior project** (a first reconstruction attempt) but **never decoded until December 2025** - they sat as mystery binary files for over 20 years.
 
 ### Evidence
 
@@ -338,12 +356,14 @@ XTC Float1 × 1.088 ≈ Derived Proficiency
 1. **New validation source**: Can verify proficiency model against binary data
 2. **Weekly snapshots**: File grows as game progresses (state history)
 3. **Float2 unknown**: Second float's purpose still undetermined
-4. **Instructor data**: These appear to be instructor-side files
+4. **Instructor data**: These are from Professor Rourke's computer (instructor-side files)
+5. **Not used in 2004**: All original reverse-engineering was done without this data - the training matrix and efficiency formulas were derived purely from REPT/DECS observation
+6. **Obtained in 2005**: Files grabbed during senior project reconstruction attempt, sat undecoded for 20 years
 
 ### References
 - `docs/xtc_verification_guide.md` (complete analysis)
 - `archive/docs/PROSIM_CASE_STUDY.md` Appendix F
-- `archive/prosim.xtc`, `archive/prosim1.xtc`
+- `archive/data/prosim.xtc`, `archive/data/prosim1.xtc`
 
 ---
 
@@ -522,6 +542,69 @@ G34:H62  - Trained weeks accumulator (op, trained)
 
 ---
 
+## 11. ProsimTable.xls Evolution Traced
+
+**Date Discovered**: December 2025
+
+**Category**: Archive Insight
+
+### The Discovery
+
+The main reverse-engineering spreadsheet `ProsimTable.xls` evolved through **four tracked versions** over 2 months (May-July 2004). A recovered floppy disk file (`C5A53900`) was identified as the earliest version.
+
+### Evidence
+
+**All versions share identical creation metadata**:
+- Created: Fri May 14 23:55:43 2004
+- Author: Shorty
+- Last Saved By: Nelson de Wilt
+
+**Version progression** (by save date):
+
+| Version | File | Save Date | Size | Sheets |
+|---------|------|-----------|------|--------|
+| v1 | `A/week 2/C5A53900` | May 20, 2004 | 98 KB | 5 |
+| v2 | `A/week 2/ProsimTable(Nelson).xls` | May 25, 2004 | 105 KB | 9 |
+| v3 | `ProsimTable(Week3).xls` | Jun 5, 2004 | 133 KB | 11 |
+| v4 | `ProsimTable.xls` | Jul 13, 2004 | 180 KB | 11 |
+
+**Sheet evolution**:
+```
+v1 (May 20):  Sheet1, Entry, Results, Operators, Data
+v2 (May 25):  + Graph, Cost, Forcasting, Sheet2
+v3 (Jun 5):   + Week Sumary, Weekly Planing, Eff
+v4 (Jul 13):  + DECS14 (final structure)
+```
+
+**C5A53900 identification**:
+- Filename is Windows recovered file pattern (FAT filesystem)
+- `BOOTEX.LOG` in same folder confirms floppy disk check
+- Content structure matches later ProsimTable versions exactly
+- Excel metadata links it to the lineage
+
+**XTC files obtained later (Summer 2005)**:
+- `prosim.xtc` and `prosim1.xtc` were obtained from Professor Rourke during a **Summer 2005 senior project** - an earlier reconstruction attempt with Shorty and one other student
+- The May 2004 dates in the files reflect when the *games were played*, not when files were obtained
+- Their binary format was **never decoded** until December 2025
+- All 2004 spreadsheet analysis was done purely from REPT/DECS output observation, without these files
+
+### Implications
+
+1. **Shorty started the analysis**: Created the spreadsheet, passed to Nelson
+2. **54 days of work**: Active reverse-engineering May 20 - July 13, 2004 (7 weeks, 5 days)
+3. **Incremental discovery**: New tabs added as more PROSIM mechanics understood
+4. **Collaboration evidence**: Spreadsheet passed between students via floppy disk
+5. **Archive completeness**: We now have full development history
+6. **No "answer key" used**: XTC files with hidden stats weren't obtained until a year later
+7. **This is the third attempt**: 2004 (class), 2005 (senior project), 2025 (current reconstruction)
+
+### References
+- `Prosim/ARCHIVE_MANIFEST.md` "ProsimTable.xls Evolution" section
+- `archive/spreadsheets/ProsimTable.xls` (final)
+- `Prosim/A/week 2/C5A53900` (earliest, recoverable with .xls extension)
+
+---
+
 ## Future Discoveries Needed
 
 ### High Priority
@@ -548,6 +631,7 @@ G34:H62  - Trained weeks accumulator (op, trained)
 | Date | Change |
 |------|--------|
 | Dec 2025 | Initial creation with 10 key discoveries |
+| Dec 2025 | Added #11: ProsimTable.xls evolution traced via recovered floppy file |
 
 ---
 
