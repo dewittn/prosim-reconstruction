@@ -1,0 +1,1101 @@
+/* =============================================================================
+   PROSIM - Windows 95/98 Retro Theme
+   =============================================================================
+   Authentic recreation of the Windows 95 visual language.
+   PROSIM III was originally a Windows 95/98 application (1996).
+   This theme recreates that exact era.
+
+   Activates via: <body class="theme-win95">
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. System Color Palette (Windows 95 Default Scheme)
+   --------------------------------------------------------------------------- */
+.theme-win95 {
+  --w95-desktop: #008080;
+  --w95-face: #c0c0c0;
+  --w95-text: #000000;
+  --w95-window: #ffffff;
+  --w95-window-text: #000000;
+  --w95-titlebar: #000080;
+  --w95-titlebar-end: #1084d0;
+  --w95-titlebar-text: #ffffff;
+  --w95-titlebar-inactive: #808080;
+  --w95-titlebar-inactive-end: #b5b5b5;
+  --w95-highlight: #000080;
+  --w95-highlight-text: #ffffff;
+  --w95-graytext: #808080;
+  --w95-btn-highlight: #ffffff;
+  --w95-btn-light: #dfdfdf;
+  --w95-btn-shadow: #808080;
+  --w95-btn-dk-shadow: #000000;
+  --w95-hottrack: #0000ff;
+  --w95-scrollbar: #c0c0c0;
+  --w95-info-bg: #ffffe1;
+  --w95-info-text: #000000;
+
+  /* Override Simple.css variables */
+  --bg: var(--w95-face);
+  --accent-bg: var(--w95-face);
+  --accent: var(--w95-titlebar);
+  --text: var(--w95-text);
+  --text-light: var(--w95-graytext);
+  --border: var(--w95-btn-shadow);
+  --accent-text: var(--w95-titlebar-text);
+  --code: var(--w95-text);
+  --preformatted: var(--w95-text);
+  --disabled: var(--w95-graytext);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Typography — Tahoma / MS Sans Serif
+   --------------------------------------------------------------------------- */
+.theme-win95,
+.theme-win95 * {
+  font-family: "Tahoma", "MS Sans Serif", "Microsoft Sans Serif", "Arial", sans-serif;
+}
+
+.theme-win95 {
+  font-size: 11px;
+  line-height: 1.4;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  text-rendering: optimizeSpeed;
+}
+
+.theme-win95 h1 { font-size: 16px; font-weight: bold; margin: 8px 0; }
+.theme-win95 h2 { font-size: 14px; font-weight: bold; margin: 8px 0 4px; }
+.theme-win95 h3 { font-size: 12px; font-weight: bold; margin: 6px 0 3px; }
+.theme-win95 h4 { font-size: 11px; font-weight: bold; margin: 4px 0 2px; }
+
+.theme-win95 pre,
+.theme-win95 code,
+.theme-win95 pre *,
+.theme-win95 code * {
+  font-family: "Fixedsys Excelsior", "Fixedsys", "Courier New", "Courier", monospace;
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Desktop Background — The Teal Desktop
+   --------------------------------------------------------------------------- */
+.theme-win95 {
+  background-color: var(--w95-desktop);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Window Frame — The App Lives Inside a "Window"
+   --------------------------------------------------------------------------- */
+
+/* Create the window frame from body's direct children */
+.theme-win95 > header,
+.theme-win95 > main,
+.theme-win95 > footer {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Window outer border - raised 3D effect */
+.theme-win95 > header:first-of-type {
+  margin-top: 16px;
+  border-top: 2px solid var(--w95-btn-highlight);
+  border-left: 2px solid var(--w95-btn-highlight);
+  border-right: 2px solid var(--w95-btn-dk-shadow);
+  border-bottom: none;
+  background: var(--w95-face);
+  padding: 2px 2px 0 2px;
+}
+
+.theme-win95 > main {
+  border-left: 2px solid var(--w95-btn-highlight);
+  border-right: 2px solid var(--w95-btn-dk-shadow);
+  border-top: none;
+  border-bottom: none;
+  background: var(--w95-face);
+  padding: 4px 6px;
+  flex: 1;
+  box-shadow:
+    inset 1px 0 0 var(--w95-btn-light),
+    inset -1px 0 0 var(--w95-btn-shadow);
+}
+
+.theme-win95 > footer {
+  border-left: 2px solid var(--w95-btn-highlight);
+  border-right: 2px solid var(--w95-btn-dk-shadow);
+  border-bottom: 2px solid var(--w95-btn-dk-shadow);
+  border-top: none;
+  background: var(--w95-face);
+  margin-bottom: 16px;
+  padding: 2px 4px 2px 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Title Bar — Blue Gradient with Window Controls
+   --------------------------------------------------------------------------- */
+.theme-win95 > header nav {
+  background: linear-gradient(90deg, var(--w95-titlebar) 0%, var(--w95-titlebar-end) 100%);
+  padding: 2px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 20px;
+  margin: 0;
+  position: relative;
+  border: none;
+}
+
+/* App icon + title */
+.theme-win95 > header nav .brand,
+.theme-win95 > header nav a.brand {
+  color: var(--w95-titlebar-text);
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-shadow: none;
+  letter-spacing: 0;
+}
+
+/* Window icon (small colored square before title) */
+.theme-win95 > header nav .brand::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background:
+    linear-gradient(135deg, #4a4a8a 25%, #8080c0 25%, #8080c0 50%, #4a4a8a 50%, #4a4a8a 75%, #8080c0 75%);
+  background-size: 4px 4px;
+  border: 1px solid var(--w95-btn-shadow);
+  flex-shrink: 0;
+}
+
+/* Window control buttons (minimize, maximize, close) — decorative */
+.theme-win95 > header nav::after {
+  content: "_ \25a1 \00d7";
+  display: flex;
+  gap: 0;
+  font-family: "Marlett", "Tahoma", sans-serif;
+  font-size: 8px;
+  color: var(--w95-text);
+  background: var(--w95-face);
+  border-top: 1px solid var(--w95-btn-highlight);
+  border-left: 1px solid var(--w95-btn-highlight);
+  border-bottom: 1px solid var(--w95-btn-dk-shadow);
+  border-right: 1px solid var(--w95-btn-dk-shadow);
+  padding: 1px 2px;
+  line-height: 1;
+  letter-spacing: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Menu bar links styled as Win95 menu items */
+.theme-win95 > header nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  background: var(--w95-face);
+  width: 100%;
+  border-top: 1px solid var(--w95-btn-highlight);
+  border-bottom: 1px solid var(--w95-btn-shadow);
+  padding: 1px 0;
+  margin-top: 2px;
+}
+
+.theme-win95 > header nav ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.theme-win95 > header nav ul li a {
+  display: block;
+  padding: 2px 8px;
+  color: var(--w95-text);
+  text-decoration: none;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Underline first letter like keyboard shortcut */
+.theme-win95 > header nav ul li:nth-child(1) a::first-letter {
+  text-decoration: underline;
+}
+
+.theme-win95 > header nav ul li:nth-child(2) a::first-letter {
+  text-decoration: underline;
+}
+
+.theme-win95 > header nav ul li:nth-child(3) a::first-letter {
+  text-decoration: underline;
+}
+
+.theme-win95 > header nav ul li a:hover {
+  background: var(--w95-highlight);
+  color: var(--w95-highlight-text);
+}
+
+/* ---------------------------------------------------------------------------
+   6. Content Panels — Sunken Areas within the Window
+   --------------------------------------------------------------------------- */
+.theme-win95 main section {
+  background: var(--w95-face);
+  margin: 4px 0;
+  padding: 6px 8px;
+}
+
+/* Sections with headers get group-box treatment */
+.theme-win95 main section > h2 {
+  background: var(--w95-face);
+  padding: 0 4px;
+  margin: 0 0 4px 0;
+  font-size: 11px;
+  font-weight: bold;
+  position: relative;
+}
+
+/* Page-level headers inside main (like game title) */
+.theme-win95 main > header {
+  background: var(--w95-face);
+  padding: 4px 6px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--w95-btn-shadow);
+}
+
+.theme-win95 main > header h1 {
+  margin: 2px 0;
+  font-size: 14px;
+}
+
+.theme-win95 main > header p {
+  margin: 2px 0;
+  font-size: 11px;
+  color: var(--w95-text);
+}
+
+/* ---------------------------------------------------------------------------
+   7. Buttons — Classic 3D Raised/Pressed
+   --------------------------------------------------------------------------- */
+.theme-win95 button,
+.theme-win95 input[type="submit"],
+.theme-win95 input[type="button"],
+.theme-win95 input[type="reset"],
+.theme-win95 a[role="button"] {
+  background: var(--w95-face);
+  color: var(--w95-text);
+  font-family: "Tahoma", "MS Sans Serif", sans-serif;
+  font-size: 11px;
+  padding: 3px 12px;
+  min-width: 75px;
+  min-height: 23px;
+  border: none;
+  cursor: default;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-dk-shadow),
+    inset 1px 1px 0 0 var(--w95-btn-highlight),
+    inset -2px -2px 0 0 var(--w95-btn-shadow),
+    inset 2px 2px 0 0 var(--w95-btn-light);
+  outline: none;
+}
+
+.theme-win95 button:active,
+.theme-win95 input[type="submit"]:active,
+.theme-win95 a[role="button"]:active {
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-dk-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-shadow);
+  padding: 4px 11px 2px 13px;
+}
+
+/* Focused button gets dotted inner border */
+.theme-win95 button:focus-visible,
+.theme-win95 input[type="submit"]:focus-visible,
+.theme-win95 a[role="button"]:focus-visible {
+  outline: 1px dotted var(--w95-text);
+  outline-offset: -4px;
+}
+
+/* Primary button (default action) */
+.theme-win95 button[type="submit"],
+.theme-win95 input[type="submit"] {
+  border: 2px solid var(--w95-btn-dk-shadow);
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-dk-shadow),
+    inset 1px 1px 0 0 var(--w95-btn-highlight),
+    inset -2px -2px 0 0 var(--w95-btn-shadow),
+    inset 2px 2px 0 0 var(--w95-btn-light);
+}
+
+/* Disabled button */
+.theme-win95 button:disabled,
+.theme-win95 input:disabled {
+  color: var(--w95-btn-shadow);
+  text-shadow: 1px 1px 0 var(--w95-btn-highlight);
+  cursor: default;
+}
+
+/* Secondary / Cancel button (the Simple.css .secondary class) */
+.theme-win95 .secondary,
+.theme-win95 a[role="button"].secondary {
+  background: var(--w95-face);
+}
+
+/* ---------------------------------------------------------------------------
+   8. Form Controls — Sunken Text Fields, Dropdowns
+   --------------------------------------------------------------------------- */
+.theme-win95 input[type="text"],
+.theme-win95 input[type="number"],
+.theme-win95 input[type="email"],
+.theme-win95 input[type="password"],
+.theme-win95 input[type="url"],
+.theme-win95 input[type="search"],
+.theme-win95 textarea {
+  background: var(--w95-window);
+  color: var(--w95-window-text);
+  font-family: "Tahoma", "MS Sans Serif", sans-serif;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow);
+  outline: none;
+  min-height: 21px;
+}
+
+.theme-win95 input:focus,
+.theme-win95 textarea:focus,
+.theme-win95 select:focus {
+  outline: none;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow);
+}
+
+.theme-win95 select {
+  background: var(--w95-window);
+  color: var(--w95-window-text);
+  font-family: "Tahoma", "MS Sans Serif", sans-serif;
+  font-size: 11px;
+  padding: 2px 20px 2px 4px;
+  border: none;
+  border-radius: 0;
+  min-height: 21px;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(var(--w95-face), var(--w95-face));
+  background-position: right 0 top 0;
+  background-size: 18px 100%;
+  background-repeat: no-repeat;
+  cursor: default;
+}
+
+/* Dropdown arrow using pseudo-element on wrapper or box-shadow trick */
+.theme-win95 select::after {
+  content: "\25bc";
+  position: absolute;
+  right: 4px;
+}
+
+.theme-win95 label {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--w95-text);
+  margin-bottom: 2px;
+  display: block;
+}
+
+.theme-win95 small {
+  font-size: 10px;
+  color: var(--w95-graytext);
+}
+
+.theme-win95 input[type="checkbox"],
+.theme-win95 input[type="radio"] {
+  accent-color: var(--w95-highlight);
+  margin-right: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   9. Fieldsets — Win95 Group Boxes
+   --------------------------------------------------------------------------- */
+.theme-win95 fieldset {
+  border: 1px solid var(--w95-btn-shadow);
+  border-radius: 0;
+  padding: 8px 10px;
+  margin: 6px 0;
+  background: var(--w95-face);
+}
+
+.theme-win95 fieldset legend {
+  font-size: 11px;
+  font-weight: normal;
+  padding: 0 4px;
+  color: var(--w95-text);
+  background: var(--w95-face);
+}
+
+/* ---------------------------------------------------------------------------
+   10. Tables — Win95 ListView / Details View
+   --------------------------------------------------------------------------- */
+.theme-win95 table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  background: var(--w95-window);
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow);
+}
+
+.theme-win95 table thead th {
+  background: var(--w95-face);
+  color: var(--w95-text);
+  font-weight: normal;
+  font-size: 11px;
+  padding: 2px 6px;
+  text-align: left;
+  border-right: 1px solid var(--w95-btn-shadow);
+  border-bottom: 1px solid var(--w95-btn-shadow);
+  box-shadow:
+    inset 0 1px 0 var(--w95-btn-highlight),
+    inset 1px 0 0 var(--w95-btn-highlight),
+    inset 0 -1px 0 var(--w95-btn-dk-shadow);
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+
+/* Column header pressed state */
+.theme-win95 table thead th:active {
+  box-shadow:
+    inset 0 1px 0 var(--w95-btn-dk-shadow),
+    inset 1px 0 0 var(--w95-btn-dk-shadow);
+  padding: 3px 5px 1px 7px;
+}
+
+.theme-win95 table tbody td {
+  padding: 1px 6px;
+  border: none;
+  color: var(--w95-window-text);
+  white-space: nowrap;
+}
+
+.theme-win95 table tbody tr:hover {
+  background: var(--w95-highlight);
+  color: var(--w95-highlight-text);
+}
+
+.theme-win95 table tbody tr:hover td {
+  color: var(--w95-highlight-text);
+}
+
+/* Selected row */
+.theme-win95 table tbody tr.selected td {
+  background: var(--w95-highlight);
+  color: var(--w95-highlight-text);
+}
+
+/* Alternating rows — off by default in Win95 ListView, but helps readability */
+.theme-win95 table tbody tr:nth-child(even) {
+  background: var(--w95-window);
+}
+
+.theme-win95 table tbody tr:nth-child(odd) {
+  background: var(--w95-window);
+}
+
+/* ---------------------------------------------------------------------------
+   11. Links — Win95 Style
+   --------------------------------------------------------------------------- */
+.theme-win95 a {
+  color: var(--w95-hottrack);
+  text-decoration: underline;
+}
+
+.theme-win95 a:hover {
+  color: var(--w95-hottrack);
+}
+
+.theme-win95 a:visited {
+  color: #800080;
+}
+
+/* ---------------------------------------------------------------------------
+   12. Status Bar — Bottom of Window
+   --------------------------------------------------------------------------- */
+.theme-win95 > footer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 22px;
+  font-size: 11px;
+}
+
+.theme-win95 > footer p {
+  margin: 0;
+  padding: 1px 6px;
+  flex: 1;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow);
+  font-size: 10px;
+  line-height: 1.4;
+  min-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-win95 > footer br {
+  display: none;
+}
+
+.theme-win95 > footer small {
+  font-size: 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   13. Preformatted Text — "Notepad" Style
+   --------------------------------------------------------------------------- */
+.theme-win95 pre {
+  background: var(--w95-window) !important;
+  color: var(--w95-window-text) !important;
+  font-family: "Fixedsys Excelsior", "Fixedsys", "Courier New", monospace !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  padding: 4px 6px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow) !important;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 4px 0;
+}
+
+.theme-win95 code {
+  background: var(--w95-window);
+  padding: 0 2px;
+  border-radius: 0;
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------------------
+   14. Details / Summary — Win95 TreeView Expand
+   --------------------------------------------------------------------------- */
+.theme-win95 details {
+  border: 1px solid var(--w95-btn-shadow);
+  background: var(--w95-face);
+  padding: 0;
+  margin: 4px 0;
+  border-radius: 0;
+}
+
+.theme-win95 details summary {
+  padding: 3px 8px;
+  cursor: default;
+  font-size: 11px;
+  background: var(--w95-face);
+  user-select: none;
+  list-style: none;
+}
+
+.theme-win95 details summary::before {
+  content: "\25b6";
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 8px;
+  transition: transform 0.1s;
+}
+
+.theme-win95 details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.theme-win95 details summary::-webkit-details-marker {
+  display: none;
+}
+
+.theme-win95 details > :not(summary) {
+  padding: 4px 8px;
+}
+
+/* ---------------------------------------------------------------------------
+   15. Flash Messages — Win95 Message Box Style
+   --------------------------------------------------------------------------- */
+.theme-win95 .flash-messages .notice {
+  background: var(--w95-face);
+  border: none;
+  border-radius: 0;
+  padding: 6px 10px;
+  font-size: 11px;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-dk-shadow),
+    inset 1px 1px 0 0 var(--w95-btn-highlight),
+    inset -2px -2px 0 0 var(--w95-btn-shadow),
+    inset 2px 2px 0 0 var(--w95-btn-light);
+  border-left: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-win95 .flash-messages .notice.success::before {
+  content: "\2139";
+  font-size: 20px;
+  color: var(--w95-titlebar);
+}
+
+.theme-win95 .flash-messages .notice.error::before {
+  content: "\2716";
+  font-size: 20px;
+  color: #cc0000;
+}
+
+.theme-win95 .flash-messages .notice.warning::before {
+  content: "\26a0";
+  font-size: 20px;
+  color: #cccc00;
+}
+
+.theme-win95 .flash-messages .notice.success {
+  background: var(--w95-face);
+}
+
+.theme-win95 .flash-messages .notice.error {
+  background: var(--w95-face);
+}
+
+.theme-win95 .flash-messages .notice.warning {
+  background: var(--w95-face);
+}
+
+/* ---------------------------------------------------------------------------
+   16. Game Cards — Win95 Explorer Icons View
+   --------------------------------------------------------------------------- */
+.theme-win95 .game-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  background: var(--w95-window);
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow);
+}
+
+.theme-win95 .game-card {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 6px;
+  width: 240px;
+  cursor: default;
+  position: relative;
+}
+
+.theme-win95 .game-card::before {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 4px;
+  background:
+    linear-gradient(135deg, #8080c0 0%, #c0c0ff 50%, #8080c0 100%);
+  box-shadow:
+    1px 1px 0 var(--w95-btn-shadow),
+    inset 1px 1px 0 rgba(255,255,255,0.4);
+}
+
+.theme-win95 .game-card h3 {
+  font-size: 11px;
+  font-weight: normal;
+  text-align: center;
+  margin: 2px 0;
+  padding: 1px 2px;
+}
+
+.theme-win95 .game-card:hover h3 {
+  background: var(--w95-highlight);
+  color: var(--w95-highlight-text);
+}
+
+.theme-win95 .game-card .meta {
+  font-size: 10px;
+  color: var(--w95-graytext);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   17. Machine Assignment Grid — Win95 Property Sheet
+   --------------------------------------------------------------------------- */
+.theme-win95 .machine-grid {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.theme-win95 .machine-card {
+  background: var(--w95-face);
+  border: 1px solid var(--w95-btn-shadow);
+  border-radius: 0;
+  padding: 6px;
+  border-left-width: 1px;
+}
+
+.theme-win95 .machine-card.parts-dept {
+  border-left: 1px solid var(--w95-btn-shadow);
+}
+
+.theme-win95 .machine-card.assembly-dept {
+  border-left: 1px solid var(--w95-btn-shadow);
+}
+
+.theme-win95 .machine-card h4 {
+  font-size: 11px;
+  margin: 0 0 4px 0;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--w95-btn-shadow);
+}
+
+.theme-win95 .machine-card .dept-label {
+  font-size: 10px;
+  color: var(--w95-graytext);
+}
+
+/* ---------------------------------------------------------------------------
+   18. Status Indicators — Win95 Badges
+   --------------------------------------------------------------------------- */
+.theme-win95 .status {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 10px;
+  border-radius: 0;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow);
+}
+
+.theme-win95 .status.active {
+  background: #00c000;
+  color: var(--w95-window);
+}
+
+.theme-win95 .status.complete {
+  background: var(--w95-titlebar);
+  color: var(--w95-titlebar-text);
+}
+
+/* ---------------------------------------------------------------------------
+   19. Progress Bar — Classic Segmented Blocks
+   --------------------------------------------------------------------------- */
+.theme-win95 progress,
+.theme-win95 .progress-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 16px;
+  border: none;
+  border-radius: 0;
+  background: var(--w95-face);
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-highlight),
+    inset 1px 1px 0 0 var(--w95-btn-shadow),
+    inset -2px -2px 0 0 var(--w95-btn-light),
+    inset 2px 2px 0 0 var(--w95-btn-dk-shadow);
+}
+
+.theme-win95 progress::-webkit-progress-bar {
+  background: var(--w95-face);
+  border-radius: 0;
+}
+
+.theme-win95 progress::-webkit-progress-value {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--w95-titlebar) 0px,
+    var(--w95-titlebar) 8px,
+    transparent 8px,
+    transparent 10px
+  );
+  border-radius: 0;
+}
+
+.theme-win95 progress::-moz-progress-bar {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--w95-titlebar) 0px,
+    var(--w95-titlebar) 8px,
+    transparent 8px,
+    transparent 10px
+  );
+  border-radius: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   20. Scrollbars — Win95 Style (WebKit)
+   --------------------------------------------------------------------------- */
+.theme-win95 ::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.theme-win95 ::-webkit-scrollbar-track {
+  background:
+    repeating-conic-gradient(
+      var(--w95-face) 0% 25%,
+      var(--w95-window) 0% 50%
+    ) 0 0 / 2px 2px;
+}
+
+.theme-win95 ::-webkit-scrollbar-thumb {
+  background: var(--w95-face);
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-dk-shadow),
+    inset 1px 1px 0 0 var(--w95-btn-highlight),
+    inset -2px -2px 0 0 var(--w95-btn-shadow),
+    inset 2px 2px 0 0 var(--w95-btn-light);
+}
+
+.theme-win95 ::-webkit-scrollbar-button {
+  display: block;
+  background: var(--w95-face);
+  width: 16px;
+  height: 16px;
+  box-shadow:
+    inset -1px -1px 0 0 var(--w95-btn-dk-shadow),
+    inset 1px 1px 0 0 var(--w95-btn-highlight),
+    inset -2px -2px 0 0 var(--w95-btn-shadow),
+    inset 2px 2px 0 0 var(--w95-btn-light);
+}
+
+/* ---------------------------------------------------------------------------
+   21. HTMX Loading — Hourglass Cursor
+   --------------------------------------------------------------------------- */
+.theme-win95 .htmx-request {
+  cursor: wait !important;
+}
+
+.theme-win95 .htmx-request * {
+  cursor: wait !important;
+}
+
+.theme-win95 .spinner {
+  border: none;
+  border-radius: 0;
+  animation: none;
+  width: auto;
+  height: auto;
+  font-size: 11px;
+}
+
+.theme-win95 .spinner::after {
+  content: "Please wait...";
+}
+
+/* ---------------------------------------------------------------------------
+   22. Tooltips — Win95 Yellow Info Boxes
+   --------------------------------------------------------------------------- */
+.theme-win95 [title] {
+  position: relative;
+}
+
+/* ---------------------------------------------------------------------------
+   23. Forms Layout — Dialog Style
+   --------------------------------------------------------------------------- */
+.theme-win95 form {
+  background: var(--w95-face);
+}
+
+.theme-win95 .form-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.theme-win95 .form-row > * {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Button row at bottom of dialog */
+.theme-win95 form > div:last-child {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid var(--w95-btn-shadow);
+  margin-top: 8px;
+}
+
+/* ---------------------------------------------------------------------------
+   24. Section Nav (Help page table of contents)
+   --------------------------------------------------------------------------- */
+.theme-win95 main > nav {
+  background: var(--w95-face);
+  padding: 4px 8px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--w95-btn-shadow);
+  margin-bottom: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   25. Lists
+   --------------------------------------------------------------------------- */
+.theme-win95 ul, .theme-win95 ol {
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
+.theme-win95 li {
+  font-size: 11px;
+  margin: 2px 0;
+  line-height: 1.4;
+}
+
+.theme-win95 p {
+  font-size: 11px;
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------------
+   26. Theme Switcher — Menu Bar Dropdown
+   --------------------------------------------------------------------------- */
+.theme-win95 .theme-switcher {
+  margin-left: auto;
+}
+
+.theme-win95 .theme-switcher form {
+  background: transparent;
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-win95 .theme-switcher select {
+  font-size: 11px;
+  min-height: 18px;
+  padding: 1px 16px 1px 3px;
+  background-size: 14px 100%;
+  border: none;
+}
+
+/* ---------------------------------------------------------------------------
+   27. Responsive — Graceful Degradation on Mobile
+   --------------------------------------------------------------------------- */
+@media (max-width: 700px) {
+  .theme-win95 > header:first-of-type,
+  .theme-win95 > main,
+  .theme-win95 > footer {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .theme-win95 > header:first-of-type {
+    margin-top: 0;
+  }
+
+  .theme-win95 > footer {
+    margin-bottom: 0;
+  }
+
+  .theme-win95 .game-list {
+    flex-direction: column;
+  }
+
+  .theme-win95 .game-card {
+    width: 100%;
+  }
+
+  .theme-win95 .machine-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-win95 .form-row {
+    flex-direction: column;
+  }
+
+  .theme-win95 .form-row > * {
+    min-width: 100%;
+  }
+
+  /* Simplify window controls on mobile */
+  .theme-win95 > header nav::after {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .theme-win95 {
+    font-size: 12px;
+  }
+
+  .theme-win95 h1 { font-size: 16px; }
+  .theme-win95 h2 { font-size: 14px; }
+}
+
+/* ---------------------------------------------------------------------------
+   27. Print Styles — Clean Output
+   --------------------------------------------------------------------------- */
+@media print {
+  .theme-win95 {
+    background: white;
+  }
+
+  .theme-win95 > header:first-of-type,
+  .theme-win95 > main,
+  .theme-win95 > footer {
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+  }
+
+  .theme-win95 > header nav {
+    background: none;
+    color: black;
+  }
+
+  .theme-win95 > header nav .brand {
+    color: black;
+  }
+}

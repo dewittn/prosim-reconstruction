@@ -7,7 +7,6 @@ Provides common dependencies for routes including:
 - Template rendering
 """
 
-from typing import Optional
 from uuid import uuid4
 
 from fastapi import Cookie, Depends, HTTPException, Request, Response
@@ -28,7 +27,7 @@ def get_templates(request: Request) -> Jinja2Templates:
 
 
 def get_or_create_session_id(
-    prosim_session: Optional[str] = Cookie(default=None),
+    prosim_session: str | None = Cookie(default=None),
 ) -> str:
     """Get existing session ID from cookie or generate a new one.
 
@@ -60,6 +59,7 @@ def set_session_cookie(response: Response, session_id: str) -> None:
         key=SESSION_COOKIE_NAME,
         value=session_id,
         httponly=True,
+        secure=not config.debug,
         max_age=config.session_max_age,
         samesite="lax",
     )
@@ -82,7 +82,7 @@ async def get_game_session(
 async def get_game_or_none(
     session_id: str,
     db: Session = Depends(get_db),
-) -> Optional[GameSession]:
+) -> GameSession | None:
     """Get a game session by its session_id, or None if not found."""
     return db.query(GameSession).filter(GameSession.session_id == session_id).first()
 
@@ -105,7 +105,9 @@ class GameSessionDep:
         session_id: str,
         db: Session = Depends(get_db),
     ) -> GameSession:
-        game = db.query(GameSession).filter(GameSession.session_id == session_id).first()
+        game = (
+            db.query(GameSession).filter(GameSession.session_id == session_id).first()
+        )
         if not game:
             raise HTTPException(status_code=404, detail="Game not found")
         return game

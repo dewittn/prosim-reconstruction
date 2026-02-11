@@ -7,7 +7,6 @@ Loads settings from environment variables with sensible defaults.
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -33,9 +32,9 @@ class WebConfig:
 
     # Paths (set in __post_init__)
     base_dir: Path = field(default_factory=lambda: Path(__file__).parent)
-    templates_dir: Optional[Path] = None
-    static_dir: Optional[Path] = None
-    data_dir: Optional[Path] = None
+    templates_dir: Path | None = None
+    static_dir: Path | None = None
+    data_dir: Path | None = None
 
     def __post_init__(self) -> None:
         """Set derived paths after initialization."""
@@ -72,7 +71,7 @@ def get_config() -> WebConfig:
 
 
 # Global config instance (lazy initialization)
-_config: Optional[WebConfig] = None
+_config: WebConfig | None = None
 
 
 def get_settings() -> WebConfig:

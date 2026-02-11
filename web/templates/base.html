@@ -11,12 +11,18 @@
     <!-- Custom styles -->
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
 
+    <!-- Theme CSS (loaded based on cookie preference) -->
+    {% set current_theme = request.state.theme if request.state.theme is defined else 'win95' %}
+    <link rel="stylesheet"
+          id="theme-css"
+          href="{{ url_for('static', path='css/theme-' + current_theme + '.css') }}">
+
     <!-- HTMX for dynamic interactions -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="theme-{{ current_theme }}">
     {% include "components/navbar.html" %}
 
     <main>
@@ -42,6 +48,27 @@
             <small>Originally created by Greenlaw, Hottenstein & Chu (1968) | Reconstructed 2025</small>
         </p>
     </footer>
+
+    <script>
+    function setTheme(theme) {
+        // Update body class
+        document.body.className = document.body.className
+            .replace(/theme-\w+/, 'theme-' + theme);
+        // Swap CSS file
+        var link = document.getElementById('theme-css');
+        link.href = '/static/css/theme-' + theme + '.css';
+        // Persist in cookie (1 year)
+        document.cookie = 'prosim_theme=' + theme +
+            ';path=/;max-age=31536000;samesite=lax';
+        // Update selector to match
+        var sel = document.getElementById('theme-select');
+        if (sel) sel.value = theme;
+        // Also persist server-side so cookie is set via Set-Cookie header
+        var form = new FormData();
+        form.append('theme', theme);
+        fetch('/theme', { method: 'POST', body: form, redirect: 'manual' });
+    }
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

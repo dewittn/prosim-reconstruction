@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Week {{ week }} Decisions - {{ game.company_name }}{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Week {{ week }} Decisions</h1>
+    <p>
+        {{ game.company_name }} |
+        Week {{ week }} of {{ game.max_weeks }}
+    </p>
+</header>
+
+{% if errors %}
+<aside>
+    <h3>Validation Errors</h3>
+    <ul>
+        {% for error in errors %}
+        <li><strong>{{ error.field }}</strong>: {{ error.message }}{% if error.suggestion %} &mdash; {{ error.suggestion }}{% endif %}</li>
+        {% endfor %}
+    </ul>
+</aside>
+{% endif %}
+
+{% if warnings %}
+<aside>
+    <h3>Warnings</h3>
+    <ul>
+        {% for warning in warnings %}
+        <li><strong>{{ warning.field }}</strong>: {{ warning.message }}{% if warning.suggestion %} &mdash; {{ warning.suggestion }}{% endif %}</li>
+        {% endfor %}
+    </ul>
+</aside>
+{% endif %}
+
+<section>
+    <h2>Current State Summary</h2>
+    <div class="form-row">
+        <div>
+            <h3>Inventory</h3>
+            <table>
+                <thead>
+                    <tr><th>Item</th><th>On Hand</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Raw Materials</td><td>{{ "{:,.0f}".format(company.inventory.raw_materials.ending) }} lbs</td></tr>
+                    <tr><td>Parts X'</td><td>{{ "{:,.0f}".format(company.inventory.parts.x_prime.ending) }}</td></tr>
+                    <tr><td>Parts Y'</td><td>{{ "{:,.0f}".format(company.inventory.parts.y_prime.ending) }}</td></tr>
+                    <tr><td>Parts Z'</td><td>{{ "{:,.0f}".format(company.inventory.parts.z_prime.ending) }}</td></tr>
+                    <tr><td>Products X</td><td>{{ "{:,.0f}".format(company.inventory.products.x.ending) }}</td></tr>
+                    <tr><td>Products Y</td><td>{{ "{:,.0f}".format(company.inventory.products.y.ending) }}</td></tr>
+                    <tr><td>Products Z</td><td>{{ "{:,.0f}".format(company.inventory.products.z.ending) }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h3>Workforce</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Name</th><th>Status</th><th>Efficiency</th></tr>
+                </thead>
+                <tbody>
+                    {% for op_id, operator in company.workforce.operators.items()|sort %}
+                    <tr>
+                        <td>{{ op_id }}</td>
+                        <td>{{ operator.display_name }}</td>
+                        <td>{{ operator.training_status.value }}</td>
+                        <td>{{ "{:.0f}%".format(operator.efficiency * 100) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% set weeks_until_shipping = (4 - ((week - 1) % 4)) %}
+    {% if weeks_until_shipping == 4 %}
+    <p><strong>This is a shipping week!</strong> Products will ship to meet demand.</p>
+    {% else %}
+    <p>Next shipping in {{ weeks_until_shipping }} week(s). (Shipping occurs weeks 4, 8, 12, ...)</p>
+    {% endif %}
+</section>
+
+<form method="post" action="/game/{{ game.session_id }}/decisions">
+    <section>
+        <h2>Budgets</h2>
+        <div class="form-row">
+            <div>
+                <label for="quality_budget">Quality Planning Budget ($)</label>
+                <input type="number" id="quality_budget" name="quality_budget"
+                       min="0" step="1" value="{{ prev.quality_budget|default(500, true) }}"
+                       placeholder="Suggested: $500-$1000">
+                <small>Reduces reject rate (logarithmic effect)</small>
+            </div>
+            <div>
+                <label for="maintenance_budget">Plant Maintenance Budget ($)</label>
+                <input type="number" id="maintenance_budget" name="maintenance_budget"
+                       min="0" step="1" value="{{ prev.maintenance_budget|default(500, true) }}"
+                       placeholder="Suggested: $500-$1000">
+                <small>Reduces machine breakdown probability</small>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Raw Materials Orders</h2>
+        <div class="form-row">
+            <div>
+                <label for="raw_materials_regular">Regular Order (3-week lead time)</label>
+                <input type="number" id="raw_materials_regular" name="raw_materials_regular"
+                       min="0" step="1" value="{{ prev.raw_materials_regular|default(0, true) }}"
+                       placeholder="0">
+            </div>
+            <div>
+                <label for="raw_materials_expedited">Expedited Order (1-week lead, +$1,200)</label>
+                <input type="number" id="raw_materials_expedited" name="raw_materials_expedited"
+                       min="0" step="1" value="{{ prev.raw_materials_expedited|default(0, true) }}"
+                       placeholder="0">
+                <small>Use sparingly &mdash; expensive surcharge</small>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Purchased Parts Orders (1-week lead time)</h2>
+        <div class="form-row">
+            <div>
+                <label for="part_orders_x">X' Parts</label>
+                <input type="number" id="part_orders_x" name="part_orders_x"
+                       min="0" step="1" value="{{ prev.part_orders.x_prime|default(0, true) if prev else 0 }}"
+                       placeholder="0">
+            </div>
+            <div>
+                <label for="part_orders_y">Y' Parts</label>
+                <input type="number" id="part_orders_y" name="part_orders_y"
+                       min="0" step="1" value="{{ prev.part_orders.y_prime|default(0, true) if prev else 0 }}"
+                       placeholder="0">
+            </div>
+            <div>
+                <label for="part_orders_z">Z' Parts</label>
+                <input type="number" id="part_orders_z" name="part_orders_z"
+                       min="0" step="1" value="{{ prev.part_orders.z_prime|default(0, true) if prev else 0 }}"
+                       placeholder="0">
+            </div>
+        </div>
+        <small>Purchased parts arrive next week. Alternative to manufacturing in Parts Dept.</small>
+    </section>
+
+    <section>
+        <h2>Parts Department (Machines 1-4)</h2>
+        <p><small>Produces component parts: X' (60/hr), Y' (50/hr), Z' (40/hr)</small></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Operator</th>
+                    <th>Status</th>
+                    <th>Train?</th>
+                    <th>Part Type</th>
+                    <th>Hours (0-50)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for machine_id in range(1, 5) %}
+                {% set op = company.workforce.get_operator(machine_id) %}
+                {% set prev_md = prev.get_machine_decision(machine_id) if prev else None %}
+                <tr>
+                    <td>Machine {{ machine_id }}</td>
+                    <td>
+                        <select name="m{{ machine_id }}_operator">
+                            {% for op_id, operator in company.workforce.operators.items()|sort %}
+                            <option value="{{ op_id }}"
+                                {% if prev_md and prev_md.machine_id == machine_id %}
+                                    {% if op_id == machine_id %}selected{% endif %}
+                                {% elif op_id == machine_id %}selected{% endif %}
+                            >{{ operator.display_name }} ({{ "{:.0f}%".format(operator.efficiency * 100) }})</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        {% if op %}{{ op.training_status.value }}{% else %}-{% endif %}
+                    </td>
+                    <td>
+                        <input type="checkbox" name="m{{ machine_id }}_training" value="1"
+                               {% if prev_md and prev_md.send_for_training %}checked{% endif %}>
+                    </td>
+                    <td>
+                        <select name="m{{ machine_id }}_part_type">
+                            <option value="1" {% if prev_md and prev_md.part_type == 1 %}selected{% elif not prev_md %}selected{% endif %}>X'</option>
+                            <option value="2" {% if prev_md and prev_md.part_type == 2 %}selected{% endif %}>Y'</option>
+                            <option value="3" {% if prev_md and prev_md.part_type == 3 %}selected{% endif %}>Z'</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="m{{ machine_id }}_hours"
+                               min="0" max="50" step="0.5"
+                               value="{{ prev_md.scheduled_hours|default(40, true) if prev_md else 40 }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Assembly Department (Machines 5-9)</h2>
+        <p><small>Assembles finished products: X (40/hr), Y (30/hr), Z (20/hr)</small></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Operator</th>
+                    <th>Status</th>
+                    <th>Train?</th>
+                    <th>Product Type</th>
+                    <th>Hours (0-50)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for machine_id in range(5, 10) %}
+                {% set op = company.workforce.get_operator(machine_id) %}
+                {% set prev_md = prev.get_machine_decision(machine_id) if prev else None %}
+                <tr>
+                    <td>Machine {{ machine_id }}</td>
+                    <td>
+                        <select name="m{{ machine_id }}_operator">
+                            {% for op_id, operator in company.workforce.operators.items()|sort %}
+                            <option value="{{ op_id }}"
+                                {% if prev_md and prev_md.machine_id == machine_id %}
+                                    {% if op_id == machine_id %}selected{% endif %}
+                                {% elif op_id == machine_id %}selected{% endif %}
+                            >{{ operator.display_name }} ({{ "{:.0f}%".format(operator.efficiency * 100) }})</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        {% if op %}{{ op.training_status.value }}{% else %}-{% endif %}
+                    </td>
+                    <td>
+                        <input type="checkbox" name="m{{ machine_id }}_training" value="1"
+                               {% if prev_md and prev_md.send_for_training %}checked{% endif %}>
+                    </td>
+                    <td>
+                        <select name="m{{ machine_id }}_part_type">
+                            <option value="1" {% if prev_md and prev_md.part_type == 1 %}selected{% elif not prev_md %}selected{% endif %}>X</option>
+                            <option value="2" {% if prev_md and prev_md.part_type == 2 %}selected{% endif %}>Y</option>
+                            <option value="3" {% if prev_md and prev_md.part_type == 3 %}selected{% endif %}>Z</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="m{{ machine_id }}_hours"
+                               min="0" max="50" step="0.5"
+                               value="{{ prev_md.scheduled_hours|default(40, true) if prev_md else 40 }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <div>
+            <button type="submit">Submit Week {{ week }} Decisions</button>
+            <a href="/game/{{ game.session_id }}" role="button" class="secondary">Cancel</a>
+        </div>
+    </section>
+</form>
+{% endblock %}

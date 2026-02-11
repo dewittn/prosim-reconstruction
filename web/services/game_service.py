@@ -6,7 +6,6 @@ and the Pydantic domain models.
 """
 
 from datetime import datetime
-from typing import Optional
 from uuid import uuid4
 
 from sqlalchemy.orm import Session
@@ -29,8 +28,8 @@ class GameService:
         db: Session,
         company_name: str,
         max_weeks: int = 16,
-        random_seed: Optional[int] = None,
-        config: Optional[ProsimConfig] = None,
+        random_seed: int | None = None,
+        config: ProsimConfig | None = None,
     ) -> GameSession:
         """Create a new game session.
 
@@ -86,7 +85,7 @@ class GameService:
         """
         return GameState.model_validate_json(db_game.game_state_json)
 
-    def get_company(self, db_game: GameSession, company_id: int = 1) -> Optional[Company]:
+    def get_company(self, db_game: GameSession, company_id: int = 1) -> Company | None:
         """Get a company from a game session.
 
         Args:
@@ -149,7 +148,7 @@ class GameService:
         db_game: GameSession,
         decisions_json: str,
         week: int,
-        report: Optional[WeeklyReport] = None,
+        report: WeeklyReport | None = None,
     ) -> WeeklyDecision:
         """Save a decision record for audit/history.
 
@@ -203,7 +202,7 @@ class GameService:
         db: Session,
         db_game: GameSession,
         week: int,
-    ) -> Optional[WeeklyReport]:
+    ) -> WeeklyReport | None:
         """Get a weekly report from decision history.
 
         Args:
@@ -243,7 +242,7 @@ class GameService:
         """
         query = db.query(GameSession)
         if active_only:
-            query = query.filter(GameSession.is_active == True)
+            query = query.filter(GameSession.is_active.is_(True))
         return query.order_by(GameSession.last_played.desc()).all()
 
     def delete_game(self, db: Session, db_game: GameSession) -> None:
@@ -264,7 +263,7 @@ class GameService:
 
 
 # Global service instance (singleton pattern)
-_game_service: Optional[GameService] = None
+_game_service: GameService | None = None
 
 
 def get_game_service() -> GameService:

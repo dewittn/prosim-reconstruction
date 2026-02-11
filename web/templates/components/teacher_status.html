@@ -1,0 +1,42 @@
+{% if advance_result %}
+<div class="notice">
+    Advanced <strong>{{ advance_result.weeks_processed }}</strong> week(s).
+    Now at week <strong>{{ advance_result.final_week }}</strong>.
+    Total costs: <strong>${{ "{:,.2f}".format(advance_result.total_costs) }}</strong>.
+</div>
+{% endif %}
+<p>
+    <strong>Current Week:</strong> {{ game.current_week }} |
+    <strong>Total Costs:</strong> ${{ "{:,.2f}".format(game.total_costs) }}
+    {% if game.is_complete %} | <strong>Game Complete</strong>{% endif %}
+</p>
+
+{% if competitors %}
+<h3>Competitor Update</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Company</th>
+            <th>Strategy</th>
+            <th>Week</th>
+            <th>Total Costs</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>{{ game.company_name or "You" }}</strong></td>
+            <td>Player</td>
+            <td>{{ game.current_week }}</td>
+            <td>${{ "{:,.2f}".format(game.total_costs) }}</td>
+        </tr>
+        {% for c in competitors %}
+        <tr>
+            <td>{{ c.company_name }}</td>
+            <td>{{ c.strategy | capitalize }}</td>
+            <td>{{ c.current_week }}</td>
+            <td>${{ "{:,.2f}".format(c.total_costs) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

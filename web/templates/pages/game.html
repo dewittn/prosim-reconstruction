@@ -25,6 +25,14 @@
     <p>
         <strong>Final Total Costs:</strong> ${{ "{:,.2f}".format(game.total_costs) }}
     </p>
+    {% if company %}
+    <p>
+        <strong>Final Revenue:</strong> ${{ "{:,.2f}".format(company.total_revenue) }}
+    </p>
+    <p>
+        <strong>Final Profit:</strong> ${{ "{:,.2f}".format(company.profit) }}
+    </p>
+    {% endif %}
     <p>
         <a href="/">Return to Games List</a>
     </p>
@@ -44,9 +52,19 @@
                 </tr>
                 {% if company %}
                 <tr>
+                    <td>Total Revenue</td>
+                    <td>${{ "{:,.2f}".format(company.total_revenue) }}</td>
+                </tr>
+                <tr>
                     <td>Profit</td>
                     <td>${{ "{:,.2f}".format(company.profit) }}</td>
                 </tr>
+                {% if company.latest_report %}
+                <tr>
+                    <td>Last Week Costs</td>
+                    <td>${{ "{:,.2f}".format(company.latest_report.weekly_costs.total_costs) }}</td>
+                </tr>
+                {% endif %}
                 {% endif %}
             </table>
         </div>
@@ -60,11 +78,69 @@
             <p>Next shipping: {{ weeks_until_shipping }} week(s)</p>
             {% endif %}
             <small>Shipping occurs every 4 weeks (weeks 4, 8, 12, ...)</small>
+
+            {% if company %}
+            <h3>Units Shipped (Cumulative)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Shipped</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Product X</td>
+                        <td>{{ "{:,.0f}".format(company.total_units_shipped.get("X", 0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Product Y</td>
+                        <td>{{ "{:,.0f}".format(company.total_units_shipped.get("Y", 0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Product Z</td>
+                        <td>{{ "{:,.0f}".format(company.total_units_shipped.get("Z", 0)) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% endif %}
         </div>
     </div>
 </section>
 
 {% if company %}
+{# --- Demand Forecast --- #}
+{% if company.demand.forecasts %}
+<section>
+    <h2>Demand Forecast</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Shipping Week</th>
+                <th>Estimated Demand</th>
+                <th>Carryover</th>
+                <th>Total Required</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for forecast in company.demand.forecasts|sort(attribute='shipping_week') %}
+            {% if forecast.shipping_week >= game.current_week %}
+            <tr>
+                <td>{{ forecast.product_type }}</td>
+                <td>Week {{ forecast.shipping_week }}</td>
+                <td>{{ "{:,.0f}".format(forecast.estimated_demand) }}</td>
+                <td>{{ "{:,.0f}".format(forecast.carryover) }}</td>
+                <td><strong>{{ "{:,.0f}".format(forecast.total_demand) }}</strong></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
+{# --- Inventory --- #}
 <section>
     <h2>Inventory</h2>
 
@@ -84,71 +160,92 @@
         </tbody>
     </table>
 
-    <h3>Parts Inventory</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Part</th>
-                <th>On Hand</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>X' Parts</td>
-                <td>{{ "{:,.0f}".format(company.inventory.parts.x_prime.ending) }}</td>
-            </tr>
-            <tr>
-                <td>Y' Parts</td>
-                <td>{{ "{:,.0f}".format(company.inventory.parts.y_prime.ending) }}</td>
-            </tr>
-            <tr>
-                <td>Z' Parts</td>
-                <td>{{ "{:,.0f}".format(company.inventory.parts.z_prime.ending) }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="form-row">
+        <div>
+            <h3>Parts Inventory</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Part</th>
+                        <th>On Hand</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>X' Parts</td>
+                        <td>{{ "{:,.0f}".format(company.inventory.parts.x_prime.ending) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Y' Parts</td>
+                        <td>{{ "{:,.0f}".format(company.inventory.parts.y_prime.ending) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Z' Parts</td>
+                        <td>{{ "{:,.0f}".format(company.inventory.parts.z_prime.ending) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <h3>Products Inventory</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>On Hand</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Product X</td>
-                <td>{{ "{:,.0f}".format(company.inventory.products.x.ending) }}</td>
-            </tr>
-            <tr>
-                <td>Product Y</td>
-                <td>{{ "{:,.0f}".format(company.inventory.products.y.ending) }}</td>
-            </tr>
-            <tr>
-                <td>Product Z</td>
-                <td>{{ "{:,.0f}".format(company.inventory.products.z.ending) }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div>
+            <h3>Products Inventory</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>On Hand</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Product X</td>
+                        <td>{{ "{:,.0f}".format(company.inventory.products.x.ending) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Product Y</td>
+                        <td>{{ "{:,.0f}".format(company.inventory.products.y.ending) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Product Z</td>
+                        <td>{{ "{:,.0f}".format(company.inventory.products.z.ending) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </section>
 
+{# --- Pending Orders --- #}
+{% set pending = company.orders.get_pending_orders(company.current_week) %}
+{% if pending %}
 <section>
-    <h2>Workforce</h2>
+    <h2>Pending Orders</h2>
     <table>
         <thead>
             <tr>
-                <th>Operator</th>
-                <th>Department</th>
-                <th>Training Status</th>
+                <th>Order Type</th>
+                <th>Amount</th>
+                <th>Placed</th>
+                <th>Arrives</th>
+                <th>Weeks Until Delivery</th>
             </tr>
         </thead>
         <tbody>
-            {% for operator in company.workforce.operators.values() %}
+            {% for order in pending|sort(attribute='week_due') %}
             <tr>
-                <td>{{ operator.display_name }}</td>
-                <td>{{ operator.department.value }}</td>
-                <td>{{ operator.training_status.value }}</td>
+                <td>
+                    {% if order.is_raw_materials %}
+                        Raw Materials{% if order.is_expedited %} (Expedited){% endif %}
+                    {% elif order.part_type %}
+                        {{ order.part_type }} Parts (Purchased)
+                    {% else %}
+                        {{ order.order_type.value }}
+                    {% endif %}
+                </td>
+                <td>{{ "{:,.0f}".format(order.amount) }}</td>
+                <td>Week {{ order.week_placed }}</td>
+                <td>Week {{ order.week_due }}</td>
+                <td>{{ order.week_due - company.current_week }} week(s)</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -156,17 +253,125 @@
 </section>
 {% endif %}
 
+{# --- Workforce --- #}
+<section>
+    <h2>Workforce</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Operator</th>
+                <th>Department</th>
+                <th>Training Level</th>
+                <th>Efficiency</th>
+                <th>Quality Tier</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for op_id, operator in company.workforce.operators.items()|sort %}
+            <tr>
+                <td>{{ operator.display_name }}</td>
+                <td>{{ operator.department.value|capitalize }}</td>
+                <td>{{ operator.training_level_name }} ({{ operator.training_level }}/10)</td>
+                <td>{{ "{:.1f}%".format(operator.efficiency * 100) }}</td>
+                <td>{{ operator.quality_tier }}</td>
+                <td>
+                    {% if operator.is_in_training_class %}
+                    <span class="status active">In Training</span>
+                    {% elif operator.is_fully_trained %}
+                    <span class="status complete">Fully Trained</span>
+                    {% elif operator.training_level >= 1 %}
+                    <span class="status">Trained</span>
+                    {% else %}
+                    <span class="status">Untrained</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{# --- Machine Status --- #}
+<section>
+    <h2>Machine Status</h2>
+
+    <div class="form-row">
+        <div>
+            <h3>Parts Department (Machines 1-{{ company.machines.parts_machines|length }})</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>Last Part Type</th>
+                        <th>Condition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for machine in company.machines.parts_machines|sort(attribute='machine_id') %}
+                    <tr>
+                        <td>Machine {{ machine.machine_id }}</td>
+                        <td>{{ machine.last_part_type or "None" }}</td>
+                        <td>
+                            {% if machine.needs_repair %}
+                            <span class="status" style="background-color: #fee; color: #c00;">Repair Needed</span>
+                            {% else %}
+                            OK
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <h3>Assembly Department (Machines {{ company.machines.parts_machines|length + 1 }}-{{ company.machines.parts_machines|length + company.machines.assembly_machines|length }})</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>Last Product Type</th>
+                        <th>Condition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for machine in company.machines.assembly_machines|sort(attribute='machine_id') %}
+                    <tr>
+                        <td>Machine {{ machine.machine_id }}</td>
+                        <td>{{ machine.last_part_type or "None" }}</td>
+                        <td>
+                            {% if machine.needs_repair %}
+                            <span class="status" style="background-color: #fee; color: #c00;">Repair Needed</span>
+                            {% else %}
+                            OK
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# --- Actions --- #}
 <section>
     <h2>Actions</h2>
     <p>
         <a href="/game/{{ game.session_id }}/decisions" role="button">
             Enter Week {{ game.current_week }} Decisions
         </a>
+        <a href="/game/{{ game.session_id }}/teacher" role="button">
+            Teacher Mode
+        </a>
     </p>
 </section>
 
 {% endif %}
 
+{# --- Report History (shown for both active and complete games) --- #}
 {% if decisions %}
 <section>
     <h2>Report History</h2>

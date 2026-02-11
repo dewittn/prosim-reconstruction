@@ -6,6 +6,20 @@
             <li><a href="/">Games</a></li>
             <li><a href="/new">New Game</a></li>
             <li><a href="/help">Help</a></li>
+            <li class="theme-switcher">
+                {% set current_theme = request.state.theme if request.state.theme is defined else 'win95' %}
+                <form method="post" action="/theme" id="theme-form">
+                    <select id="theme-select"
+                            name="theme"
+                            onchange="setTheme(this.value)"
+                            aria-label="Select theme">
+                        <option value="win95" {% if current_theme == 'win95' %}selected{% endif %}>Windows 95</option>
+                        <option value="industrial" {% if current_theme == 'industrial' %}selected{% endif %}>Industrial</option>
+                        <option value="academic" {% if current_theme == 'academic' %}selected{% endif %}>Academic</option>
+                    </select>
+                    <noscript><button type="submit">Apply</button></noscript>
+                </form>
+            </li>
         </ul>
     </nav>
 </header>

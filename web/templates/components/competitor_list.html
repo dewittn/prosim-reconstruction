@@ -1,0 +1,37 @@
+{% if competitors %}
+<table>
+    <thead>
+        <tr>
+            <th>Company</th>
+            <th>Strategy</th>
+            <th>Week</th>
+            <th>Total Costs</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in competitors %}
+        <tr>
+            <td>{{ c.company_name }}</td>
+            <td>{{ c.strategy | capitalize }}</td>
+            <td>{{ c.current_week }}</td>
+            <td>${{ "{:,.2f}".format(c.total_costs) }}</td>
+            <td>{% if c.is_active %}Active{% else %}Done{% endif %}</td>
+            <td>
+                <button
+                    hx-delete="/game/{{ game.session_id }}/teacher/competitors/{{ c.competitor_id }}"
+                    hx-target="#competitor-list"
+                    hx-swap="innerHTML"
+                    hx-confirm="Remove {{ c.company_name }}?"
+                >
+                    Remove
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p><em>No AI competitors added yet.</em></p>
+{% endif %}

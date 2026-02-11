@@ -7,7 +7,6 @@ using Pydantic's built-in serialization.
 """
 
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase
@@ -39,7 +38,9 @@ class GameSession(Base):
 
     # Game state (serialized Pydantic models)
     game_state_json: str = Column(Text, nullable=False)  # JSON serialized GameState
-    config_json: Optional[str] = Column(Text, nullable=True)  # JSON serialized ProsimConfig
+    config_json: str | None = Column(
+        Text, nullable=True
+    )  # JSON serialized ProsimConfig
 
     # Denormalized metadata for quick queries
     current_week: int = Column(Integer, default=1)
@@ -50,16 +51,18 @@ class GameSession(Base):
 
     # Teacher mode settings
     auto_process: bool = Column(Boolean, default=False)
-    auto_process_interval: Optional[int] = Column(Integer, nullable=True)  # Hours
-    next_auto_process: Optional[datetime] = Column(DateTime, nullable=True)
+    auto_process_interval: int | None = Column(Integer, nullable=True)  # Hours
+    next_auto_process: datetime | None = Column(DateTime, nullable=True)
 
     # Timestamps
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
-    updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at: datetime = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
     last_played: datetime = Column(DateTime, default=datetime.utcnow)
 
     # Random seed for reproducibility
-    random_seed: Optional[int] = Column(Integer, nullable=True)
+    random_seed: int | None = Column(Integer, nullable=True)
 
     def __repr__(self) -> str:
         return (
@@ -89,10 +92,49 @@ class WeeklyDecision(Base):
 
     # Result tracking
     was_processed: bool = Column(Boolean, default=False)
-    report_json: Optional[str] = Column(Text, nullable=True)  # JSON serialized WeeklyReport
+    report_json: str | None = Column(
+        Text, nullable=True
+    )  # JSON serialized WeeklyReport
 
     def __repr__(self) -> str:
         return (
             f"<WeeklyDecision(id={self.id}, game={self.game_session_id}, "
             f"week={self.week}, processed={self.was_processed})>"
+        )
+
+
+class AICompetitor(Base):
+    """AI-controlled competitor for teacher mode.
+
+    Each competitor runs its own Company state using an AI strategy.
+    Linked to a parent GameSession for comparison.
+    """
+
+    __tablename__ = "ai_competitors"
+
+    id: int = Column(Integer, primary_key=True, autoincrement=True)
+    competitor_id: str = Column(String(16), unique=True, nullable=False, index=True)
+    game_session_id: int = Column(
+        Integer, nullable=False, index=True
+    )  # FK to game_sessions.id
+
+    company_name: str = Column(String(100), default="AI Competitor")
+    strategy: str = Column(
+        String(32), nullable=False
+    )  # conservative, aggressive, balanced
+
+    # Serialized Company state
+    company_state_json: str = Column(Text, nullable=False)
+
+    # Denormalized for quick display
+    current_week: int = Column(Integer, default=1)
+    total_costs: float = Column(Float, default=0.0)
+    is_active: bool = Column(Boolean, default=True)
+
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return (
+            f"<AICompetitor(id={self.id}, name={self.company_name}, "
+            f"strategy={self.strategy}, week={self.current_week})>"
         )

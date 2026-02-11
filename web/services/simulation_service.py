@@ -5,8 +5,6 @@ Wraps the prosim.engine.Simulation class for web use,
 providing a clean interface for processing weeks.
 """
 
-from typing import Optional
-
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.engine.simulation import Simulation, SimulationWeekResult
 from prosim.engine.validation import ValidationResult, validate_decisions
@@ -21,7 +19,7 @@ class SimulationService:
     web-friendly interfaces.
     """
 
-    def __init__(self, config: Optional[ProsimConfig] = None):
+    def __init__(self, config: ProsimConfig | None = None):
         """Initialize the simulation service.
 
         Args:
@@ -33,7 +31,7 @@ class SimulationService:
     def get_simulation(
         self,
         game_id: str,
-        random_seed: Optional[int] = None,
+        random_seed: int | None = None,
     ) -> Simulation:
         """Get or create a Simulation instance for a game.
 
@@ -82,7 +80,7 @@ class SimulationService:
         game_id: str,
         company: Company,
         decisions: Decisions,
-        random_seed: Optional[int] = None,
+        random_seed: int | None = None,
     ) -> SimulationWeekResult:
         """Process a week of simulation.
 
@@ -100,7 +98,7 @@ class SimulationService:
 
 
 # Global service instance (singleton pattern)
-_simulation_service: Optional[SimulationService] = None
+_simulation_service: SimulationService | None = None
 
 
 def get_simulation_service() -> SimulationService:

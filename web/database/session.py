@@ -5,9 +5,9 @@ Provides SQLAlchemy session factory and dependency injection
 helpers for FastAPI.
 """
 
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker

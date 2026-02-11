@@ -1,0 +1,1342 @@
+/* =============================================================================
+   PROSIM - Industrial / SCADA Dashboard Theme
+   =============================================================================
+   Factory floor monitoring system / SCADA control room aesthetic.
+   Dark backgrounds with bright data indicators, glowing accents,
+   and a Bloomberg Terminal meets factory HMI feel.
+
+   Activates via: <body class="theme-industrial">
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   0. Fonts — Technical / Industrial Typography
+   --------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Share+Tech&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+/* ---------------------------------------------------------------------------
+   1. Color Palette — SCADA Dark with Bright Indicators
+   --------------------------------------------------------------------------- */
+.theme-industrial {
+  --ind-bg-deep: #0a0e17;
+  --ind-bg-panel: #141b2d;
+  --ind-bg-surface: #1a2332;
+  --ind-bg-elevated: #1f2b3e;
+  --ind-bg-hover: #243348;
+
+  --ind-cyan: #00d4ff;
+  --ind-cyan-dim: #0099bb;
+  --ind-cyan-glow: rgba(0, 212, 255, 0.25);
+  --ind-cyan-subtle: rgba(0, 212, 255, 0.08);
+
+  --ind-amber: #ff9f1c;
+  --ind-amber-dim: #cc7f16;
+  --ind-amber-glow: rgba(255, 159, 28, 0.25);
+
+  --ind-green: #00e676;
+  --ind-green-dim: #00b35c;
+  --ind-green-glow: rgba(0, 230, 118, 0.3);
+
+  --ind-red: #ff3d71;
+  --ind-red-dim: #cc3059;
+  --ind-red-glow: rgba(255, 61, 113, 0.3);
+
+  --ind-text: #e0e6ed;
+  --ind-text-secondary: #7a8ba3;
+  --ind-text-dim: #4a5a72;
+  --ind-border: #2a3a52;
+  --ind-border-bright: #3a4f6e;
+
+  /* Override Simple.css variables */
+  --bg: var(--ind-bg-deep);
+  --accent-bg: var(--ind-bg-panel);
+  --accent: var(--ind-cyan);
+  --accent-text: var(--ind-bg-deep);
+  --text: var(--ind-text);
+  --text-light: var(--ind-text-secondary);
+  --border: var(--ind-border);
+  --code: var(--ind-cyan);
+  --preformatted: var(--ind-text);
+  --disabled: var(--ind-text-dim);
+  --marked: var(--ind-amber);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Typography — Technical / Monospace Data Readouts
+   --------------------------------------------------------------------------- */
+.theme-industrial {
+  font-family: "Rajdhani", "Share Tech", "Inter", "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.theme-industrial h1,
+.theme-industrial h2,
+.theme-industrial h3,
+.theme-industrial h4 {
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ind-text);
+}
+
+.theme-industrial h1 {
+  font-size: 1.8rem;
+  color: var(--ind-cyan);
+  text-shadow: 0 0 20px var(--ind-cyan-glow);
+}
+
+.theme-industrial h2 {
+  font-size: 1.2rem;
+  color: var(--ind-text);
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--ind-border);
+  position: relative;
+}
+
+/* Horizontal accent line extending from section headers */
+.theme-industrial h2::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: var(--ind-cyan);
+  box-shadow: 0 0 8px var(--ind-cyan-glow);
+}
+
+.theme-industrial h3 {
+  font-size: 1rem;
+  color: var(--ind-amber);
+}
+
+.theme-industrial h4 {
+  font-size: 0.9rem;
+  color: var(--ind-text);
+}
+
+.theme-industrial pre,
+.theme-industrial code,
+.theme-industrial pre *,
+.theme-industrial code * {
+  font-family: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "Courier New", monospace;
+  font-size: 13px;
+}
+
+.theme-industrial p {
+  color: var(--ind-text-secondary);
+  line-height: 1.6;
+}
+
+.theme-industrial strong {
+  color: var(--ind-text);
+  font-weight: 600;
+}
+
+.theme-industrial small {
+  color: var(--ind-text-dim);
+  font-size: 0.8rem;
+}
+
+.theme-industrial em {
+  color: var(--ind-text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   3. Base Layout — Dark SCADA Background with Scan Lines
+   --------------------------------------------------------------------------- */
+.theme-industrial {
+  background-color: var(--ind-bg-deep);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Subtle scan-line overlay */
+.theme-industrial::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   4. Main Layout Containers
+   --------------------------------------------------------------------------- */
+.theme-industrial > header,
+.theme-industrial > main,
+.theme-industrial > footer {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.theme-industrial > main {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  background: var(--ind-bg-deep);
+}
+
+/* ---------------------------------------------------------------------------
+   5. Navigation — Control Room Title Bar
+   --------------------------------------------------------------------------- */
+.theme-industrial > header nav {
+  background: var(--ind-bg-panel);
+  border-bottom: 2px solid var(--ind-cyan);
+  box-shadow: 0 2px 15px var(--ind-cyan-glow);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  margin: 0;
+}
+
+.theme-industrial > header nav .brand,
+.theme-industrial > header nav a.brand {
+  color: var(--ind-cyan);
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 0 10px var(--ind-cyan-glow);
+}
+
+/* Small status indicator dot before brand */
+.theme-industrial > header nav .brand::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--ind-green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--ind-green-glow);
+  animation: ind-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.theme-industrial > header nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2px;
+}
+
+.theme-industrial > header nav ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.theme-industrial > header nav ul li a {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: var(--ind-text-secondary);
+  text-decoration: none;
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.theme-industrial > header nav ul li a:hover {
+  color: var(--ind-cyan);
+  border-bottom-color: var(--ind-cyan);
+  background: var(--ind-cyan-subtle);
+}
+
+/* ---------------------------------------------------------------------------
+   6. Content Sections — Data Panels
+   --------------------------------------------------------------------------- */
+.theme-industrial main section {
+  background: var(--ind-bg-panel);
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  margin: 1rem 0;
+  padding: 1.2rem 1.5rem;
+  position: relative;
+}
+
+/* Top-left corner accent for panels */
+.theme-industrial main section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--ind-cyan) 0%,
+    var(--ind-cyan-dim) 30%,
+    transparent 100%
+  );
+}
+
+.theme-industrial main section > h2 {
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+}
+
+/* Page-level headers */
+.theme-industrial main > header {
+  background: var(--ind-bg-panel);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--ind-border);
+  border-left: 3px solid var(--ind-cyan);
+  border-radius: 2px;
+}
+
+.theme-industrial main > header h1 {
+  margin: 0 0 0.3rem 0;
+}
+
+.theme-industrial main > header p {
+  margin: 0;
+  color: var(--ind-text-secondary);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------------------
+   7. Tables — LED Data Readout Panels
+   --------------------------------------------------------------------------- */
+.theme-industrial table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.85rem;
+  background: var(--ind-bg-surface);
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+}
+
+.theme-industrial table thead th {
+  background: var(--ind-bg-elevated);
+  color: var(--ind-text-secondary);
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--ind-border-bright);
+  white-space: nowrap;
+}
+
+.theme-industrial table tbody td {
+  padding: 0.5rem 1rem;
+  color: var(--ind-text);
+  border-bottom: 1px solid rgba(42, 58, 82, 0.5);
+  white-space: nowrap;
+}
+
+/* Data values glow subtly like LED readouts */
+.theme-industrial table tbody td:not(:first-child) {
+  color: var(--ind-cyan);
+  text-shadow: 0 0 4px var(--ind-cyan-glow);
+}
+
+.theme-industrial table tbody tr:hover {
+  background: var(--ind-bg-hover);
+}
+
+.theme-industrial table tbody tr:hover td {
+  color: var(--ind-text);
+}
+
+.theme-industrial table tbody tr:hover td:not(:first-child) {
+  color: var(--ind-cyan);
+  text-shadow: 0 0 8px var(--ind-cyan-glow);
+}
+
+/* Alternating rows */
+.theme-industrial table tbody tr:nth-child(even) {
+  background: rgba(20, 27, 45, 0.5);
+}
+
+.theme-industrial table tbody tr:nth-child(odd) {
+  background: var(--ind-bg-surface);
+}
+
+/* Total / summary rows */
+.theme-industrial .total-row {
+  font-weight: 700;
+  border-top: 2px solid var(--ind-amber);
+}
+
+.theme-industrial .total-row td {
+  color: var(--ind-amber) !important;
+  text-shadow: 0 0 6px var(--ind-amber-glow) !important;
+}
+
+/* Cost tables */
+.theme-industrial .cost-table th,
+.theme-industrial .cost-table td {
+  text-align: right;
+}
+
+.theme-industrial .cost-table th:first-child,
+.theme-industrial .cost-table td:first-child {
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------------------
+   8. Buttons — Industrial Push Buttons / Toggle Switches
+   --------------------------------------------------------------------------- */
+.theme-industrial button,
+.theme-industrial input[type="submit"],
+.theme-industrial input[type="button"],
+.theme-industrial input[type="reset"],
+.theme-industrial a[role="button"] {
+  background: var(--ind-bg-surface);
+  color: var(--ind-cyan);
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.5rem;
+  border: 1px solid var(--ind-cyan-dim);
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 8px var(--ind-cyan-glow),
+              inset 0 0 8px rgba(0, 212, 255, 0.05);
+}
+
+.theme-industrial button:hover,
+.theme-industrial input[type="submit"]:hover,
+.theme-industrial a[role="button"]:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--ind-cyan);
+  box-shadow: 0 0 15px var(--ind-cyan-glow),
+              inset 0 0 15px rgba(0, 212, 255, 0.08);
+  color: var(--ind-cyan);
+}
+
+.theme-industrial button:active,
+.theme-industrial input[type="submit"]:active,
+.theme-industrial a[role="button"]:active {
+  background: rgba(0, 212, 255, 0.2);
+  box-shadow: 0 0 20px var(--ind-cyan-glow),
+              inset 0 0 20px rgba(0, 212, 255, 0.15);
+  transform: translateY(1px);
+}
+
+/* Primary action button */
+.theme-industrial button[type="submit"],
+.theme-industrial input[type="submit"] {
+  background: linear-gradient(180deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 100%);
+  border: 1px solid var(--ind-cyan);
+  box-shadow: 0 0 12px var(--ind-cyan-glow),
+              inset 0 1px 0 rgba(0, 212, 255, 0.2);
+}
+
+/* Focused button */
+.theme-industrial button:focus-visible,
+.theme-industrial input[type="submit"]:focus-visible,
+.theme-industrial a[role="button"]:focus-visible {
+  outline: 1px solid var(--ind-cyan);
+  outline-offset: 2px;
+  box-shadow: 0 0 20px var(--ind-cyan-glow);
+}
+
+/* Disabled button */
+.theme-industrial button:disabled,
+.theme-industrial input:disabled {
+  color: var(--ind-text-dim);
+  border-color: var(--ind-border);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Secondary / Cancel button */
+.theme-industrial .secondary,
+.theme-industrial a[role="button"].secondary {
+  background: var(--ind-bg-surface);
+  color: var(--ind-text-secondary);
+  border-color: var(--ind-border);
+  box-shadow: none;
+}
+
+.theme-industrial .secondary:hover,
+.theme-industrial a[role="button"].secondary:hover {
+  color: var(--ind-text);
+  border-color: var(--ind-text-secondary);
+  box-shadow: none;
+  background: var(--ind-bg-elevated);
+}
+
+/* ---------------------------------------------------------------------------
+   9. Form Controls — Control Panel Inputs
+   --------------------------------------------------------------------------- */
+.theme-industrial input[type="text"],
+.theme-industrial input[type="number"],
+.theme-industrial input[type="email"],
+.theme-industrial input[type="password"],
+.theme-industrial input[type="url"],
+.theme-industrial input[type="search"],
+.theme-industrial textarea {
+  background: var(--ind-bg-deep);
+  color: var(--ind-cyan);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-shadow: 0 0 4px var(--ind-cyan-glow);
+}
+
+.theme-industrial input:focus,
+.theme-industrial textarea:focus,
+.theme-industrial select:focus {
+  border-color: var(--ind-cyan);
+  box-shadow: 0 0 10px var(--ind-cyan-glow),
+              inset 0 0 10px rgba(0, 212, 255, 0.05);
+  outline: none;
+}
+
+.theme-industrial input::placeholder,
+.theme-industrial textarea::placeholder {
+  color: var(--ind-text-dim);
+  text-shadow: none;
+}
+
+.theme-industrial select {
+  background: var(--ind-bg-deep);
+  color: var(--ind-cyan);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.9rem;
+  padding: 0.5rem 2rem 0.5rem 0.8rem;
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%2300d4ff' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  cursor: pointer;
+  text-shadow: 0 0 4px var(--ind-cyan-glow);
+}
+
+.theme-industrial select option {
+  background: var(--ind-bg-panel);
+  color: var(--ind-text);
+}
+
+.theme-industrial label {
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ind-text-secondary);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.theme-industrial input[type="checkbox"],
+.theme-industrial input[type="radio"] {
+  accent-color: var(--ind-cyan);
+  margin-right: 6px;
+}
+
+/* ---------------------------------------------------------------------------
+   10. Fieldsets — SCADA Group Panels
+   --------------------------------------------------------------------------- */
+.theme-industrial fieldset {
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  background: var(--ind-bg-surface);
+  position: relative;
+}
+
+.theme-industrial fieldset legend {
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.8rem;
+  color: var(--ind-amber);
+  background: var(--ind-bg-panel);
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   11. Links
+   --------------------------------------------------------------------------- */
+.theme-industrial a {
+  color: var(--ind-cyan);
+  text-decoration: none;
+  transition: color 0.15s, text-shadow 0.15s;
+}
+
+.theme-industrial a:hover {
+  color: #33dfff;
+  text-shadow: 0 0 8px var(--ind-cyan-glow);
+}
+
+.theme-industrial a:visited {
+  color: var(--ind-cyan-dim);
+}
+
+/* ---------------------------------------------------------------------------
+   12. Status Indicators — Alert System Badges
+   --------------------------------------------------------------------------- */
+.theme-industrial .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.2rem 0.7rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  border: 1px solid;
+}
+
+/* Pulsing dot before status text */
+.theme-industrial .status::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.theme-industrial .status.active {
+  background: rgba(0, 230, 118, 0.1);
+  color: var(--ind-green);
+  border-color: var(--ind-green-dim);
+}
+
+.theme-industrial .status.active::before {
+  background: var(--ind-green);
+  box-shadow: 0 0 6px var(--ind-green-glow);
+  animation: ind-pulse 2s ease-in-out infinite;
+}
+
+.theme-industrial .status.complete {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--ind-cyan);
+  border-color: var(--ind-cyan-dim);
+}
+
+.theme-industrial .status.complete::before {
+  background: var(--ind-cyan);
+  box-shadow: 0 0 6px var(--ind-cyan-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   13. Game Cards — Monitoring Panels on Landing Page
+   --------------------------------------------------------------------------- */
+.theme-industrial .game-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.theme-industrial .game-card {
+  background: var(--ind-bg-surface);
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  padding: 1.2rem 1.5rem;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+/* Top accent bar on each card */
+.theme-industrial .game-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ind-cyan) 0%, transparent 100%);
+}
+
+.theme-industrial .game-card:hover {
+  border-color: var(--ind-cyan-dim);
+  box-shadow: 0 0 20px var(--ind-cyan-glow);
+}
+
+.theme-industrial .game-card h3 {
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ind-text);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.theme-industrial .game-card .meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  color: var(--ind-text-dim);
+}
+
+.theme-industrial .game-card p {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+}
+
+/* Dollar amounts in cards */
+.theme-industrial .game-card strong {
+  color: var(--ind-amber);
+  text-shadow: 0 0 4px var(--ind-amber-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   14. Machine Assignment Grid — Control Room Layout
+   --------------------------------------------------------------------------- */
+.theme-industrial .machine-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.theme-industrial .machine-card {
+  background: var(--ind-bg-surface);
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  padding: 1rem;
+  position: relative;
+}
+
+.theme-industrial .machine-card.parts-dept {
+  border-left: 3px solid var(--ind-green);
+}
+
+.theme-industrial .machine-card.assembly-dept {
+  border-left: 3px solid var(--ind-amber);
+}
+
+.theme-industrial .machine-card h4 {
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ind-text);
+  margin: 0 0 0.5rem 0;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--ind-border);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.theme-industrial .machine-card .dept-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.theme-industrial .machine-card.parts-dept .dept-label {
+  color: var(--ind-green);
+}
+
+.theme-industrial .machine-card.assembly-dept .dept-label {
+  color: var(--ind-amber);
+}
+
+/* ---------------------------------------------------------------------------
+   15. Pre-formatted Report Text — Terminal / Data Dump
+   --------------------------------------------------------------------------- */
+.theme-industrial pre {
+  background: var(--ind-bg-deep) !important;
+  color: var(--ind-green) !important;
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  padding: 1.2rem 1.5rem !important;
+  border: 1px solid var(--ind-border) !important;
+  border-radius: 2px !important;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0.8rem 0;
+  box-shadow: inset 0 0 30px rgba(0, 230, 118, 0.03) !important;
+  text-shadow: 0 0 2px rgba(0, 230, 118, 0.3);
+  position: relative;
+}
+
+.theme-industrial code {
+  background: var(--ind-bg-surface);
+  color: var(--ind-cyan);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  font-size: 0.85em;
+  border: 1px solid var(--ind-border);
+}
+
+/* Inline code inside pre should not get extra box */
+.theme-industrial pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+   16. Details / Summary — Expandable Data Panels
+   --------------------------------------------------------------------------- */
+.theme-industrial details {
+  border: 1px solid var(--ind-border);
+  background: var(--ind-bg-surface);
+  padding: 0;
+  margin: 0.8rem 0;
+  border-radius: 2px;
+}
+
+.theme-industrial details summary {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-family: "Rajdhani", "Share Tech", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ind-text-secondary);
+  background: var(--ind-bg-elevated);
+  user-select: none;
+  list-style: none;
+  transition: color 0.15s;
+}
+
+.theme-industrial details summary:hover {
+  color: var(--ind-cyan);
+}
+
+.theme-industrial details summary::before {
+  content: "\25b8";
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--ind-cyan);
+  font-size: 0.8rem;
+  transition: transform 0.15s;
+}
+
+.theme-industrial details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.theme-industrial details summary::-webkit-details-marker {
+  display: none;
+}
+
+.theme-industrial details > :not(summary) {
+  padding: 0.8rem 1rem;
+}
+
+/* ---------------------------------------------------------------------------
+   17. Flash Messages — System Alert Notifications
+   --------------------------------------------------------------------------- */
+.theme-industrial .flash-messages .notice {
+  background: var(--ind-bg-surface);
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  padding: 0.8rem 1.2rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left accent stripe */
+.theme-industrial .flash-messages .notice::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+}
+
+.theme-industrial .flash-messages .notice.success {
+  background: rgba(0, 230, 118, 0.05);
+  border-color: var(--ind-green-dim);
+  color: var(--ind-green);
+}
+
+.theme-industrial .flash-messages .notice.success::before {
+  background: var(--ind-green);
+  box-shadow: 0 0 8px var(--ind-green-glow);
+}
+
+.theme-industrial .flash-messages .notice.error {
+  background: rgba(255, 61, 113, 0.05);
+  border-color: var(--ind-red-dim);
+  color: var(--ind-red);
+}
+
+.theme-industrial .flash-messages .notice.error::before {
+  background: var(--ind-red);
+  box-shadow: 0 0 8px var(--ind-red-glow);
+}
+
+.theme-industrial .flash-messages .notice.warning {
+  background: rgba(255, 159, 28, 0.05);
+  border-color: var(--ind-amber-dim);
+  color: var(--ind-amber);
+}
+
+.theme-industrial .flash-messages .notice.warning::before {
+  background: var(--ind-amber);
+  box-shadow: 0 0 8px var(--ind-amber-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   18. Footer — Status Bar / System Telemetry
+   --------------------------------------------------------------------------- */
+.theme-industrial > footer {
+  background: var(--ind-bg-panel);
+  border-top: 1px solid var(--ind-border);
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.theme-industrial > footer p {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--ind-text-dim);
+  line-height: 1.5;
+}
+
+.theme-industrial > footer strong {
+  color: var(--ind-text-secondary);
+  font-weight: 600;
+}
+
+.theme-industrial > footer small {
+  font-size: 0.68rem;
+  color: var(--ind-text-dim);
+}
+
+.theme-industrial > footer br {
+  display: inline;
+}
+
+/* ---------------------------------------------------------------------------
+   19. Progress Indicators — Industrial Gauge Bar
+   --------------------------------------------------------------------------- */
+.theme-industrial progress,
+.theme-industrial .progress-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 20px;
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  background: var(--ind-bg-deep);
+  overflow: hidden;
+}
+
+.theme-industrial progress::-webkit-progress-bar {
+  background: var(--ind-bg-deep);
+  border-radius: 2px;
+}
+
+.theme-industrial progress::-webkit-progress-value {
+  background: linear-gradient(
+    90deg,
+    var(--ind-cyan-dim) 0%,
+    var(--ind-cyan) 100%
+  );
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--ind-cyan-glow);
+}
+
+.theme-industrial progress::-moz-progress-bar {
+  background: linear-gradient(
+    90deg,
+    var(--ind-cyan-dim) 0%,
+    var(--ind-cyan) 100%
+  );
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--ind-cyan-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   20. Scrollbars — Minimal Dark
+   --------------------------------------------------------------------------- */
+.theme-industrial ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.theme-industrial ::-webkit-scrollbar-track {
+  background: var(--ind-bg-deep);
+}
+
+.theme-industrial ::-webkit-scrollbar-thumb {
+  background: var(--ind-border-bright);
+  border-radius: 4px;
+}
+
+.theme-industrial ::-webkit-scrollbar-thumb:hover {
+  background: var(--ind-text-dim);
+}
+
+/* ---------------------------------------------------------------------------
+   21. HTMX Loading — Processing Indicator
+   --------------------------------------------------------------------------- */
+.theme-industrial .htmx-request {
+  cursor: wait !important;
+}
+
+.theme-industrial .htmx-request * {
+  cursor: wait !important;
+}
+
+.theme-industrial .spinner {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid var(--ind-border);
+  border-top-color: var(--ind-cyan);
+  border-radius: 50%;
+  animation: ind-spin 0.6s linear infinite;
+  box-shadow: 0 0 8px var(--ind-cyan-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   22. Lists — Clean Data Presentation
+   --------------------------------------------------------------------------- */
+.theme-industrial ul,
+.theme-industrial ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.theme-industrial li {
+  font-size: 0.95rem;
+  margin: 0.3rem 0;
+  line-height: 1.5;
+  color: var(--ind-text-secondary);
+}
+
+.theme-industrial li strong {
+  color: var(--ind-text);
+}
+
+.theme-industrial li::marker {
+  color: var(--ind-cyan-dim);
+}
+
+/* ---------------------------------------------------------------------------
+   23. Form Layout — Dialog / Control Panel
+   --------------------------------------------------------------------------- */
+.theme-industrial form {
+  background: transparent;
+}
+
+.theme-industrial .form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.theme-industrial .form-row > * {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Button row at bottom of forms */
+.theme-industrial form > div:last-child {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: flex-start;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--ind-border);
+}
+
+/* ---------------------------------------------------------------------------
+   24. Section Navigation (Help page ToC)
+   --------------------------------------------------------------------------- */
+.theme-industrial main > nav {
+  background: var(--ind-bg-panel);
+  padding: 0.8rem 1.2rem;
+  border: 1px solid var(--ind-border);
+  border-radius: 2px;
+  margin-bottom: 1rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+}
+
+.theme-industrial main > nav strong {
+  color: var(--ind-text-secondary);
+  margin-right: 0.5rem;
+}
+
+.theme-industrial main > nav a {
+  color: var(--ind-cyan-dim);
+}
+
+.theme-industrial main > nav a:hover {
+  color: var(--ind-cyan);
+}
+
+/* ---------------------------------------------------------------------------
+   25. Animations — Pulsing / Glowing Effects
+   --------------------------------------------------------------------------- */
+@keyframes ind-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 6px var(--ind-green-glow);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 2px var(--ind-green-glow);
+  }
+}
+
+@keyframes ind-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ind-glow-cyan {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--ind-cyan-glow);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--ind-cyan-glow);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   26. Theme Switcher — Control Panel Dropdown
+   --------------------------------------------------------------------------- */
+.theme-industrial .theme-switcher {
+  margin-left: auto;
+}
+
+.theme-industrial .theme-switcher form {
+  background: transparent;
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-industrial .theme-switcher select {
+  background: var(--ind-panel);
+  color: var(--ind-cyan);
+  border: 1px solid var(--ind-border);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  padding: 0.25rem 1.75rem 0.25rem 0.5rem;
+  border-radius: 3px;
+  min-height: auto;
+}
+
+.theme-industrial .theme-switcher select:hover {
+  border-color: var(--ind-cyan);
+}
+
+.theme-industrial .theme-switcher select:focus {
+  border-color: var(--ind-cyan);
+  box-shadow: 0 0 4px var(--ind-cyan-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   27. Responsive — Mobile Adaptations
+   --------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .theme-industrial > header nav {
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem;
+    gap: 0.3rem;
+  }
+
+  .theme-industrial > header nav ul {
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid var(--ind-border);
+    padding-top: 0.3rem;
+  }
+
+  .theme-industrial > main {
+    padding: 1rem;
+  }
+
+  .theme-industrial main section {
+    padding: 1rem;
+  }
+
+  .theme-industrial .game-list {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-industrial .machine-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-industrial .form-row {
+    flex-direction: column;
+  }
+
+  .theme-industrial .form-row > * {
+    min-width: 100%;
+  }
+
+  .theme-industrial h1 {
+    font-size: 1.4rem;
+  }
+
+  .theme-industrial h2 {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-industrial > header nav .brand {
+    font-size: 1.1rem;
+  }
+
+  .theme-industrial > header nav ul li a {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .theme-industrial table {
+    font-size: 0.8rem;
+  }
+
+  .theme-industrial table thead th,
+  .theme-industrial table tbody td {
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   27. Print Styles — Clean Output
+   --------------------------------------------------------------------------- */
+@media print {
+  .theme-industrial {
+    background: white;
+    color: black;
+  }
+
+  .theme-industrial::before {
+    display: none;
+  }
+
+  .theme-industrial > header nav {
+    background: none;
+    border-bottom: 1px solid #ccc;
+    box-shadow: none;
+  }
+
+  .theme-industrial > header nav .brand {
+    color: black;
+    text-shadow: none;
+  }
+
+  .theme-industrial > header nav .brand::before {
+    display: none;
+  }
+
+  .theme-industrial main section {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+
+  .theme-industrial main section::before {
+    display: none;
+  }
+
+  .theme-industrial table {
+    background: white;
+  }
+
+  .theme-industrial table tbody td:not(:first-child) {
+    color: black;
+    text-shadow: none;
+  }
+
+  .theme-industrial pre {
+    background: #f5f5f5 !important;
+    color: black !important;
+    text-shadow: none;
+    box-shadow: none !important;
+  }
+
+  .theme-industrial .status.active,
+  .theme-industrial .status.complete {
+    border: 1px solid #333;
+    background: #eee;
+    color: black;
+  }
+
+  .theme-industrial .status::before {
+    display: none;
+  }
+
+  .theme-industrial h1,
+  .theme-industrial h2,
+  .theme-industrial h3 {
+    color: black;
+    text-shadow: none;
+  }
+
+  .theme-industrial h2::after {
+    display: none;
+  }
+}

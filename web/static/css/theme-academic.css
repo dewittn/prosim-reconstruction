@@ -1,0 +1,1444 @@
+/* =============================================================================
+   PROSIM - Academic / Classroom Theme
+   =============================================================================
+   A warm, inviting university-inspired design that feels like a beautifully
+   designed college textbook meets a modern learning management system.
+
+   PROSIM was created for university business courses — this theme embraces
+   that academic heritage with scholarly typography, warm cream tones,
+   university gold accents, and a "chapter and verse" information hierarchy.
+
+   Activates via: <body class="theme-academic">
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   0. Google Fonts Import
+   --------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ---------------------------------------------------------------------------
+   1. Color Palette & Custom Properties
+   --------------------------------------------------------------------------- */
+.theme-academic {
+  /* Core palette */
+  --acad-bg: #faf8f5;
+  --acad-bg-alt: #f5f1eb;
+  --acad-surface: #ffffff;
+  --acad-navy: #1a3a5c;
+  --acad-navy-light: #2a5a8c;
+  --acad-navy-pale: #e8eef5;
+  --acad-gold: #c8963e;
+  --acad-gold-light: #d4aa5a;
+  --acad-gold-pale: #f9f0de;
+  --acad-success: #2d6a4f;
+  --acad-success-bg: #e8f5ee;
+  --acad-warning: #b85c2f;
+  --acad-warning-bg: #fdf0e8;
+  --acad-danger: #922b21;
+  --acad-danger-bg: #fce8e6;
+  --acad-text: #2c2c2c;
+  --acad-text-secondary: #6b6b6b;
+  --acad-text-light: #8a8580;
+  --acad-border: #e5ddd3;
+  --acad-border-light: #ede8e1;
+  --acad-hover: #f0ece6;
+  --acad-focus-ring: rgba(200, 150, 62, 0.4);
+
+  /* Shadows */
+  --acad-shadow-sm: 0 1px 3px rgba(44, 44, 44, 0.06), 0 1px 2px rgba(44, 44, 44, 0.04);
+  --acad-shadow-md: 0 4px 12px rgba(44, 44, 44, 0.07), 0 2px 4px rgba(44, 44, 44, 0.04);
+  --acad-shadow-lg: 0 8px 24px rgba(44, 44, 44, 0.08), 0 4px 8px rgba(44, 44, 44, 0.04);
+
+  /* Override Simple.css variables */
+  --bg: var(--acad-bg);
+  --accent-bg: var(--acad-gold-pale);
+  --accent: var(--acad-navy);
+  --accent-text: #ffffff;
+  --text: var(--acad-text);
+  --text-light: var(--acad-text-secondary);
+  --border: var(--acad-border);
+  --code: var(--acad-navy);
+  --preformatted: var(--acad-text);
+  --disabled: var(--acad-text-light);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Base Typography
+   --------------------------------------------------------------------------- */
+.theme-academic {
+  font-family: "Source Sans 3", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--acad-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.theme-academic h1,
+.theme-academic h2,
+.theme-academic h3,
+.theme-academic h4,
+.theme-academic h5,
+.theme-academic h6 {
+  font-family: "Crimson Pro", "Georgia", "Times New Roman", serif;
+  color: var(--acad-navy);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.theme-academic h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--acad-gold);
+}
+
+.theme-academic h2 {
+  font-size: 1.625rem;
+  font-weight: 600;
+  margin: 2rem 0 0.625rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--acad-border);
+  position: relative;
+}
+
+/* Gold accent underline on h2 — like a textbook section divider */
+.theme-academic h2::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 3rem;
+  height: 2px;
+  background: var(--acad-gold);
+}
+
+.theme-academic h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--acad-navy);
+}
+
+.theme-academic h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.375rem;
+  color: var(--acad-navy-light);
+}
+
+.theme-academic p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0.625rem 0;
+  color: var(--acad-text);
+}
+
+.theme-academic strong {
+  font-weight: 600;
+  color: var(--acad-text);
+}
+
+.theme-academic small {
+  font-size: 0.8125rem;
+  color: var(--acad-text-secondary);
+  line-height: 1.5;
+}
+
+.theme-academic em {
+  font-style: italic;
+  color: var(--acad-text-secondary);
+}
+
+.theme-academic pre,
+.theme-academic code,
+.theme-academic pre *,
+.theme-academic code * {
+  font-family: "IBM Plex Mono", "Consolas", "Monaco", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Page Background — Subtle Paper Texture
+   --------------------------------------------------------------------------- */
+.theme-academic {
+  background-color: var(--acad-bg);
+  background-image:
+    /* Subtle paper grain */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.003) 2px,
+      rgba(0, 0, 0, 0.003) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.002) 2px,
+      rgba(0, 0, 0, 0.002) 4px
+    );
+  min-height: 100vh;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Page Layout — Warm, Generous Whitespace
+   --------------------------------------------------------------------------- */
+.theme-academic > header,
+.theme-academic > main,
+.theme-academic > footer {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.theme-academic > main {
+  padding-top: 0.5rem;
+  padding-bottom: 2rem;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Navigation Bar — University Header
+   --------------------------------------------------------------------------- */
+.theme-academic > header nav {
+  background: var(--acad-navy);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: var(--acad-shadow-md);
+  margin-bottom: 0.5rem;
+}
+
+.theme-academic > header nav .brand,
+.theme-academic > header nav a.brand {
+  color: #ffffff;
+  font-family: "Crimson Pro", "Georgia", serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Small decorative crest/shield before the brand */
+.theme-academic > header nav .brand::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--acad-gold);
+  border-radius: 3px;
+  background:
+    linear-gradient(135deg,
+      var(--acad-gold) 0%, var(--acad-gold) 30%,
+      transparent 30%, transparent 50%,
+      var(--acad-gold) 50%, var(--acad-gold) 70%,
+      transparent 70%);
+  background-size: 8px 8px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.theme-academic > header nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.theme-academic > header nav ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.theme-academic > header nav ul li a {
+  display: block;
+  padding: 0.5rem 1.125rem;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.15s ease;
+}
+
+.theme-academic > header nav ul li a:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border: none;
+}
+
+.theme-academic > header nav ul li a:active {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Content Sections — Card-based Layout
+   --------------------------------------------------------------------------- */
+.theme-academic main section {
+  background: var(--acad-surface);
+  margin: 1.25rem 0;
+  padding: 1.5rem 1.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--acad-border-light);
+  box-shadow: var(--acad-shadow-sm);
+}
+
+.theme-academic main section:first-child {
+  margin-top: 0.5rem;
+}
+
+/* Nested sections should not double-card */
+.theme-academic main section section {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  border-radius: 0;
+}
+
+/* Section headers inside cards */
+.theme-academic main section > h2 {
+  margin-top: 0;
+}
+
+/* Page-level headers (like game title bar) */
+.theme-academic main > header {
+  background: var(--acad-surface);
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid var(--acad-border-light);
+  border-bottom: 2px solid var(--acad-gold);
+  box-shadow: var(--acad-shadow-sm);
+}
+
+/* When header is followed by a section, connect them visually */
+.theme-academic main > header + section {
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  margin-top: 0;
+}
+
+.theme-academic main > header h1 {
+  margin: 0 0 0.25rem;
+  padding-bottom: 0;
+  border-bottom: none;
+  font-size: 1.875rem;
+}
+
+.theme-academic main > header p {
+  margin: 0.25rem 0 0;
+  color: var(--acad-text-secondary);
+  font-size: 0.9375rem;
+}
+
+/* Section header with button (like "Your Games" + "New Game") */
+.theme-academic main section > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--acad-border-light);
+}
+
+.theme-academic main section > header h2 {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.theme-academic main section > header h2::after {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   7. Links — Scholarly Blue
+   --------------------------------------------------------------------------- */
+.theme-academic a {
+  color: var(--acad-navy-light);
+  text-decoration: underline;
+  text-decoration-color: rgba(42, 90, 140, 0.3);
+  text-underline-offset: 2px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.theme-academic a:hover {
+  color: var(--acad-navy);
+  text-decoration-color: var(--acad-navy);
+}
+
+.theme-academic a:visited {
+  color: #5a4a7a;
+}
+
+/* Arrow links (like "Learn how to play") */
+.theme-academic a[href$="rarr;"],
+.theme-academic section > p > a:only-child {
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------------------
+   8. Buttons — Warm, Confident, University-branded
+   --------------------------------------------------------------------------- */
+.theme-academic button,
+.theme-academic input[type="submit"],
+.theme-academic input[type="button"],
+.theme-academic input[type="reset"],
+.theme-academic a[role="button"] {
+  font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  line-height: 1.4;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+/* Primary button — navy */
+.theme-academic button[type="submit"],
+.theme-academic input[type="submit"],
+.theme-academic a[role="button"]:not(.secondary) {
+  background: var(--acad-navy);
+  color: #ffffff;
+  box-shadow: var(--acad-shadow-sm);
+}
+
+.theme-academic button[type="submit"]:hover,
+.theme-academic input[type="submit"]:hover,
+.theme-academic a[role="button"]:not(.secondary):hover {
+  background: var(--acad-navy-light);
+  box-shadow: var(--acad-shadow-md);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.theme-academic button[type="submit"]:active,
+.theme-academic input[type="submit"]:active,
+.theme-academic a[role="button"]:not(.secondary):active {
+  transform: translateY(1px);
+  box-shadow: var(--acad-shadow-sm);
+}
+
+/* Secondary button — outlined */
+.theme-academic .secondary,
+.theme-academic a[role="button"].secondary {
+  background: var(--acad-surface);
+  color: var(--acad-navy);
+  border: 1.5px solid var(--acad-border);
+  box-shadow: none;
+}
+
+.theme-academic .secondary:hover,
+.theme-academic a[role="button"].secondary:hover {
+  background: var(--acad-hover);
+  border-color: var(--acad-navy);
+  color: var(--acad-navy);
+  text-decoration: none;
+}
+
+/* Focus ring */
+.theme-academic button:focus-visible,
+.theme-academic input[type="submit"]:focus-visible,
+.theme-academic a[role="button"]:focus-visible {
+  outline: 3px solid var(--acad-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Disabled */
+.theme-academic button:disabled,
+.theme-academic input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------------------
+   9. Form Controls — Worksheet-style Fields
+   --------------------------------------------------------------------------- */
+.theme-academic input[type="text"],
+.theme-academic input[type="number"],
+.theme-academic input[type="email"],
+.theme-academic input[type="password"],
+.theme-academic input[type="url"],
+.theme-academic input[type="search"],
+.theme-academic textarea {
+  font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+  font-size: 1rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--acad-surface);
+  color: var(--acad-text);
+  border: 1.5px solid var(--acad-border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.theme-academic input:focus,
+.theme-academic textarea:focus,
+.theme-academic select:focus {
+  border-color: var(--acad-gold);
+  box-shadow: 0 0 0 3px var(--acad-focus-ring);
+  outline: none;
+}
+
+.theme-academic select {
+  font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+  font-size: 1rem;
+  padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+  background: var(--acad-surface);
+  color: var(--acad-text);
+  border: 1.5px solid var(--acad-border);
+  border-radius: 8px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.theme-academic select:hover {
+  border-color: var(--acad-text-light);
+}
+
+.theme-academic label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--acad-text);
+  margin-bottom: 0.375rem;
+  display: block;
+}
+
+.theme-academic input[type="checkbox"],
+.theme-academic input[type="radio"] {
+  accent-color: var(--acad-navy);
+  margin-right: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Placeholder text */
+.theme-academic input::placeholder,
+.theme-academic textarea::placeholder {
+  color: var(--acad-text-light);
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
+   10. Fieldsets — Chapter Sections
+   --------------------------------------------------------------------------- */
+.theme-academic fieldset {
+  border: 1.5px solid var(--acad-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  background: var(--acad-bg);
+}
+
+.theme-academic fieldset legend {
+  font-family: "Crimson Pro", "Georgia", serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 0 0.75rem;
+  color: var(--acad-navy);
+  background: var(--acad-bg);
+}
+
+/* ---------------------------------------------------------------------------
+   11. Tables — Clean Academic Data Presentation
+   --------------------------------------------------------------------------- */
+.theme-academic table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9375rem;
+  background: var(--acad-surface);
+  border: 1px solid var(--acad-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0.75rem 0;
+}
+
+.theme-academic table thead th {
+  background: var(--acad-bg-alt);
+  color: var(--acad-navy);
+  font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--acad-gold);
+  white-space: nowrap;
+}
+
+.theme-academic table thead th:not(:last-child) {
+  border-right: 1px solid var(--acad-border-light);
+}
+
+.theme-academic table tbody td {
+  padding: 0.625rem 1rem;
+  color: var(--acad-text);
+  border-bottom: 1px solid var(--acad-border-light);
+  vertical-align: top;
+}
+
+.theme-academic table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.theme-academic table tbody tr:hover {
+  background: var(--acad-hover);
+}
+
+/* Alternating row stripes — subtle warmth */
+.theme-academic table tbody tr:nth-child(even) {
+  background: rgba(250, 248, 245, 0.5);
+}
+
+.theme-academic table tbody tr:nth-child(even):hover {
+  background: var(--acad-hover);
+}
+
+/* Cost tables — right-aligned numbers */
+.theme-academic .cost-table th,
+.theme-academic .cost-table td {
+  text-align: right;
+}
+
+.theme-academic .cost-table th:first-child,
+.theme-academic .cost-table td:first-child {
+  text-align: left;
+}
+
+.theme-academic .total-row {
+  font-weight: 700;
+  border-top: 2px solid var(--acad-navy);
+  background: var(--acad-gold-pale);
+}
+
+/* ---------------------------------------------------------------------------
+   12. Game Cards — Course Module Cards
+   --------------------------------------------------------------------------- */
+.theme-academic .game-list {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.theme-academic .game-card {
+  background: var(--acad-surface);
+  border: 1px solid var(--acad-border-light);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--acad-shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold top accent bar — like a course card */
+.theme-academic .game-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--acad-gold), var(--acad-gold-light));
+}
+
+.theme-academic .game-card:hover {
+  box-shadow: var(--acad-shadow-md);
+  transform: translateY(-2px);
+}
+
+.theme-academic .game-card h3 {
+  font-family: "Crimson Pro", "Georgia", serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--acad-navy);
+  margin: 0.25rem 0 0.5rem;
+}
+
+.theme-academic .game-card .meta {
+  font-size: 0.8125rem;
+  color: var(--acad-text-secondary);
+  line-height: 1.6;
+}
+
+.theme-academic .game-card small {
+  display: block;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--acad-border-light);
+  font-size: 0.8125rem;
+  color: var(--acad-text-light);
+}
+
+/* ---------------------------------------------------------------------------
+   13. Machine Cards — Operator Assignment Panels
+   --------------------------------------------------------------------------- */
+.theme-academic .machine-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.theme-academic .machine-card {
+  background: var(--acad-surface);
+  border: 1px solid var(--acad-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  box-shadow: var(--acad-shadow-sm);
+  transition: box-shadow 0.15s ease;
+}
+
+.theme-academic .machine-card:hover {
+  box-shadow: var(--acad-shadow-md);
+}
+
+.theme-academic .machine-card.parts-dept {
+  border-left: 4px solid var(--acad-success);
+}
+
+.theme-academic .machine-card.assembly-dept {
+  border-left: 4px solid var(--acad-navy-light);
+}
+
+.theme-academic .machine-card h4 {
+  font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--acad-navy);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--acad-border-light);
+}
+
+.theme-academic .machine-card .dept-label {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+}
+
+.theme-academic .machine-card.parts-dept .dept-label {
+  color: var(--acad-success);
+  background: var(--acad-success-bg);
+}
+
+.theme-academic .machine-card.assembly-dept .dept-label {
+  color: var(--acad-navy-light);
+  background: var(--acad-navy-pale);
+}
+
+/* ---------------------------------------------------------------------------
+   14. Status Indicators — Academic Grade Badges
+   --------------------------------------------------------------------------- */
+.theme-academic .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+/* Active — green "in progress" badge */
+.theme-academic .status.active {
+  background: var(--acad-success-bg);
+  color: var(--acad-success);
+}
+
+.theme-academic .status.active::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acad-success);
+}
+
+/* Complete — navy "completed" badge */
+.theme-academic .status.complete {
+  background: var(--acad-navy-pale);
+  color: var(--acad-navy);
+}
+
+.theme-academic .status.complete::before {
+  content: "\2713";
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+   15. Flash Messages — Warm Notification Panels
+   --------------------------------------------------------------------------- */
+.theme-academic .flash-messages {
+  margin-bottom: 1rem;
+}
+
+.theme-academic .flash-messages .notice {
+  padding: 0.875rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid;
+}
+
+.theme-academic .flash-messages .notice.success {
+  background: var(--acad-success-bg);
+  border-color: rgba(45, 106, 79, 0.2);
+  color: var(--acad-success);
+}
+
+.theme-academic .flash-messages .notice.success::before {
+  content: "\2713";
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.theme-academic .flash-messages .notice.error {
+  background: var(--acad-danger-bg);
+  border-color: rgba(146, 43, 33, 0.2);
+  color: var(--acad-danger);
+}
+
+.theme-academic .flash-messages .notice.error::before {
+  content: "\2717";
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.theme-academic .flash-messages .notice.warning {
+  background: var(--acad-warning-bg);
+  border-color: rgba(184, 92, 47, 0.2);
+  color: var(--acad-warning);
+}
+
+.theme-academic .flash-messages .notice.warning::before {
+  content: "\26A0";
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   16. Details / Summary — Textbook Sidebar Notes
+   --------------------------------------------------------------------------- */
+.theme-academic details {
+  background: var(--acad-gold-pale);
+  border: 1px solid rgba(200, 150, 62, 0.25);
+  border-radius: 10px;
+  padding: 0;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.theme-academic details summary {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--acad-navy);
+  background: transparent;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-academic details summary::before {
+  content: "\25B8";
+  display: inline-block;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  color: var(--acad-gold);
+  flex-shrink: 0;
+}
+
+.theme-academic details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.theme-academic details summary::-webkit-details-marker {
+  display: none;
+}
+
+.theme-academic details summary:hover {
+  background: rgba(200, 150, 62, 0.12);
+}
+
+.theme-academic details > :not(summary) {
+  padding: 0 1.25rem 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.theme-academic details > p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   17. Preformatted / Code — "Printed Report" Style
+   --------------------------------------------------------------------------- */
+.theme-academic pre {
+  background: #fdfcf9 !important;
+  color: var(--acad-text) !important;
+  font-family: "IBM Plex Mono", "Consolas", monospace !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.55 !important;
+  padding: 1.25rem 1.5rem !important;
+  border: 1px solid var(--acad-border) !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0.75rem 0;
+}
+
+.theme-academic code {
+  background: var(--acad-bg-alt);
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.875em;
+  color: var(--acad-navy);
+}
+
+/* Inline code inside pre should not have background */
+.theme-academic pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+   18. Help Page — Chapter/Section Textbook Feel
+   --------------------------------------------------------------------------- */
+
+/* Table of contents navigation */
+.theme-academic main > nav {
+  background: var(--acad-surface);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--acad-border-light);
+  box-shadow: var(--acad-shadow-sm);
+  margin-bottom: 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.theme-academic main > nav strong {
+  font-family: "Crimson Pro", "Georgia", serif;
+  color: var(--acad-navy);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.theme-academic main > nav a {
+  color: var(--acad-navy-light);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.125rem 0;
+  border-bottom: 1px dotted var(--acad-border);
+  transition: border-color 0.15s ease;
+}
+
+.theme-academic main > nav a:hover {
+  border-bottom-style: solid;
+  border-bottom-color: var(--acad-navy);
+}
+
+/* Numbered lists in help — styled like textbook enumerations */
+.theme-academic section ol {
+  counter-reset: item;
+  padding-left: 0;
+  list-style: none;
+}
+
+.theme-academic section ol > li {
+  counter-increment: item;
+  position: relative;
+  padding-left: 2rem;
+  margin: 0.5rem 0;
+}
+
+.theme-academic section ol > li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+  color: var(--acad-gold);
+  font-family: "Crimson Pro", "Georgia", serif;
+  font-size: 1rem;
+}
+
+/* Unordered lists */
+.theme-academic ul {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.theme-academic li {
+  margin: 0.375rem 0;
+  line-height: 1.65;
+}
+
+.theme-academic ul li::marker {
+  color: var(--acad-gold);
+}
+
+/* ---------------------------------------------------------------------------
+   19. Form Layout — Clean Worksheet Rows
+   --------------------------------------------------------------------------- */
+.theme-academic form {
+  background: transparent;
+}
+
+.theme-academic .form-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.theme-academic .form-row > * {
+  flex: 1;
+  min-width: 220px;
+}
+
+/* Button row at bottom of form */
+.theme-academic form > div:last-child {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding-top: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   20. Footer — Quiet Academic Footer
+   --------------------------------------------------------------------------- */
+.theme-academic > footer {
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--acad-border-light);
+}
+
+.theme-academic > footer p {
+  margin: 0;
+  color: var(--acad-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.theme-academic > footer small {
+  color: var(--acad-text-light);
+  font-size: 0.8125rem;
+}
+
+.theme-academic > footer strong {
+  font-family: "Crimson Pro", "Georgia", serif;
+  color: var(--acad-navy);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ---------------------------------------------------------------------------
+   21. HTMX Loading — Smooth Academic Spinner
+   --------------------------------------------------------------------------- */
+.theme-academic .htmx-request {
+  cursor: wait;
+}
+
+.theme-academic .htmx-indicator {
+  display: none;
+}
+
+.theme-academic .htmx-request .htmx-indicator {
+  display: inline-block;
+}
+
+.theme-academic .htmx-request.htmx-indicator {
+  display: inline-block;
+}
+
+.theme-academic .spinner {
+  display: inline-block;
+  width: 1.25em;
+  height: 1.25em;
+  border: 2.5px solid var(--acad-border);
+  border-top-color: var(--acad-gold);
+  border-radius: 50%;
+  animation: acad-spin 0.7s linear infinite;
+}
+
+@keyframes acad-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   22. Progress Bar — Course Completion Tracker
+   --------------------------------------------------------------------------- */
+.theme-academic progress {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px;
+  border: none;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--acad-bg-alt);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.theme-academic progress::-webkit-progress-bar {
+  background: var(--acad-bg-alt);
+  border-radius: 6px;
+}
+
+.theme-academic progress::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--acad-navy), var(--acad-navy-light));
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.theme-academic progress::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--acad-navy), var(--acad-navy-light));
+  border-radius: 6px;
+}
+
+/* ---------------------------------------------------------------------------
+   23. Horizontal Rules — Elegant Textbook Dividers
+   --------------------------------------------------------------------------- */
+.theme-academic hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--acad-border) 15%,
+    var(--acad-gold) 50%,
+    var(--acad-border) 85%,
+    transparent
+  );
+  margin: 2rem 0;
+}
+
+/* ---------------------------------------------------------------------------
+   24. Blockquotes — Margin Notes
+   --------------------------------------------------------------------------- */
+.theme-academic blockquote {
+  border-left: 3px solid var(--acad-gold);
+  background: var(--acad-gold-pale);
+  padding: 0.875rem 1.25rem;
+  margin: 1rem 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--acad-text-secondary);
+}
+
+.theme-academic blockquote p {
+  margin: 0.25rem 0;
+}
+
+/* ---------------------------------------------------------------------------
+   25. Scrollbars — Subtle & Warm
+   --------------------------------------------------------------------------- */
+.theme-academic ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-academic ::-webkit-scrollbar-track {
+  background: var(--acad-bg);
+  border-radius: 5px;
+}
+
+.theme-academic ::-webkit-scrollbar-thumb {
+  background: var(--acad-border);
+  border-radius: 5px;
+  border: 2px solid var(--acad-bg);
+}
+
+.theme-academic ::-webkit-scrollbar-thumb:hover {
+  background: var(--acad-text-light);
+}
+
+/* ---------------------------------------------------------------------------
+   26. Selection — Gold Highlight
+   --------------------------------------------------------------------------- */
+.theme-academic ::selection {
+  background: var(--acad-gold-pale);
+  color: var(--acad-text);
+}
+
+.theme-academic ::-moz-selection {
+  background: var(--acad-gold-pale);
+  color: var(--acad-text);
+}
+
+/* ---------------------------------------------------------------------------
+   27. Theme Switcher — Navbar Dropdown
+   --------------------------------------------------------------------------- */
+.theme-academic .theme-switcher {
+  margin-left: auto;
+}
+
+.theme-academic .theme-switcher form {
+  background: transparent;
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-academic .theme-switcher select {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.3rem 2rem 0.3rem 0.625rem;
+  border-radius: 6px;
+  min-height: auto;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.7)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.theme-academic .theme-switcher select:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.theme-academic .theme-switcher select:focus {
+  border-color: var(--acad-gold);
+  box-shadow: 0 0 0 2px rgba(200, 150, 62, 0.3);
+  outline: none;
+}
+
+/* ---------------------------------------------------------------------------
+   28. Responsive — Tablet & Mobile
+   --------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .theme-academic {
+    font-size: 15px;
+  }
+
+  .theme-academic > header,
+  .theme-academic > main,
+  .theme-academic > footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .theme-academic > header nav {
+    padding: 0 1rem;
+    border-radius: 0;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .theme-academic > header nav .brand {
+    font-size: 1.2rem;
+  }
+
+  .theme-academic > header nav .brand::before {
+    width: 22px;
+    height: 22px;
+  }
+
+  .theme-academic > header nav ul {
+    gap: 0;
+  }
+
+  .theme-academic > header nav ul li a {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.875rem;
+  }
+
+  .theme-academic h1 {
+    font-size: 1.75rem;
+  }
+
+  .theme-academic h2 {
+    font-size: 1.375rem;
+  }
+
+  .theme-academic main section {
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .theme-academic main > header {
+    padding: 1rem 1.25rem;
+  }
+
+  .theme-academic .game-list {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-academic .machine-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-academic .form-row {
+    flex-direction: column;
+  }
+
+  .theme-academic .form-row > * {
+    min-width: 100%;
+  }
+
+  .theme-academic table {
+    font-size: 0.875rem;
+  }
+
+  .theme-academic table thead th,
+  .theme-academic table tbody td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .theme-academic fieldset {
+    padding: 1rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-academic > header nav {
+    min-height: 48px;
+  }
+
+  .theme-academic > header nav .brand::before {
+    display: none;
+  }
+
+  .theme-academic h1 {
+    font-size: 1.5rem;
+  }
+
+  .theme-academic main section {
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+  }
+
+  .theme-academic main > header {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .theme-academic main > header + section {
+    border-radius: 0 0 8px 8px;
+  }
+
+  .theme-academic form > div:last-child {
+    flex-direction: column;
+  }
+
+  .theme-academic form > div:last-child button,
+  .theme-academic form > div:last-child a[role="button"] {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   28. Print Styles — Clean Academic Output
+   --------------------------------------------------------------------------- */
+@media print {
+  .theme-academic {
+    background: white;
+    background-image: none;
+    font-size: 12pt;
+  }
+
+  .theme-academic > header nav {
+    background: none;
+    box-shadow: none;
+    border-bottom: 2px solid var(--acad-navy);
+    border-radius: 0;
+  }
+
+  .theme-academic > header nav .brand {
+    color: var(--acad-navy);
+  }
+
+  .theme-academic > header nav .brand::before {
+    display: none;
+  }
+
+  .theme-academic > header nav ul {
+    display: none;
+  }
+
+  .theme-academic main section {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .theme-academic .game-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .theme-academic a {
+    color: var(--acad-navy);
+    text-decoration: underline;
+  }
+
+  .theme-academic a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  .theme-academic > footer {
+    border-top: 1px solid #ddd;
+  }
+}

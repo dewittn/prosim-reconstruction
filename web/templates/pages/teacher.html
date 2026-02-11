@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Mode - {{ game.company_name }}{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Teacher Mode</h1>
+    <p>
+        {{ game.company_name }} |
+        Game ID: {{ game.game_id }} |
+        Week {{ game.current_week }} of {{ game.max_weeks }}
+        {% if game.is_complete %}
+        <span class="status complete">Complete</span>
+        {% elif game.is_active %}
+        <span class="status active">Active</span>
+        {% endif %}
+    </p>
+</header>
+
+<!-- Auto-Advance Section -->
+<section>
+    <h2>Auto-Advance</h2>
+    <p>Process weeks automatically using AI-generated decisions.</p>
+
+    <form
+        hx-post="/game/{{ game.session_id }}/teacher/auto-advance"
+        hx-target="#teacher-status"
+        hx-swap="innerHTML"
+        hx-indicator="#advance-spinner"
+    >
+        <div class="form-row">
+            <div>
+                <label for="num_weeks">Weeks to advance:</label>
+                <select name="num_weeks" id="num_weeks">
+                    <option value="1">1 week</option>
+                    <option value="2">2 weeks</option>
+                    <option value="4" selected>4 weeks (1 shipping period)</option>
+                    <option value="8">8 weeks (2 shipping periods)</option>
+                    <option value="16">16 weeks (full game)</option>
+                </select>
+            </div>
+            <div>
+                <label for="strategy">AI Strategy:</label>
+                <select name="strategy" id="strategy">
+                    <option value="conservative">Conservative (stable, moderate)</option>
+                    <option value="balanced" selected>Balanced (demand-responsive)</option>
+                    <option value="aggressive">Aggressive (max output)</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" {% if game.is_complete %}disabled{% endif %}>
+            Advance Weeks
+        </button>
+        <span id="advance-spinner" class="htmx-indicator"> Processing...</span>
+    </form>
+
+    <div id="teacher-status">
+        <p>
+            <strong>Current Week:</strong> {{ game.current_week }} |
+            <strong>Total Costs:</strong> ${{ "{:,.2f}".format(game.total_costs) }}
+        </p>
+    </div>
+</section>
+
+<!-- AI Competitors Section -->
+<section>
+    <h2>AI Competitors</h2>
+    <p>Add computer-controlled companies to compete against.</p>
+
+    <form
+        hx-post="/game/{{ game.session_id }}/teacher/competitors"
+        hx-target="#competitor-list"
+        hx-swap="innerHTML"
+        hx-indicator="#competitor-spinner"
+    >
+        <div class="form-row">
+            <div>
+                <label for="company_name">Company Name:</label>
+                <input
+                    type="text"
+                    name="company_name"
+                    id="company_name"
+                    value="AI Corp"
+                    required
+                >
+            </div>
+            <div>
+                <label for="difficulty">Difficulty:</label>
+                <select name="difficulty" id="difficulty">
+                    <option value="easy">Easy (Conservative)</option>
+                    <option value="medium" selected>Medium (Balanced)</option>
+                    <option value="hard">Hard (Aggressive)</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit">Add Competitor</button>
+        <span id="competitor-spinner" class="htmx-indicator"> Adding...</span>
+    </form>
+
+    <div id="competitor-list">
+        {% include "components/competitor_list.html" %}
+    </div>
+</section>
+
+<!-- Comparison Table -->
+<section>
+    <h2>Cost Comparison</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Strategy</th>
+                <th>Week</th>
+                <th>Total Costs</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>{{ game.company_name or "You" }}</strong></td>
+                <td>Player</td>
+                <td>{{ game.current_week }}</td>
+                <td>${{ "{:,.2f}".format(game.total_costs) }}</td>
+                <td>{% if game.is_complete %}Complete{% else %}Active{% endif %}</td>
+            </tr>
+            {% for c in competitors %}
+            <tr>
+                <td>{{ c.company_name }}</td>
+                <td>{{ c.strategy | capitalize }}</td>
+                <td>{{ c.current_week }}</td>
+                <td>${{ "{:,.2f}".format(c.total_costs) }}</td>
+                <td>{% if c.is_active %}Active{% else %}Done{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <p>
+        <a href="/game/{{ game.session_id }}">&larr; Back to Game Dashboard</a>
+    </p>
+</section>
+{% endblock %}

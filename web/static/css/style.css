@@ -170,6 +170,20 @@ fieldset {
     to { transform: rotate(360deg); }
 }
 
+/* Theme switcher in navbar */
+.theme-switcher form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.theme-switcher select {
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .form-row {
