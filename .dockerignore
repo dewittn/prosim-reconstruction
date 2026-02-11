@@ -53,6 +53,11 @@ tests
 *.db
 data/
 
+# Docker (don't recurse)
+Dockerfile
+Dockerfile.dev
+docker-compose.yml
+
 # macOS
 .DS_Store
 
@@ -60,3 +65,7 @@ data/
 *.tmp
 *.bak
 *.log
+
+# Implementation plan and Claude files
+IMPLEMENTATION_PLAN.md
+CLAUDE.md

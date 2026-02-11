@@ -58,7 +58,11 @@ docs/_build/
 .DS_Store
 Thumbs.db
 
+# Playwright CLI
+.playwright-cli/
+
 # Project specific
 *.log
 saves/
+data/
 .claude/

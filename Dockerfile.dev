@@ -1,28 +1,28 @@
-# PROSIM Web Interface - Development
+# PROSIM Web Interface — Development
 # Optimized for hot reload during development
 
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install the package in development mode with web dependencies
+# Copy project definition and install in editable mode
 COPY pyproject.toml ./
 COPY prosim/ ./prosim/
 COPY web/ ./web/
 
-# Install in editable mode for development
 RUN pip install --no-cache-dir -e ".[web,dev]"
 
 # Create data directory for SQLite database
 RUN mkdir -p /app/data
 
 # Environment variables
-ENV PROSIM_DATABASE_URL=sqlite:///./data/prosim.db
-ENV PROSIM_HOST=0.0.0.0
-ENV PROSIM_PORT=8000
-ENV PROSIM_DEBUG=true
+ENV PROSIM_DATABASE_URL=sqlite:///./data/prosim.db \
+    PROSIM_SECRET_KEY=dev-secret-key \
+    PROSIM_HOST=0.0.0.0 \
+    PROSIM_PORT=8000 \
+    PROSIM_DEBUG=true \
+    PYTHONUNBUFFERED=1
 
-# Expose port
 EXPOSE 8000
 
 # Run with reload for development

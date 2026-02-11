@@ -1,18 +1,18 @@
-version: "3.8"
-
 services:
+  # Production service
   prosim:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "${PROSIM_PORT:-8000}:8000"
     volumes:
-      # Persist SQLite database
       - prosim_data:/app/data
     environment:
       - PROSIM_DATABASE_URL=sqlite:///./data/prosim.db
-      - PROSIM_SECRET_KEY=${PROSIM_SECRET_KEY:-dev-secret-key-change-in-production}
+      - PROSIM_SECRET_KEY=${PROSIM_SECRET_KEY:-change-me-in-production}
+      - PROSIM_HOST=0.0.0.0
+      - PROSIM_PORT=8000
       - PROSIM_DEBUG=${PROSIM_DEBUG:-false}
     restart: unless-stopped
     healthcheck:
@@ -28,15 +28,17 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "8000:8000"
+      - "${PROSIM_PORT:-8000}:8000"
     volumes:
       # Mount source code for hot reload
       - ./prosim:/app/prosim:ro
       - ./web:/app/web:ro
-      - prosim_data:/app/data
+      - prosim_dev_data:/app/data
     environment:
       - PROSIM_DATABASE_URL=sqlite:///./data/prosim.db
       - PROSIM_SECRET_KEY=dev-secret-key
+      - PROSIM_HOST=0.0.0.0
+      - PROSIM_PORT=8000
       - PROSIM_DEBUG=true
     profiles:
       - dev
@@ -44,3 +46,5 @@ services:
 volumes:
   prosim_data:
     name: prosim_data
+  prosim_dev_data:
+    name: prosim_dev_data
