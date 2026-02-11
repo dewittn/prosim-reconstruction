@@ -9,12 +9,11 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from prosim.config.schema import ProsimConfig, get_default_config
-from prosim.models.company import Company, GameState
+from prosim.config.schema import ProsimConfig
+from prosim.models.company import GameState
 
 
 class SaveMetadata(BaseModel):
@@ -36,7 +35,7 @@ class SavedGame(BaseModel):
 
     metadata: SaveMetadata
     game_state: GameState
-    config: Optional[ProsimConfig] = Field(
+    config: ProsimConfig | None = Field(
         default=None, description="Game configuration (uses defaults if None)"
     )
 
@@ -78,7 +77,7 @@ def get_default_saves_dir() -> Path:
     return saves_dir
 
 
-def get_save_path(slot: int, saves_dir: Optional[Path] = None) -> Path:
+def get_save_path(slot: int, saves_dir: Path | None = None) -> Path:
     """Get the file path for a save slot.
 
     Args:
@@ -93,7 +92,7 @@ def get_save_path(slot: int, saves_dir: Optional[Path] = None) -> Path:
     return saves_dir / f"save_{slot:02d}.json"
 
 
-def get_autosave_path(saves_dir: Optional[Path] = None) -> Path:
+def get_autosave_path(saves_dir: Path | None = None) -> Path:
     """Get the file path for auto-save.
 
     Args:
@@ -110,9 +109,9 @@ def get_autosave_path(saves_dir: Optional[Path] = None) -> Path:
 def save_game(
     game_state: GameState,
     slot: int,
-    save_name: Optional[str] = None,
-    config: Optional[ProsimConfig] = None,
-    saves_dir: Optional[Path] = None,
+    save_name: str | None = None,
+    config: ProsimConfig | None = None,
+    saves_dir: Path | None = None,
 ) -> Path:
     """Save game state to a slot.
 
@@ -192,7 +191,7 @@ def save_game(
 
 def load_game(
     slot: int,
-    saves_dir: Optional[Path] = None,
+    saves_dir: Path | None = None,
 ) -> SavedGame:
     """Load game state from a slot.
 
@@ -212,7 +211,7 @@ def load_game(
         raise LoadError(f"No save found in slot {slot}")
 
     try:
-        with open(save_path, "r", encoding="utf-8") as f:
+        with open(save_path, encoding="utf-8") as f:
             data = json.load(f)
 
         return SavedGame.model_validate(data)
@@ -239,7 +238,7 @@ def load_game_from_path(path: Path) -> SavedGame:
         raise LoadError(f"Save file not found: {path}")
 
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         return SavedGame.model_validate(data)
@@ -252,8 +251,8 @@ def load_game_from_path(path: Path) -> SavedGame:
 
 def autosave(
     game_state: GameState,
-    config: Optional[ProsimConfig] = None,
-    saves_dir: Optional[Path] = None,
+    config: ProsimConfig | None = None,
+    saves_dir: Path | None = None,
 ) -> Path:
     """Auto-save game state.
 
@@ -319,7 +318,7 @@ def autosave(
         raise SaveError(f"Failed to autosave: {e}") from e
 
 
-def load_autosave(saves_dir: Optional[Path] = None) -> SavedGame:
+def load_autosave(saves_dir: Path | None = None) -> SavedGame:
     """Load autosaved game state.
 
     Args:
@@ -337,7 +336,7 @@ def load_autosave(saves_dir: Optional[Path] = None) -> SavedGame:
         raise LoadError("No autosave found")
 
     try:
-        with open(autosave_path, "r", encoding="utf-8") as f:
+        with open(autosave_path, encoding="utf-8") as f:
             data = json.load(f)
 
         return SavedGame.model_validate(data)
@@ -348,7 +347,7 @@ def load_autosave(saves_dir: Optional[Path] = None) -> SavedGame:
         raise LoadError(f"Failed to load autosave: {e}") from e
 
 
-def delete_save(slot: int, saves_dir: Optional[Path] = None) -> bool:
+def delete_save(slot: int, saves_dir: Path | None = None) -> bool:
     """Delete a save slot.
 
     Args:
@@ -365,7 +364,7 @@ def delete_save(slot: int, saves_dir: Optional[Path] = None) -> bool:
     return False
 
 
-def delete_autosave(saves_dir: Optional[Path] = None) -> bool:
+def delete_autosave(saves_dir: Path | None = None) -> bool:
     """Delete the autosave file.
 
     Args:
@@ -381,7 +380,7 @@ def delete_autosave(saves_dir: Optional[Path] = None) -> bool:
     return False
 
 
-def list_saves(saves_dir: Optional[Path] = None) -> list[SaveMetadata]:
+def list_saves(saves_dir: Path | None = None) -> list[SaveMetadata]:
     """List all available save files.
 
     Args:
@@ -420,7 +419,7 @@ def list_saves(saves_dir: Optional[Path] = None) -> list[SaveMetadata]:
     return saves
 
 
-def has_autosave(saves_dir: Optional[Path] = None) -> bool:
+def has_autosave(saves_dir: Path | None = None) -> bool:
     """Check if an autosave exists.
 
     Args:
@@ -432,7 +431,7 @@ def has_autosave(saves_dir: Optional[Path] = None) -> bool:
     return get_autosave_path(saves_dir).exists()
 
 
-def get_save_info(slot: int, saves_dir: Optional[Path] = None) -> Optional[SaveMetadata]:
+def get_save_info(slot: int, saves_dir: Path | None = None) -> SaveMetadata | None:
     """Get metadata for a save slot without loading full state.
 
     Args:
@@ -452,7 +451,7 @@ def get_save_info(slot: int, saves_dir: Optional[Path] = None) -> Optional[SaveM
 def export_save(
     slot: int,
     output_path: Path,
-    saves_dir: Optional[Path] = None,
+    saves_dir: Path | None = None,
 ) -> None:
     """Export a save file to a different location.
 
@@ -480,7 +479,7 @@ def export_save(
 def import_save(
     input_path: Path,
     slot: int,
-    saves_dir: Optional[Path] = None,
+    saves_dir: Path | None = None,
 ) -> SaveMetadata:
     """Import a save file from another location.
 

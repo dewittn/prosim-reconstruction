@@ -7,33 +7,27 @@ Supports single-player mode with save/load functionality.
 
 import sys
 import uuid
-from pathlib import Path
-from typing import Optional
 
 import click
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm, FloatPrompt, IntPrompt, Prompt
 from rich.table import Table
-from rich.text import Text
 
 from prosim import __version__
-from prosim.config.schema import ProsimConfig, get_default_config
+from prosim.config.schema import get_default_config
 from prosim.engine.simulation import Simulation
-from prosim.i18n import t, load_locale
 from prosim.engine.validation import validate_decisions
+from prosim.i18n import load_locale
 from prosim.io import (
     LoadError,
     SaveError,
     autosave,
-    delete_save,
-    has_autosave,
     list_saves,
     load_autosave,
     load_game,
     parse_decs,
     save_game,
-    write_decs,
     write_rept,
     write_rept_human_readable,
 )
@@ -74,15 +68,21 @@ def cli(lang: str) -> None:
 @cli.command()
 @click.option("--name", "-n", prompt="Company name", help="Your company name")
 @click.option("--weeks", "-w", default=16, help="Maximum simulation weeks")
-@click.option("--seed", "-s", type=int, default=None, help="Random seed for reproducibility")
-@click.option("--slot", type=int, default=None, help="Save slot to use (auto-saves to this slot)")
-def new(name: str, weeks: int, seed: Optional[int], slot: Optional[int]) -> None:
+@click.option(
+    "--seed", "-s", type=int, default=None, help="Random seed for reproducibility"
+)
+@click.option(
+    "--slot", type=int, default=None, help="Save slot to use (auto-saves to this slot)"
+)
+def new(name: str, weeks: int, seed: int | None, slot: int | None) -> None:
     """Start a new game."""
     console.print()
-    console.print(Panel.fit(
-        "[bold blue]PROSIM[/bold blue]\n[dim]Production Management Simulation[/dim]",
-        border_style="blue",
-    ))
+    console.print(
+        Panel.fit(
+            "[bold blue]PROSIM[/bold blue]\n[dim]Production Management Simulation[/dim]",
+            border_style="blue",
+        )
+    )
     console.print()
 
     # Create game state
@@ -115,9 +115,13 @@ def new(name: str, weeks: int, seed: Optional[int], slot: Optional[int]) -> None
 
 @cli.command()
 @click.argument("slot", type=int, required=False)
-@click.option("--file", "-f", type=click.Path(exists=True), help="Load from specific file")
-@click.option("--autosave", "-a", "from_autosave", is_flag=True, help="Load from autosave")
-def load(slot: Optional[int], file: Optional[str], from_autosave: bool) -> None:
+@click.option(
+    "--file", "-f", type=click.Path(exists=True), help="Load from specific file"
+)
+@click.option(
+    "--autosave", "-a", "from_autosave", is_flag=True, help="Load from autosave"
+)
+def load(slot: int | None, file: str | None, from_autosave: bool) -> None:
     """Load a saved game.
 
     SLOT is the save slot number (1-99).
@@ -157,16 +161,26 @@ def saves() -> None:
 
 
 @cli.command()
-@click.option("--decs", "-d", type=click.Path(exists=True), required=True, help="DECS decision file")
-@click.option("--state", "-s", type=click.Path(exists=True), help="Game state file to load")
+@click.option(
+    "--decs",
+    "-d",
+    type=click.Path(exists=True),
+    required=True,
+    help="DECS decision file",
+)
+@click.option(
+    "--state", "-s", type=click.Path(exists=True), help="Game state file to load"
+)
 @click.option("--slot", type=int, help="Load game from this save slot")
 @click.option("--output", "-o", type=click.Path(), help="Output REPT file path")
-@click.option("--autosave/--no-autosave", default=True, help="Auto-save after processing")
+@click.option(
+    "--autosave/--no-autosave", default=True, help="Auto-save after processing"
+)
 def process(
     decs: str,
-    state: Optional[str],
-    slot: Optional[int],
-    output: Optional[str],
+    state: str | None,
+    slot: int | None,
+    output: str | None,
     autosave_enabled: bool,
 ) -> None:
     """Process a week using a DECS decision file.
@@ -232,8 +246,9 @@ def process(
 @cli.command()
 def info() -> None:
     """Show information about PROSIM."""
-    console.print(Panel.fit(
-        """[bold blue]PROSIM - Production Management Simulation[/bold blue]
+    console.print(
+        Panel.fit(
+            """[bold blue]PROSIM - Production Management Simulation[/bold blue]
 
 [bold]Original Authors (1968-1996):[/bold]
   - Paul S. Greenlaw
@@ -250,9 +265,10 @@ game, rebuilt for educational preservation and modern use.
   - README.md
   - IMPLEMENTATION_PLAN.md
   - docs/history.md[/dim]""",
-        title="About PROSIM",
-        border_style="blue",
-    ))
+            title="About PROSIM",
+            border_style="blue",
+        )
+    )
 
 
 # =============================================================================
@@ -260,7 +276,7 @@ game, rebuilt for educational preservation and modern use.
 # =============================================================================
 
 
-def _play_game(game_state: GameState, save_slot: Optional[int] = None) -> None:
+def _play_game(game_state: GameState, save_slot: int | None = None) -> None:
     """Main interactive game loop."""
     config = get_default_config()
     simulation = Simulation(config=config, random_seed=game_state.random_seed)
@@ -282,7 +298,9 @@ def _play_game(game_state: GameState, save_slot: Optional[int] = None) -> None:
         console.print("  [q] Quit")
         console.print()
 
-        choice = Prompt.ask("Choice", choices=["1", "2", "3", "4", "5", "6", "q"], default="1")
+        choice = Prompt.ask(
+            "Choice", choices=["1", "2", "3", "4", "5", "6", "q"], default="1"
+        )
 
         if choice == "1":
             # Enter decisions
@@ -291,9 +309,11 @@ def _play_game(game_state: GameState, save_slot: Optional[int] = None) -> None:
                 continue
 
             # Store decisions for potential export
-            game_state = game_state.model_copy(
-                update={"_last_decisions": decisions}
-            ) if hasattr(game_state, "_last_decisions") else game_state
+            game_state = (
+                game_state.model_copy(update={"_last_decisions": decisions})
+                if hasattr(game_state, "_last_decisions")
+                else game_state
+            )
 
             # Process week
             try:
@@ -346,20 +366,24 @@ def _play_game(game_state: GameState, save_slot: Optional[int] = None) -> None:
             break
 
     if game_state.is_complete:
-        console.print(Panel.fit(
-            "[bold green]Game Complete![/bold green]\n\n"
-            f"You reached week {game_state.max_weeks}.",
-            border_style="green",
-        ))
+        console.print(
+            Panel.fit(
+                "[bold green]Game Complete![/bold green]\n\n"
+                f"You reached week {game_state.max_weeks}.",
+                border_style="green",
+            )
+        )
 
 
-def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
+def _get_decisions_interactive(company: Company) -> Decisions | None:
     """Get weekly decisions from user input."""
     console.print()
-    console.print(Panel.fit(
-        f"[bold]Week {company.current_week} Decisions[/bold]",
-        border_style="cyan",
-    ))
+    console.print(
+        Panel.fit(
+            f"[bold]Week {company.current_week} Decisions[/bold]",
+            border_style="cyan",
+        )
+    )
 
     try:
         # Budgets
@@ -393,7 +417,9 @@ def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
         console.print("\n[bold]Machine Assignments:[/bold]")
         console.print("[dim]Parts Dept (1-4): produce X'=1, Y'=2, Z'=3[/dim]")
         console.print("[dim]Assembly Dept (5-9): produce X=1, Y=2, Z=3[/dim]")
-        console.print("[dim]Enter 0 hours to not schedule. Enter 't' to train operator.[/dim]")
+        console.print(
+            "[dim]Enter 0 hours to not schedule. Enter 't' to train operator.[/dim]"
+        )
         console.print()
 
         machine_decisions = []
@@ -401,7 +427,11 @@ def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
             dept = "Parts" if machine_id <= 4 else "Assembly"
             op = company.workforce.get_operator(machine_id)
             if op:
-                trained_str = "[green]Trained[/green]" if op.is_trained else "[yellow]Untrained[/yellow]"
+                trained_str = (
+                    "[green]Trained[/green]"
+                    if op.is_trained
+                    else "[yellow]Untrained[/yellow]"
+                )
                 op_name = op.display_name
             else:
                 trained_str = "[yellow]Untrained[/yellow]"
@@ -410,7 +440,7 @@ def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
             console.print(f"  Machine {machine_id} ({dept}) - {op_name} {trained_str}")
 
             hours_input = Prompt.ask(
-                f"    Hours (0-50 or 't' for training)",
+                "    Hours (0-50 or 't' for training)",
                 default="40",
             )
 
@@ -429,19 +459,21 @@ def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
 
                 if hours > 0:
                     part_type = IntPrompt.ask(
-                        f"    Part type (1=X, 2=Y, 3=Z)",
+                        "    Part type (1=X, 2=Y, 3=Z)",
                         default=1,
                     )
                     part_type = max(1, min(3, part_type))
                 else:
                     part_type = 1
 
-            machine_decisions.append(MachineDecision(
-                machine_id=machine_id,
-                send_for_training=training,
-                part_type=part_type,
-                scheduled_hours=hours,
-            ))
+            machine_decisions.append(
+                MachineDecision(
+                    machine_id=machine_id,
+                    send_for_training=training,
+                    part_type=part_type,
+                    scheduled_hours=hours,
+                )
+            )
 
         # Build decisions
         decisions = Decisions(
@@ -492,7 +524,7 @@ def _get_decisions_interactive(company: Company) -> Optional[Decisions]:
         return None
 
 
-def _save_game_interactive(game_state: GameState, default_slot: Optional[int]) -> None:
+def _save_game_interactive(game_state: GameState, default_slot: int | None) -> None:
     """Interactive save game dialog."""
     saves = list_saves()
 
@@ -527,12 +559,14 @@ def _save_game_interactive(game_state: GameState, default_slot: Optional[int]) -
 def _display_game_state(company: Company) -> None:
     """Display current game state summary."""
     console.print()
-    console.print(Panel.fit(
-        f"[bold]{company.name}[/bold]\n"
-        f"Week {company.current_week} | Total Costs: ${company.total_costs:,.2f}",
-        title="Current State",
-        border_style="blue",
-    ))
+    console.print(
+        Panel.fit(
+            f"[bold]{company.name}[/bold]\n"
+            f"Week {company.current_week} | Total Costs: ${company.total_costs:,.2f}",
+            title="Current State",
+            border_style="blue",
+        )
+    )
 
     # Inventory summary
     inv = company.inventory
@@ -566,17 +600,20 @@ def _display_report(report: WeeklyReport, use_authentic_format: bool = True) -> 
         # Use the authentic PROSIM format (verified against week1.txt and report.doc)
         # This is the exact format students received in the original simulation
         import io
+
         output = io.StringIO()
         write_rept_human_readable(report, output)
         report_text = output.getvalue()
 
         # Display in a panel with monospace formatting preserved
-        console.print(Panel(
-            report_text,
-            title=f"[bold]Week {report.week} Report[/bold]",
-            border_style="green",
-            padding=(0, 1),
-        ))
+        console.print(
+            Panel(
+                report_text,
+                title=f"[bold]Week {report.week} Report[/bold]",
+                border_style="green",
+                padding=(0, 1),
+            )
+        )
     else:
         # Legacy Rich-formatted display (kept for reference)
         _display_report_rich(report)
@@ -588,10 +625,12 @@ def _display_report(report: WeeklyReport, use_authentic_format: bool = True) -> 
 
 def _display_report_rich(report: WeeklyReport) -> None:
     """Display a weekly report using Rich tables (legacy format)."""
-    console.print(Panel.fit(
-        f"[bold]Week {report.week} Report[/bold]",
-        border_style="green",
-    ))
+    console.print(
+        Panel.fit(
+            f"[bold]Week {report.week} Report[/bold]",
+            border_style="green",
+        )
+    )
 
     # Costs summary
     costs = report.weekly_costs
@@ -610,21 +649,38 @@ def _display_report_rich(report: WeeklyReport) -> None:
     def format_cost(val: float) -> str:
         return f"${val:,.0f}" if val > 0 else "-"
 
-    table.add_row("Labor", format_cost(x.labor), format_cost(y.labor), format_cost(z.labor),
-                  format_cost(x.labor + y.labor + z.labor))
-    table.add_row("Equipment", format_cost(x.equipment_usage), format_cost(y.equipment_usage),
-                  format_cost(z.equipment_usage),
-                  format_cost(x.equipment_usage + y.equipment_usage + z.equipment_usage))
-    table.add_row("Raw Materials", format_cost(x.raw_materials), format_cost(y.raw_materials),
-                  format_cost(z.raw_materials),
-                  format_cost(x.raw_materials + y.raw_materials + z.raw_materials))
+    table.add_row(
+        "Labor",
+        format_cost(x.labor),
+        format_cost(y.labor),
+        format_cost(z.labor),
+        format_cost(x.labor + y.labor + z.labor),
+    )
+    table.add_row(
+        "Equipment",
+        format_cost(x.equipment_usage),
+        format_cost(y.equipment_usage),
+        format_cost(z.equipment_usage),
+        format_cost(x.equipment_usage + y.equipment_usage + z.equipment_usage),
+    )
+    table.add_row(
+        "Raw Materials",
+        format_cost(x.raw_materials),
+        format_cost(y.raw_materials),
+        format_cost(z.raw_materials),
+        format_cost(x.raw_materials + y.raw_materials + z.raw_materials),
+    )
 
     x_total = x.subtotal
     y_total = y.subtotal
     z_total = z.subtotal
-    table.add_row("[bold]Sub-Total[/bold]", f"[bold]${x_total:,.0f}[/bold]",
-                  f"[bold]${y_total:,.0f}[/bold]", f"[bold]${z_total:,.0f}[/bold]",
-                  f"[bold]${x_total + y_total + z_total:,.0f}[/bold]")
+    table.add_row(
+        "[bold]Sub-Total[/bold]",
+        f"[bold]${x_total:,.0f}[/bold]",
+        f"[bold]${y_total:,.0f}[/bold]",
+        f"[bold]${z_total:,.0f}[/bold]",
+        f"[bold]${x_total + y_total + z_total:,.0f}[/bold]",
+    )
 
     console.print(table)
 
@@ -632,8 +688,12 @@ def _display_report_rich(report: WeeklyReport) -> None:
     oh = costs.overhead
     overhead_total = oh.subtotal
     console.print(f"\n[bold]Overhead:[/bold] ${overhead_total:,.0f}")
-    console.print(f"  Quality: ${oh.quality_planning:,.0f} | Maintenance: ${oh.plant_maintenance:,.0f}")
-    console.print(f"  Training: ${oh.training_cost:,.0f} | Fixed: ${oh.fixed_expense:,.0f}")
+    console.print(
+        f"  Quality: ${oh.quality_planning:,.0f} | Maintenance: ${oh.plant_maintenance:,.0f}"
+    )
+    console.print(
+        f"  Training: ${oh.training_cost:,.0f} | Fixed: ${oh.fixed_expense:,.0f}"
+    )
 
     # Grand total
     grand_total = x_total + y_total + z_total + overhead_total
@@ -689,7 +749,11 @@ def _display_report_rich(report: WeeklyReport) -> None:
         f"{inv.raw_materials.ending_inventory:,.0f}",
     )
 
-    for part_name, part in [("X'", inv.parts_x), ("Y'", inv.parts_y), ("Z'", inv.parts_z)]:
+    for part_name, part in [
+        ("X'", inv.parts_x),
+        ("Y'", inv.parts_y),
+        ("Z'", inv.parts_z),
+    ]:
         table.add_row(
             f"Parts {part_name}",
             f"{part.beginning_inventory:,.0f}",
@@ -699,7 +763,11 @@ def _display_report_rich(report: WeeklyReport) -> None:
             f"{part.ending_inventory:,.0f}",
         )
 
-    for prod_name, product in [("X", inv.products_x), ("Y", inv.products_y), ("Z", inv.products_z)]:
+    for prod_name, product in [
+        ("X", inv.products_x),
+        ("Y", inv.products_y),
+        ("Z", inv.products_z),
+    ]:
         table.add_row(
             f"Product {prod_name}",
             f"{product.beginning_inventory:,.0f}",
@@ -742,8 +810,9 @@ def _show_saves() -> None:
 
 def _show_help() -> None:
     """Display help information."""
-    console.print(Panel.fit(
-        """[bold]PROSIM Help[/bold]
+    console.print(
+        Panel.fit(
+            """[bold]PROSIM Help[/bold]
 
 [bold cyan]Objective:[/bold cyan]
 Manage a manufacturing company producing three products (X, Y, Z).
@@ -774,11 +843,12 @@ Raw Materials -> Parts Dept (X', Y', Z') -> Assembly Dept (X, Y, Z)
 
 [bold cyan]Shipping:[/bold cyan]
 Products ship every 4 weeks. Unfulfilled demand carries over with penalty.""",
-        border_style="cyan",
-    ))
+            border_style="cyan",
+        )
+    )
 
 
-def _settings_menu(company: Company) -> Optional[Company]:
+def _settings_menu(company: Company) -> Company | None:
     """Display settings menu and handle worker renaming.
 
     Args:
@@ -788,10 +858,12 @@ def _settings_menu(company: Company) -> Optional[Company]:
         Updated Company if changes were made, None otherwise
     """
     console.print()
-    console.print(Panel.fit(
-        "[bold]Settings[/bold]",
-        border_style="magenta",
-    ))
+    console.print(
+        Panel.fit(
+            "[bold]Settings[/bold]",
+            border_style="magenta",
+        )
+    )
 
     console.print("\n[bold]Options:[/bold]")
     console.print("  [1] Rename workers")
@@ -810,7 +882,7 @@ def _settings_menu(company: Company) -> Optional[Company]:
         return None
 
 
-def _rename_workers_menu(company: Company) -> Optional[Company]:
+def _rename_workers_menu(company: Company) -> Company | None:
     """Interactive menu for renaming workers.
 
     Args:
@@ -830,10 +902,18 @@ def _rename_workers_menu(company: Company) -> Optional[Company]:
     table.add_column("Department")
 
     for op_id, operator in sorted(company.workforce.operators.items()):
-        status = "[green]Trained[/green]" if operator.is_trained else "[yellow]Untrained[/yellow]"
+        status = (
+            "[green]Trained[/green]"
+            if operator.is_trained
+            else "[yellow]Untrained[/yellow]"
+        )
         if operator.training_status.value == "training":
             status = "[cyan]In Training[/cyan]"
-        dept = operator.department.value.title() if operator.department.value != "unassigned" else "-"
+        dept = (
+            operator.department.value.title()
+            if operator.department.value != "unassigned"
+            else "-"
+        )
 
         table.add_row(
             str(op_id),
@@ -889,10 +969,12 @@ def _rename_workers_menu(company: Company) -> Optional[Company]:
 def _display_workers(company: Company) -> None:
     """Display all workers with their details."""
     console.print()
-    console.print(Panel.fit(
-        "[bold]Workforce[/bold]",
-        border_style="blue",
-    ))
+    console.print(
+        Panel.fit(
+            "[bold]Workforce[/bold]",
+            border_style="blue",
+        )
+    )
 
     table = Table(title="All Workers")
     table.add_column("ID", justify="right")
@@ -902,10 +984,18 @@ def _display_workers(company: Company) -> None:
     table.add_column("Weeks Unscheduled", justify="right")
 
     for op_id, operator in sorted(company.workforce.operators.items()):
-        status = "[green]Trained[/green]" if operator.is_trained else "[yellow]Untrained[/yellow]"
+        status = (
+            "[green]Trained[/green]"
+            if operator.is_trained
+            else "[yellow]Untrained[/yellow]"
+        )
         if operator.training_status.value == "training":
             status = "[cyan]In Training[/cyan]"
-        dept = operator.department.value.title() if operator.department.value != "unassigned" else "-"
+        dept = (
+            operator.department.value.title()
+            if operator.department.value != "unassigned"
+            else "-"
+        )
 
         table.add_row(
             str(op_id),
@@ -927,10 +1017,12 @@ def _export_files_interactive(company: Company) -> None:
         company: Current company state
     """
     console.print()
-    console.print(Panel.fit(
-        "[bold]Export Files[/bold]",
-        border_style="yellow",
-    ))
+    console.print(
+        Panel.fit(
+            "[bold]Export Files[/bold]",
+            border_style="yellow",
+        )
+    )
 
     if not company.reports:
         console.print("[yellow]No reports available to export yet.[/yellow]")
@@ -994,6 +1086,7 @@ def _export_files_interactive(company: Company) -> None:
             output_dir = Prompt.ask("Output directory", default=".")
 
             from pathlib import Path
+
             output_path = Path(output_dir)
             output_path.mkdir(parents=True, exist_ok=True)
 
@@ -1007,7 +1100,9 @@ def _export_files_interactive(company: Company) -> None:
                     write_rept_human_readable(report, filepath)
                 exported += 1
 
-            console.print(f"[green]Exported {exported} report(s) to {output_dir}/[/green]")
+            console.print(
+                f"[green]Exported {exported} report(s) to {output_dir}/[/green]"
+            )
 
         except (KeyboardInterrupt, EOFError):
             console.print("\n[yellow]Cancelled.[/yellow]")

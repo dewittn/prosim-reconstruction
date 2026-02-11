@@ -91,9 +91,7 @@ def parse_rept(source: str | Path | TextIO) -> WeeklyReport:
     lines = [line for line in lines if line]
 
     if len(lines) < 42:
-        raise REPTParseError(
-            f"REPT file must have at least 42 lines, got {len(lines)}"
-        )
+        raise REPTParseError(f"REPT file must have at least 42 lines, got {len(lines)}")
 
     # Line 1: Header [Week] [Company] [Parts_machines] [Assembly_machines] [?]
     header = _parse_ints(lines[0])
@@ -474,11 +472,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.machine_setup,
             wc.y_costs.machine_setup,
             wc.z_costs.machine_setup,
-            wc.x_costs.machine_setup + wc.y_costs.machine_setup + wc.z_costs.machine_setup,
+            wc.x_costs.machine_setup
+            + wc.y_costs.machine_setup
+            + wc.z_costs.machine_setup,
             cc.x_costs.machine_setup,
             cc.y_costs.machine_setup,
             cc.z_costs.machine_setup,
-            cc.x_costs.machine_setup + cc.y_costs.machine_setup + cc.z_costs.machine_setup,
+            cc.x_costs.machine_setup
+            + cc.y_costs.machine_setup
+            + cc.z_costs.machine_setup,
         )
     )
     # Repair
@@ -487,11 +489,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.machine_repair,
             wc.y_costs.machine_repair,
             wc.z_costs.machine_repair,
-            wc.x_costs.machine_repair + wc.y_costs.machine_repair + wc.z_costs.machine_repair,
+            wc.x_costs.machine_repair
+            + wc.y_costs.machine_repair
+            + wc.z_costs.machine_repair,
             cc.x_costs.machine_repair,
             cc.y_costs.machine_repair,
             cc.z_costs.machine_repair,
-            cc.x_costs.machine_repair + cc.y_costs.machine_repair + cc.z_costs.machine_repair,
+            cc.x_costs.machine_repair
+            + cc.y_costs.machine_repair
+            + cc.z_costs.machine_repair,
         )
     )
     # Raw Materials
@@ -500,11 +506,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.raw_materials,
             wc.y_costs.raw_materials,
             wc.z_costs.raw_materials,
-            wc.x_costs.raw_materials + wc.y_costs.raw_materials + wc.z_costs.raw_materials,
+            wc.x_costs.raw_materials
+            + wc.y_costs.raw_materials
+            + wc.z_costs.raw_materials,
             cc.x_costs.raw_materials,
             cc.y_costs.raw_materials,
             cc.z_costs.raw_materials,
-            cc.x_costs.raw_materials + cc.y_costs.raw_materials + cc.z_costs.raw_materials,
+            cc.x_costs.raw_materials
+            + cc.y_costs.raw_materials
+            + cc.z_costs.raw_materials,
         )
     )
     # Purchased Parts
@@ -513,11 +523,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.purchased_parts,
             wc.y_costs.purchased_parts,
             wc.z_costs.purchased_parts,
-            wc.x_costs.purchased_parts + wc.y_costs.purchased_parts + wc.z_costs.purchased_parts,
+            wc.x_costs.purchased_parts
+            + wc.y_costs.purchased_parts
+            + wc.z_costs.purchased_parts,
             cc.x_costs.purchased_parts,
             cc.y_costs.purchased_parts,
             cc.z_costs.purchased_parts,
-            cc.x_costs.purchased_parts + cc.y_costs.purchased_parts + cc.z_costs.purchased_parts,
+            cc.x_costs.purchased_parts
+            + cc.y_costs.purchased_parts
+            + cc.z_costs.purchased_parts,
         )
     )
     # Equipment Usage
@@ -526,11 +540,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.equipment_usage,
             wc.y_costs.equipment_usage,
             wc.z_costs.equipment_usage,
-            wc.x_costs.equipment_usage + wc.y_costs.equipment_usage + wc.z_costs.equipment_usage,
+            wc.x_costs.equipment_usage
+            + wc.y_costs.equipment_usage
+            + wc.z_costs.equipment_usage,
             cc.x_costs.equipment_usage,
             cc.y_costs.equipment_usage,
             cc.z_costs.equipment_usage,
-            cc.x_costs.equipment_usage + cc.y_costs.equipment_usage + cc.z_costs.equipment_usage,
+            cc.x_costs.equipment_usage
+            + cc.y_costs.equipment_usage
+            + cc.z_costs.equipment_usage,
         )
     )
     # Parts Carrying
@@ -539,11 +557,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.parts_carrying,
             wc.y_costs.parts_carrying,
             wc.z_costs.parts_carrying,
-            wc.x_costs.parts_carrying + wc.y_costs.parts_carrying + wc.z_costs.parts_carrying,
+            wc.x_costs.parts_carrying
+            + wc.y_costs.parts_carrying
+            + wc.z_costs.parts_carrying,
             cc.x_costs.parts_carrying,
             cc.y_costs.parts_carrying,
             cc.z_costs.parts_carrying,
-            cc.x_costs.parts_carrying + cc.y_costs.parts_carrying + cc.z_costs.parts_carrying,
+            cc.x_costs.parts_carrying
+            + cc.y_costs.parts_carrying
+            + cc.z_costs.parts_carrying,
         )
     )
     # Products Carrying
@@ -552,11 +574,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.products_carrying,
             wc.y_costs.products_carrying,
             wc.z_costs.products_carrying,
-            wc.x_costs.products_carrying + wc.y_costs.products_carrying + wc.z_costs.products_carrying,
+            wc.x_costs.products_carrying
+            + wc.y_costs.products_carrying
+            + wc.z_costs.products_carrying,
             cc.x_costs.products_carrying,
             cc.y_costs.products_carrying,
             cc.z_costs.products_carrying,
-            cc.x_costs.products_carrying + cc.y_costs.products_carrying + cc.z_costs.products_carrying,
+            cc.x_costs.products_carrying
+            + cc.y_costs.products_carrying
+            + cc.z_costs.products_carrying,
         )
     )
     # Demand Penalty
@@ -565,11 +591,15 @@ def write_rept(report: WeeklyReport, destination: str | Path | TextIO) -> None:
             wc.x_costs.demand_penalty,
             wc.y_costs.demand_penalty,
             wc.z_costs.demand_penalty,
-            wc.x_costs.demand_penalty + wc.y_costs.demand_penalty + wc.z_costs.demand_penalty,
+            wc.x_costs.demand_penalty
+            + wc.y_costs.demand_penalty
+            + wc.z_costs.demand_penalty,
             cc.x_costs.demand_penalty,
             cc.y_costs.demand_penalty,
             cc.z_costs.demand_penalty,
-            cc.x_costs.demand_penalty + cc.y_costs.demand_penalty + cc.z_costs.demand_penalty,
+            cc.x_costs.demand_penalty
+            + cc.y_costs.demand_penalty
+            + cc.z_costs.demand_penalty,
         )
     )
     # Subtotal
@@ -742,9 +772,7 @@ def write_rept_human_readable(
 
     lines.append("[Cost Information]")
     lines.append("")
-    lines.append(
-        f"Costs for Week:                X          Y          Z         Total"
-    )
+    lines.append("Costs for Week:                X          Y          Z         Total")
     lines.append("")
 
     wc = report.weekly_costs
@@ -753,9 +781,7 @@ def write_rept_human_readable(
         total = x + y + z
         return f"{name:<24}{x:>10.1f}{y:>11.1f}{z:>11.1f}{total:>13.1f}"
 
-    lines.append(
-        fmt_row("Labor", wc.x_costs.labor, wc.y_costs.labor, wc.z_costs.labor)
-    )
+    lines.append(fmt_row("Labor", wc.x_costs.labor, wc.y_costs.labor, wc.z_costs.labor))
     lines.append(
         fmt_row(
             "Machine Set-Up",
@@ -850,11 +876,9 @@ def write_rept_human_readable(
 
     # Cumulative Costs
     cc = report.cumulative_costs
-    lines.append(f"Cumulative Cost:               X          Y          Z         Total")
+    lines.append("Cumulative Cost:               X          Y          Z         Total")
     lines.append("")
-    lines.append(
-        fmt_row("Labor", cc.x_costs.labor, cc.y_costs.labor, cc.z_costs.labor)
-    )
+    lines.append(fmt_row("Labor", cc.x_costs.labor, cc.y_costs.labor, cc.z_costs.labor))
     lines.append(
         fmt_row(
             "Machine Set-Up",
@@ -954,7 +978,9 @@ def write_rept_human_readable(
     lines.append("")
     if report.pending_orders:
         for order in report.pending_orders:
-            lines.append(f"{order.order_type:<30}{order.week_due:>6}.{order.amount:>20.0f}.")
+            lines.append(
+                f"{order.order_type:<30}{order.week_due:>6}.{order.amount:>20.0f}."
+            )
         lines.append("")
     lines.append("* * No (More) Scheduled Receipt * *")
     lines.append("")
@@ -965,9 +991,7 @@ def write_rept_human_readable(
     lines.append("[Production Information]")
     lines.append("")
     lines.append("Part Department:")
-    lines.append(
-        "                             Sched.  Productive"
-    )
+    lines.append("                             Sched.  Productive")
     lines.append(
         "Machine  Operator    Part    Hours     Hours     Production   Rejects"
     )
@@ -982,9 +1006,7 @@ def write_rept_human_readable(
 
     lines.append("")
     lines.append("Assembly Department:")
-    lines.append(
-        "                             Sched.  Productive"
-    )
+    lines.append("                             Sched.  Productive")
     lines.append(
         "Machine  Operator  Product   Hours     Hours     Production   Rejects"
     )
@@ -1003,12 +1025,8 @@ def write_rept_human_readable(
     lines.append("[Inventory Information]")
     lines.append("")
     lines.append("Raw Materials:")
-    lines.append(
-        "     Beginning      Orders       Used in         Ending"
-    )
-    lines.append(
-        "     Inventory     Received    Production      Inventory"
-    )
+    lines.append("     Beginning      Orders       Used in         Ending")
+    lines.append("     Inventory     Received    Production      Inventory")
     rm = report.inventory.raw_materials
     lines.append(
         f"       {int(rm.beginning_inventory)}.         {int(rm.orders_received)}."
@@ -1017,9 +1035,7 @@ def write_rept_human_readable(
 
     lines.append("")
     lines.append("Parts:")
-    lines.append(
-        "     Beginning      Orders       Used in      Production      Ending"
-    )
+    lines.append("     Beginning      Orders       Used in      Production      Ending")
     lines.append(
         "     Inventory     Received    Production     This  Week    Inventory"
     )
@@ -1037,12 +1053,8 @@ def write_rept_human_readable(
 
     lines.append("")
     lines.append("Products:")
-    lines.append(
-        "     Beginning    Production      Demand        Ending"
-    )
-    lines.append(
-        "     Inventory    This  Week    This Week     Inventory"
-    )
+    lines.append("     Beginning    Production      Demand        Ending")
+    lines.append("     Inventory    This  Week    This Week     Inventory")
     for prod_type, prod_report in [
         ("X", report.inventory.products_x),
         ("Y", report.inventory.products_y),
@@ -1059,15 +1071,9 @@ def write_rept_human_readable(
     lines.append("")
     lines.append("[Demand Information]")
     lines.append("")
-    lines.append(
-        "     Estimated     Carry Over      Estimated"
-    )
-    lines.append(
-        "       Demand         From       Total Demand"
-    )
-    lines.append(
-        "    This Month     Last Month     This Month"
-    )
+    lines.append("     Estimated     Carry Over      Estimated")
+    lines.append("       Demand         From       Total Demand")
+    lines.append("    This Month     Last Month     This Month")
     for prod_type, demand in [
         ("X", report.demand_x),
         ("Y", report.demand_y),
@@ -1085,12 +1091,8 @@ def write_rept_human_readable(
     lines.append("")
     lines.append("Current Week:")
     lines.append("")
-    lines.append(
-        "     Total         Total       Percent of    $ Variance   % On-Time"
-    )
-    lines.append(
-        "   Std. Costs    Act. Costs    Efficiency     Per Unit     Delivery"
-    )
+    lines.append("     Total         Total       Percent of    $ Variance   % On-Time")
+    lines.append("   Std. Costs    Act. Costs    Efficiency     Per Unit     Delivery")
     wp = report.weekly_performance
     on_time = f"{wp.on_time_delivery:.1f}" if wp.on_time_delivery else "NA"
     lines.append(
@@ -1102,12 +1104,8 @@ def write_rept_human_readable(
     lines.append("")
     lines.append("Cumulative:")
     lines.append("")
-    lines.append(
-        "     Total         Total       Percent of    $ Variance   % On-Time"
-    )
-    lines.append(
-        "   Std. Costs    Act. Costs    Efficiency     Per Unit     Delivery"
-    )
+    lines.append("     Total         Total       Percent of    $ Variance   % On-Time")
+    lines.append("   Std. Costs    Act. Costs    Efficiency     Per Unit     Delivery")
     cp = report.cumulative_performance
     cum_on_time = f"{cp.on_time_delivery:.1f}" if cp.on_time_delivery else "NA"
     lines.append(
@@ -1162,9 +1160,7 @@ class REPTParser:
                 reports.append(report)
             except REPTParseError as e:
                 if self.strict:
-                    raise REPTParseError(
-                        f"Error parsing {file_path}: {e}"
-                    ) from e
+                    raise REPTParseError(f"Error parsing {file_path}: {e}") from e
 
         reports.sort(key=lambda r: (r.company_id, r.week))
         return reports

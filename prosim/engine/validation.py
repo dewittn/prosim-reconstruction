@@ -6,7 +6,6 @@ Provides helpful error messages for invalid inputs.
 """
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 from prosim.models.company import Company
 from prosim.models.decisions import Decisions, MachineDecision
@@ -18,8 +17,8 @@ class ValidationError:
 
     field: str
     message: str
-    value: Optional[str] = None
-    suggestion: Optional[str] = None
+    value: str | None = None
+    suggestion: str | None = None
 
     def __str__(self) -> str:
         msg = f"{self.field}: {self.message}"
@@ -108,19 +107,23 @@ def _validate_week(decisions: Decisions, company: Company) -> ValidationResult:
     result = ValidationResult(valid=True)
 
     if decisions.week != company.current_week:
-        result.add_error(ValidationError(
-            field="week",
-            message="Decision week doesn't match company's current week",
-            value=f"decision={decisions.week}, company={company.current_week}",
-            suggestion="Ensure you're submitting decisions for the current week",
-        ))
+        result.add_error(
+            ValidationError(
+                field="week",
+                message="Decision week doesn't match company's current week",
+                value=f"decision={decisions.week}, company={company.current_week}",
+                suggestion="Ensure you're submitting decisions for the current week",
+            )
+        )
 
     if decisions.company_id != company.company_id:
-        result.add_error(ValidationError(
-            field="company_id",
-            message="Decision company ID doesn't match",
-            value=f"decision={decisions.company_id}, company={company.company_id}",
-        ))
+        result.add_error(
+            ValidationError(
+                field="company_id",
+                message="Decision company ID doesn't match",
+                value=f"decision={decisions.company_id}, company={company.company_id}",
+            )
+        )
 
     return result
 
@@ -131,33 +134,41 @@ def _validate_budgets(decisions: Decisions) -> ValidationResult:
 
     # Quality budget validation
     if decisions.quality_budget < 0:
-        result.add_error(ValidationError(
-            field="quality_budget",
-            message="Quality budget cannot be negative",
-            value=str(decisions.quality_budget),
-        ))
+        result.add_error(
+            ValidationError(
+                field="quality_budget",
+                message="Quality budget cannot be negative",
+                value=str(decisions.quality_budget),
+            )
+        )
     elif decisions.quality_budget > 10000:
-        result.add_warning(ValidationError(
-            field="quality_budget",
-            message="Quality budget seems unusually high",
-            value=str(decisions.quality_budget),
-            suggestion="Typical budgets are $0-$5,000",
-        ))
+        result.add_warning(
+            ValidationError(
+                field="quality_budget",
+                message="Quality budget seems unusually high",
+                value=str(decisions.quality_budget),
+                suggestion="Typical budgets are $0-$5,000",
+            )
+        )
 
     # Maintenance budget validation
     if decisions.maintenance_budget < 0:
-        result.add_error(ValidationError(
-            field="maintenance_budget",
-            message="Maintenance budget cannot be negative",
-            value=str(decisions.maintenance_budget),
-        ))
+        result.add_error(
+            ValidationError(
+                field="maintenance_budget",
+                message="Maintenance budget cannot be negative",
+                value=str(decisions.maintenance_budget),
+            )
+        )
     elif decisions.maintenance_budget > 10000:
-        result.add_warning(ValidationError(
-            field="maintenance_budget",
-            message="Maintenance budget seems unusually high",
-            value=str(decisions.maintenance_budget),
-            suggestion="Typical budgets are $0-$5,000",
-        ))
+        result.add_warning(
+            ValidationError(
+                field="maintenance_budget",
+                message="Maintenance budget seems unusually high",
+                value=str(decisions.maintenance_budget),
+                suggestion="Typical budgets are $0-$5,000",
+            )
+        )
 
     return result
 
@@ -168,26 +179,32 @@ def _validate_orders(decisions: Decisions, company: Company) -> ValidationResult
 
     # Raw materials validation
     if decisions.raw_materials_regular < 0:
-        result.add_error(ValidationError(
-            field="raw_materials_regular",
-            message="Regular raw materials order cannot be negative",
-            value=str(decisions.raw_materials_regular),
-        ))
+        result.add_error(
+            ValidationError(
+                field="raw_materials_regular",
+                message="Regular raw materials order cannot be negative",
+                value=str(decisions.raw_materials_regular),
+            )
+        )
 
     if decisions.raw_materials_expedited < 0:
-        result.add_error(ValidationError(
-            field="raw_materials_expedited",
-            message="Expedited raw materials order cannot be negative",
-            value=str(decisions.raw_materials_expedited),
-        ))
+        result.add_error(
+            ValidationError(
+                field="raw_materials_expedited",
+                message="Expedited raw materials order cannot be negative",
+                value=str(decisions.raw_materials_expedited),
+            )
+        )
 
     # Warning for expedited without regular
     if decisions.raw_materials_expedited > 0 and decisions.raw_materials_regular == 0:
-        result.add_warning(ValidationError(
-            field="raw_materials_expedited",
-            message="Using expedited orders is expensive (+$1,200)",
-            suggestion="Consider regular orders (3-week lead) for non-urgent needs",
-        ))
+        result.add_warning(
+            ValidationError(
+                field="raw_materials_expedited",
+                message="Using expedited orders is expensive (+$1,200)",
+                suggestion="Consider regular orders (3-week lead) for non-urgent needs",
+            )
+        )
 
     # Parts orders validation
     parts = decisions.part_orders
@@ -197,21 +214,25 @@ def _validate_orders(decisions: Decisions, company: Company) -> ValidationResult
         ("z_prime", parts.z_prime),
     ]:
         if value < 0:
-            result.add_error(ValidationError(
-                field=f"part_orders.{part_type}",
-                message=f"Parts order cannot be negative",
-                value=str(value),
-            ))
+            result.add_error(
+                ValidationError(
+                    field=f"part_orders.{part_type}",
+                    message="Parts order cannot be negative",
+                    value=str(value),
+                )
+            )
 
     # Warning for buying parts vs manufacturing
     total_parts_ordered = decisions.total_parts_ordered
     if total_parts_ordered > 1000:
-        result.add_warning(ValidationError(
-            field="part_orders",
-            message="Buying large quantities of parts may be expensive",
-            value=str(total_parts_ordered),
-            suggestion="Consider manufacturing parts in-house when possible",
-        ))
+        result.add_warning(
+            ValidationError(
+                field="part_orders",
+                message="Buying large quantities of parts may be expensive",
+                value=str(total_parts_ordered),
+                suggestion="Consider manufacturing parts in-house when possible",
+            )
+        )
 
     return result
 
@@ -225,17 +246,23 @@ def _validate_machine_assignments(
 
     # Check we have exactly 9 machines
     if len(decisions.machine_decisions) != 9:
-        result.add_error(ValidationError(
-            field="machine_decisions",
-            message="Must have exactly 9 machine decisions",
-            value=str(len(decisions.machine_decisions)),
-        ))
+        result.add_error(
+            ValidationError(
+                field="machine_decisions",
+                message="Must have exactly 9 machine decisions",
+                value=str(len(decisions.machine_decisions)),
+            )
+        )
         return result  # Can't validate further
 
     # Track which operators are assigned
     scheduled_hours_by_type: dict[str, float] = {
-        "X'": 0, "Y'": 0, "Z'": 0,
-        "X": 0, "Y": 0, "Z": 0,
+        "X'": 0,
+        "Y'": 0,
+        "Z'": 0,
+        "X": 0,
+        "Y": 0,
+        "Z": 0,
     }
 
     for md in decisions.machine_decisions:
@@ -251,23 +278,29 @@ def _validate_machine_assignments(
 
     # Check for unbalanced production
     parts_hours = sum(v for k, v in scheduled_hours_by_type.items() if k.endswith("'"))
-    assembly_hours = sum(v for k, v in scheduled_hours_by_type.items() if not k.endswith("'"))
+    assembly_hours = sum(
+        v for k, v in scheduled_hours_by_type.items() if not k.endswith("'")
+    )
 
     if parts_hours > 0 and assembly_hours == 0:
-        result.add_warning(ValidationError(
-            field="machine_decisions",
-            message="Parts are being produced but no assembly is scheduled",
-            suggestion="Schedule assembly machines to produce finished products",
-        ))
+        result.add_warning(
+            ValidationError(
+                field="machine_decisions",
+                message="Parts are being produced but no assembly is scheduled",
+                suggestion="Schedule assembly machines to produce finished products",
+            )
+        )
 
     # Check for training too many operators
     training_count = len(decisions.operators_training)
     if training_count > 3:
-        result.add_warning(ValidationError(
-            field="machine_decisions",
-            message=f"Training {training_count} operators at once will significantly reduce production",
-            suggestion="Consider training 1-2 operators at a time",
-        ))
+        result.add_warning(
+            ValidationError(
+                field="machine_decisions",
+                message=f"Training {training_count} operators at once will significantly reduce production",
+                suggestion="Consider training 1-2 operators at a time",
+            )
+        )
 
     return result
 
@@ -281,45 +314,55 @@ def _validate_machine_decision(
 
     # Machine ID validation
     if md.machine_id < 1 or md.machine_id > 9:
-        result.add_error(ValidationError(
-            field=f"machine_{md.machine_id}",
-            message="Machine ID must be between 1 and 9",
-            value=str(md.machine_id),
-        ))
+        result.add_error(
+            ValidationError(
+                field=f"machine_{md.machine_id}",
+                message="Machine ID must be between 1 and 9",
+                value=str(md.machine_id),
+            )
+        )
         return result
 
     # Hours validation
     if md.scheduled_hours < 0:
-        result.add_error(ValidationError(
-            field=f"machine_{md.machine_id}.scheduled_hours",
-            message="Scheduled hours cannot be negative",
-            value=str(md.scheduled_hours),
-        ))
+        result.add_error(
+            ValidationError(
+                field=f"machine_{md.machine_id}.scheduled_hours",
+                message="Scheduled hours cannot be negative",
+                value=str(md.scheduled_hours),
+            )
+        )
     elif md.scheduled_hours > 50:
-        result.add_error(ValidationError(
-            field=f"machine_{md.machine_id}.scheduled_hours",
-            message="Scheduled hours cannot exceed 50 per week",
-            value=str(md.scheduled_hours),
-            suggestion="Maximum is 50 hours per week",
-        ))
+        result.add_error(
+            ValidationError(
+                field=f"machine_{md.machine_id}.scheduled_hours",
+                message="Scheduled hours cannot exceed 50 per week",
+                value=str(md.scheduled_hours),
+                suggestion="Maximum is 50 hours per week",
+            )
+        )
 
     # Part type validation
     if md.part_type < 1 or md.part_type > 3:
-        result.add_error(ValidationError(
-            field=f"machine_{md.machine_id}.part_type",
-            message="Part type must be 1, 2, or 3 (X, Y, Z)",
-            value=str(md.part_type),
-        ))
+        result.add_error(
+            ValidationError(
+                field=f"machine_{md.machine_id}.part_type",
+                message="Part type must be 1, 2, or 3 (X, Y, Z)",
+                value=str(md.part_type),
+            )
+        )
 
     # Check operator status for training
     if md.send_for_training:
         operator = company.workforce.get_operator(md.machine_id)
         if operator and operator.is_trained:
-            result.add_warning(ValidationError(
-                field=f"machine_{md.machine_id}",
-                message="Operator is already trained",
-                suggestion="No benefit to training again",
-            ))
+            result.add_warning(
+                ValidationError(
+                    field=f"machine_{md.machine_id}",
+                    message="Operator is already trained",
+                    suggestion="No benefit to training again",
+                )
+            )
 
     return result
 

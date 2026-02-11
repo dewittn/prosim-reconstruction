@@ -7,7 +7,6 @@ Tracks pending orders for:
 """
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -66,7 +65,7 @@ class Order(BaseModel):
         )
 
     @property
-    def part_type(self) -> Optional[str]:
+    def part_type(self) -> str | None:
         """Get part type if this is a parts order."""
         mapping = {
             OrderType.PARTS_X_PRIME: "X'",
@@ -83,7 +82,9 @@ class Order(BaseModel):
 class OrderBook(BaseModel):
     """Manages all pending orders for a company."""
 
-    orders: list[Order] = Field(default_factory=list, description="List of pending orders")
+    orders: list[Order] = Field(
+        default_factory=list, description="List of pending orders"
+    )
 
     def place_order(
         self,
@@ -117,21 +118,17 @@ class OrderBook(BaseModel):
 
     def get_due_raw_materials(self, current_week: int) -> list[Order]:
         """Get raw materials orders due in the current week."""
-        return [
-            o for o in self.orders
-            if o.is_due(current_week) and o.is_raw_materials
-        ]
+        return [o for o in self.orders if o.is_due(current_week) and o.is_raw_materials]
 
     def get_due_parts(self, current_week: int) -> list[Order]:
         """Get parts orders due in the current week."""
         return [o for o in self.orders if o.is_due(current_week) and o.is_parts]
 
-    def get_due_parts_by_type(
-        self, current_week: int, part_type: str
-    ) -> list[Order]:
+    def get_due_parts_by_type(self, current_week: int, part_type: str) -> list[Order]:
         """Get parts orders due for a specific part type."""
         return [
-            o for o in self.orders
+            o
+            for o in self.orders
             if o.is_due(current_week) and o.part_type == part_type
         ]
 
@@ -171,21 +168,21 @@ class DemandForecast(BaseModel):
     product_type: str = Field(description="Product type (X, Y, or Z)")
     shipping_week: int = Field(ge=1, description="Week when demand must be fulfilled")
     estimated_demand: float = Field(ge=0, description="Estimated demand quantity")
-    actual_demand: Optional[float] = Field(
-        default=None,
-        ge=0,
-        description="Actual demand (known only at shipping week)"
+    actual_demand: float | None = Field(
+        default=None, ge=0, description="Actual demand (known only at shipping week)"
     )
     carryover: float = Field(
-        default=0.0,
-        ge=0,
-        description="Unfulfilled demand from previous period"
+        default=0.0, ge=0, description="Unfulfilled demand from previous period"
     )
 
     @property
     def total_demand(self) -> float:
         """Total demand including carryover."""
-        demand = self.actual_demand if self.actual_demand is not None else self.estimated_demand
+        demand = (
+            self.actual_demand
+            if self.actual_demand is not None
+            else self.estimated_demand
+        )
         return demand + self.carryover
 
 
@@ -193,20 +190,19 @@ class DemandSchedule(BaseModel):
     """Manages demand forecasts for all products."""
 
     forecasts: list[DemandForecast] = Field(
-        default_factory=list,
-        description="List of demand forecasts"
+        default_factory=list, description="List of demand forecasts"
     )
     shipping_frequency: int = Field(
-        default=4,
-        ge=1,
-        description="Weeks between shipping periods"
+        default=4, ge=1, description="Weeks between shipping periods"
     )
 
     def get_forecasts_for_week(self, week: int) -> list[DemandForecast]:
         """Get all forecasts with shipping in a given week."""
         return [f for f in self.forecasts if f.shipping_week == week]
 
-    def get_forecast(self, product_type: str, shipping_week: int) -> Optional[DemandForecast]:
+    def get_forecast(
+        self, product_type: str, shipping_week: int
+    ) -> DemandForecast | None:
         """Get specific forecast by product and shipping week."""
         for f in self.forecasts:
             if f.product_type == product_type and f.shipping_week == shipping_week:
@@ -222,8 +218,8 @@ class DemandSchedule(BaseModel):
         self,
         product_type: str,
         shipping_week: int,
-        actual_demand: Optional[float] = None,
-        carryover: Optional[float] = None,
+        actual_demand: float | None = None,
+        carryover: float | None = None,
     ) -> "DemandSchedule":
         """Update an existing forecast."""
         new_forecasts = []

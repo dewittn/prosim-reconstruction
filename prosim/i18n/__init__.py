@@ -32,7 +32,7 @@ def load_locale(language: str = "en") -> dict[str, Any]:
         language = "en"
 
     if locale_file.exists():
-        with open(locale_file, "r", encoding="utf-8") as f:
+        with open(locale_file, encoding="utf-8") as f:
             _current_locale = json.load(f)
     else:
         _current_locale = {}

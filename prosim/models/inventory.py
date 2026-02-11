@@ -17,9 +17,15 @@ class RawMaterialsInventory(BaseModel):
     during parts production in the Parts Department.
     """
 
-    beginning: float = Field(default=0.0, ge=0, description="Beginning inventory for the week")
-    orders_received: float = Field(default=0.0, ge=0, description="Orders received this week")
-    used_in_production: float = Field(default=0.0, ge=0, description="Consumed in parts production")
+    beginning: float = Field(
+        default=0.0, ge=0, description="Beginning inventory for the week"
+    )
+    orders_received: float = Field(
+        default=0.0, ge=0, description="Orders received this week"
+    )
+    used_in_production: float = Field(
+        default=0.0, ge=0, description="Consumed in parts production"
+    )
 
     @property
     def ending(self) -> float:
@@ -43,17 +49,28 @@ class PartsInventory(BaseModel):
     """
 
     part_type: str = Field(description="Part type identifier (X', Y', or Z')")
-    beginning: float = Field(default=0.0, ge=0, description="Beginning inventory for the week")
-    orders_received: float = Field(default=0.0, ge=0, description="Purchased parts received")
-    production: float = Field(default=0.0, ge=0, description="Parts produced this week (net of rejects)")
-    used_in_assembly: float = Field(default=0.0, ge=0, description="Consumed in product assembly")
+    beginning: float = Field(
+        default=0.0, ge=0, description="Beginning inventory for the week"
+    )
+    orders_received: float = Field(
+        default=0.0, ge=0, description="Purchased parts received"
+    )
+    production: float = Field(
+        default=0.0, ge=0, description="Parts produced this week (net of rejects)"
+    )
+    used_in_assembly: float = Field(
+        default=0.0, ge=0, description="Consumed in product assembly"
+    )
 
     @property
     def ending(self) -> float:
         """Calculate ending inventory."""
         return max(
             0.0,
-            self.beginning + self.orders_received + self.production - self.used_in_assembly
+            self.beginning
+            + self.orders_received
+            + self.production
+            - self.used_in_assembly,
         )
 
     def advance_week(self) -> "PartsInventory":
@@ -75,9 +92,15 @@ class ProductsInventory(BaseModel):
     """
 
     product_type: str = Field(description="Product type identifier (X, Y, or Z)")
-    beginning: float = Field(default=0.0, ge=0, description="Beginning inventory for the week")
-    production: float = Field(default=0.0, ge=0, description="Products assembled this week (net of rejects)")
-    demand_fulfilled: float = Field(default=0.0, ge=0, description="Units shipped to meet demand")
+    beginning: float = Field(
+        default=0.0, ge=0, description="Beginning inventory for the week"
+    )
+    production: float = Field(
+        default=0.0, ge=0, description="Products assembled this week (net of rejects)"
+    )
+    demand_fulfilled: float = Field(
+        default=0.0, ge=0, description="Units shipped to meet demand"
+    )
 
     @property
     def ending(self) -> float:
@@ -97,9 +120,15 @@ class ProductsInventory(BaseModel):
 class AllPartsInventory(BaseModel):
     """Container for all three part types."""
 
-    x_prime: PartsInventory = Field(default_factory=lambda: PartsInventory(part_type="X'"))
-    y_prime: PartsInventory = Field(default_factory=lambda: PartsInventory(part_type="Y'"))
-    z_prime: PartsInventory = Field(default_factory=lambda: PartsInventory(part_type="Z'"))
+    x_prime: PartsInventory = Field(
+        default_factory=lambda: PartsInventory(part_type="X'")
+    )
+    y_prime: PartsInventory = Field(
+        default_factory=lambda: PartsInventory(part_type="Y'")
+    )
+    z_prime: PartsInventory = Field(
+        default_factory=lambda: PartsInventory(part_type="Z'")
+    )
 
     def get(self, part_type: str) -> PartsInventory:
         """Get inventory by part type."""
@@ -132,9 +161,15 @@ class AllPartsInventory(BaseModel):
 class AllProductsInventory(BaseModel):
     """Container for all three product types."""
 
-    x: ProductsInventory = Field(default_factory=lambda: ProductsInventory(product_type="X"))
-    y: ProductsInventory = Field(default_factory=lambda: ProductsInventory(product_type="Y"))
-    z: ProductsInventory = Field(default_factory=lambda: ProductsInventory(product_type="Z"))
+    x: ProductsInventory = Field(
+        default_factory=lambda: ProductsInventory(product_type="X")
+    )
+    y: ProductsInventory = Field(
+        default_factory=lambda: ProductsInventory(product_type="Y")
+    )
+    z: ProductsInventory = Field(
+        default_factory=lambda: ProductsInventory(product_type="Z")
+    )
 
     def get(self, product_type: str) -> ProductsInventory:
         """Get inventory by product type."""

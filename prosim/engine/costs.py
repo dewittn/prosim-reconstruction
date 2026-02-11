@@ -32,10 +32,9 @@ Cost structure from original week1.txt:
 """
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 from prosim.config.schema import ProsimConfig, get_default_config
-from prosim.engine.production import DepartmentProductionResult, ProductionResult
+from prosim.engine.production import ProductionResult
 from prosim.engine.workforce import WorkforceCostResult
 from prosim.models.inventory import Inventory
 from prosim.models.orders import OrderBook
@@ -140,7 +139,9 @@ class CostCalculationInput:
     expedited_orders_count: int = 0
     regular_orders_count: int = 0
     parts_orders_count: int = 0
-    machine_repairs: dict[str, int] = field(default_factory=dict)  # Product type -> repair count
+    machine_repairs: dict[str, int] = field(
+        default_factory=dict
+    )  # Product type -> repair count
 
 
 class CostCalculator:
@@ -152,7 +153,7 @@ class CostCalculator:
     3. Weekly and cumulative tracking
     """
 
-    def __init__(self, config: Optional[ProsimConfig] = None):
+    def __init__(self, config: ProsimConfig | None = None):
         """Initialize cost calculator.
 
         Args:
@@ -260,7 +261,10 @@ class CostCalculator:
         costs: dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         rm_per_part = self.config.production.raw_materials_per_part
 
-        for part_type, gross_qty in production_result.parts_department.gross_production_by_type.items():
+        for (
+            part_type,
+            gross_qty,
+        ) in production_result.parts_department.gross_production_by_type.items():
             product_type = part_type.replace("'", "")
             if product_type in costs:
                 rate = rm_per_part.get(part_type, 1.0)
@@ -315,12 +319,16 @@ class CostCalculator:
             if result.part_type:
                 product_type = result.part_type.replace("'", "")
                 if product_type in costs:
-                    costs[product_type] += result.productive_hours * rates.parts_department
+                    costs[product_type] += (
+                        result.productive_hours * rates.parts_department
+                    )
 
         # Assembly department
         for result in production_result.assembly_department.machine_results:
             if result.part_type and result.part_type in costs:
-                costs[result.part_type] += result.productive_hours * rates.assembly_department
+                costs[result.part_type] += (
+                    result.productive_hours * rates.assembly_department
+                )
 
         return costs
 
@@ -534,7 +542,7 @@ class CostCalculator:
 
     def accumulate_costs(
         self,
-        current_cumulative: Optional[CumulativeCostReport],
+        current_cumulative: CumulativeCostReport | None,
         weekly_report: WeeklyCostReport,
     ) -> CumulativeCostReport:
         """Add weekly costs to cumulative totals.
@@ -606,7 +614,8 @@ class CostCalculator:
             training_cost=curr_oh.training_cost + week_oh.training_cost,
             hiring_cost=curr_oh.hiring_cost + week_oh.hiring_cost,
             layoff_firing_cost=curr_oh.layoff_firing_cost + week_oh.layoff_firing_cost,
-            raw_materials_carrying=curr_oh.raw_materials_carrying + week_oh.raw_materials_carrying,
+            raw_materials_carrying=curr_oh.raw_materials_carrying
+            + week_oh.raw_materials_carrying,
             ordering_cost=curr_oh.ordering_cost + week_oh.ordering_cost,
             fixed_expense=curr_oh.fixed_expense + week_oh.fixed_expense,
         )

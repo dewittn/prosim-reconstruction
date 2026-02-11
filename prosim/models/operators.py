@@ -21,16 +21,13 @@ Example: Operator 3 (the "expert")
 """
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
 from prosim.config.defaults import (
-    TRAINING_MATRIX,
-    get_operator_efficiency,
     STARTING_OPERATOR_PROFILES,
+    get_operator_efficiency,
 )
-
 
 # Maximum training level (0=untrained, 10=fully trained "J")
 MAX_TRAINING_LEVEL = 10
@@ -44,8 +41,8 @@ class TrainingStatus(str, Enum):
     """Operator training status (simplified view of training level)."""
 
     UNTRAINED = "untrained"  # training_level == 0
-    TRAINING = "training"    # Currently in training this week (not working)
-    TRAINED = "trained"      # training_level >= 1
+    TRAINING = "training"  # Currently in training this week (not working)
+    TRAINED = "trained"  # training_level >= 1
 
 
 class Department(str, Enum):
@@ -76,44 +73,42 @@ class Operator(BaseModel):
     """
 
     operator_id: int = Field(ge=1, description="Unique operator identifier")
-    name: Optional[str] = Field(
+    name: str | None = Field(
         default=None,
-        description="Custom name for the operator (None uses default 'Operator N')"
+        description="Custom name for the operator (None uses default 'Operator N')",
     )
     quality_tier: int = Field(
         default=5,
         ge=MIN_QUALITY_TIER,
         le=MAX_QUALITY_TIER,
-        description="Quality tier (0-9): Determines training matrix row"
+        description="Quality tier (0-9): Determines training matrix row",
     )
     training_level: int = Field(
         default=0,
         ge=0,
         le=MAX_TRAINING_LEVEL,
-        description="Training level (0-10): Determines training matrix column"
+        description="Training level (0-10): Determines training matrix column",
     )
     proficiency: float = Field(
         default=1.0,
         ge=0.5,
         le=1.5,
-        description="Proficiency multiplier (fixed at hire): 0.8-1.2 typical range"
+        description="Proficiency multiplier (fixed at hire): 0.8-1.2 typical range",
     )
     is_in_training_class: bool = Field(
         default=False,
-        description="Whether operator is in training class this week (not working)"
+        description="Whether operator is in training class this week (not working)",
     )
     consecutive_weeks_unscheduled: int = Field(
         default=0,
         ge=0,
-        description="Consecutive weeks not scheduled (for layoff costs)"
+        description="Consecutive weeks not scheduled (for layoff costs)",
     )
     department: Department = Field(
-        default=Department.UNASSIGNED,
-        description="Current department assignment"
+        default=Department.UNASSIGNED, description="Current department assignment"
     )
     is_new_hire: bool = Field(
-        default=False,
-        description="Whether this operator was hired this week"
+        default=False, description="Whether this operator was hired this week"
     )
 
     @property
@@ -121,7 +116,7 @@ class Operator(BaseModel):
         """Get display name (custom name or default 'Operator N')."""
         return self.name if self.name else f"Operator {self.operator_id}"
 
-    def rename(self, new_name: Optional[str]) -> "Operator":
+    def rename(self, new_name: str | None) -> "Operator":
         """Rename the operator.
 
         Args:
@@ -192,6 +187,7 @@ class Operator(BaseModel):
     def training_level_name(self) -> str:
         """Get human-readable training level name."""
         from prosim.config.defaults import TRAINING_LEVELS
+
         return TRAINING_LEVELS[min(self.training_level, len(TRAINING_LEVELS) - 1)]
 
     @property
@@ -214,10 +210,12 @@ class Operator(BaseModel):
         Advances training level by 1 (up to max).
         """
         new_level = min(self.training_level + 1, MAX_TRAINING_LEVEL)
-        return self.model_copy(update={
-            "is_in_training_class": False,
-            "training_level": new_level,
-        })
+        return self.model_copy(
+            update={
+                "is_in_training_class": False,
+                "training_level": new_level,
+            }
+        )
 
     def advance_training_from_work(self) -> "Operator":
         """Advance training level from working (on-the-job training).
@@ -257,16 +255,13 @@ class Workforce(BaseModel):
     """
 
     operators: dict[int, Operator] = Field(
-        default_factory=dict,
-        description="Map of operator_id to Operator"
+        default_factory=dict, description="Map of operator_id to Operator"
     )
     next_operator_id: int = Field(
-        default=1,
-        ge=1,
-        description="Next ID to assign to new hires"
+        default=1, ge=1, description="Next ID to assign to new hires"
     )
 
-    def get_operator(self, operator_id: int) -> Optional[Operator]:
+    def get_operator(self, operator_id: int) -> Operator | None:
         """Get operator by ID."""
         return self.operators.get(operator_id)
 
@@ -307,7 +302,7 @@ class Workforce(BaseModel):
         new_operators = {k: v for k, v in self.operators.items() if k != operator_id}
         return self.model_copy(update={"operators": new_operators})
 
-    def rename_operator(self, operator_id: int, new_name: Optional[str]) -> "Workforce":
+    def rename_operator(self, operator_id: int, new_name: str | None) -> "Workforce":
         """Rename an operator.
 
         Args:
@@ -338,7 +333,8 @@ class Workforce(BaseModel):
     def untrained_operators(self) -> list[Operator]:
         """Get all untrained operators."""
         return [
-            op for op in self.operators.values()
+            op
+            for op in self.operators.values()
             if op.training_status == TrainingStatus.UNTRAINED
         ]
 
@@ -346,7 +342,8 @@ class Workforce(BaseModel):
     def operators_in_training(self) -> list[Operator]:
         """Get operators currently in training."""
         return [
-            op for op in self.operators.values()
+            op
+            for op in self.operators.values()
             if op.training_status == TrainingStatus.TRAINING
         ]
 
@@ -354,19 +351,22 @@ class Workforce(BaseModel):
     def unscheduled_operators(self) -> list[Operator]:
         """Get operators not scheduled this week."""
         return [
-            op for op in self.operators.values()
+            op
+            for op in self.operators.values()
             if op.department == Department.UNASSIGNED
         ]
 
     def count_by_status(self) -> dict[TrainingStatus, int]:
         """Count operators by training status."""
-        counts = {status: 0 for status in TrainingStatus}
+        counts = dict.fromkeys(TrainingStatus, 0)
         for op in self.operators.values():
             counts[op.training_status] += 1
         return counts
 
     @classmethod
-    def create_initial(cls, num_operators: int = 9, num_trained: int = 0) -> "Workforce":
+    def create_initial(
+        cls, num_operators: int = 9, num_trained: int = 0
+    ) -> "Workforce":
         """Create initial workforce for a new game.
 
         Starting operators (1-9) have FIXED profiles (quality_tier + proficiency)

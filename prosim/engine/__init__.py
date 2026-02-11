@@ -53,18 +53,18 @@ from prosim.engine.production import (
     ProductionInput,
     ProductionResult,
 )
+from prosim.engine.validation import (
+    ValidationError,
+    ValidationResult,
+    validate_decisions,
+    validate_decisions_with_messages,
+)
 from prosim.engine.workforce import (
     OperatorEfficiencyResult,
     OperatorManager,
     TrainingResult,
     WorkforceCostResult,
     WorkforceSchedulingResult,
-)
-from prosim.engine.validation import (
-    ValidationError,
-    ValidationResult,
-    validate_decisions,
-    validate_decisions_with_messages,
 )
 
 __all__ = [

@@ -15,7 +15,6 @@ The demand system uses:
 
 import random
 from dataclasses import dataclass, field
-from typing import Optional
 
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.models.orders import DemandForecast, DemandSchedule
@@ -74,9 +73,9 @@ class DemandManager:
 
     def __init__(
         self,
-        config: Optional[ProsimConfig] = None,
-        random_seed: Optional[int] = None,
-        base_demand: Optional[dict[str, float]] = None,
+        config: ProsimConfig | None = None,
+        random_seed: int | None = None,
+        base_demand: dict[str, float] | None = None,
     ):
         """Initialize demand manager.
 
@@ -89,7 +88,7 @@ class DemandManager:
         self._rng = random.Random(random_seed)
         self.base_demand = base_demand or self.DEFAULT_BASE_DEMAND.copy()
 
-    def set_random_seed(self, seed: Optional[int]) -> None:
+    def set_random_seed(self, seed: int | None) -> None:
         """Set random seed for reproducible demand generation.
 
         Args:
@@ -193,7 +192,7 @@ class DemandManager:
     def generate_shipping_period_demand(
         self,
         shipping_week: int,
-        carryover: Optional[dict[str, float]] = None,
+        carryover: dict[str, float] | None = None,
     ) -> ShippingPeriodDemand:
         """Generate demand for all products in a shipping period.
 
@@ -271,7 +270,9 @@ class DemandManager:
 
         # Generate forecasts for each period
         for i in range(periods_ahead):
-            shipping_week = first_shipping + (i * self.config.simulation.shipping_frequency)
+            shipping_week = first_shipping + (
+                i * self.config.simulation.shipping_frequency
+            )
 
             for product_type in ["X", "Y", "Z"]:
                 forecast = self.generate_forecast(
@@ -308,8 +309,6 @@ class DemandManager:
         # Get all forecasts for future shipping weeks
         for forecast in schedule.forecasts:
             if forecast.shipping_week >= current_week:
-                weeks_out = forecast.shipping_week - current_week
-
                 # Regenerate forecast with updated uncertainty
                 new_forecast = self.generate_forecast(
                     product_type=forecast.product_type,
@@ -416,7 +415,6 @@ class DemandManager:
         """
         # Calculate the new shipping week to forecast
         frequency = self.config.simulation.shipping_frequency
-        next_shipping = self.next_shipping_week(current_week)
 
         # Find the furthest shipping week we already have forecasts for
         max_shipping_week = 0
@@ -464,7 +462,7 @@ class DemandManager:
         self,
         schedule: DemandSchedule,
         week: int,
-    ) -> Optional[dict[str, float]]:
+    ) -> dict[str, float] | None:
         """Get demand amounts for a shipping week.
 
         Returns actual demand if available, otherwise estimated demand.

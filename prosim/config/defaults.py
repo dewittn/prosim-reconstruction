@@ -169,7 +169,17 @@ EXPEDITED_SHIPPING_COST: float = 1200.0  # Premium for expedited orders
 
 # Training level names for reference
 TRAINING_LEVELS: list[str] = [
-    "Untrained", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"
+    "Untrained",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
 ]
 
 # Exact training matrix from reverse-engineered spreadsheet (2004)
@@ -178,16 +188,16 @@ TRAINING_LEVELS: list[str] = [
 # Values are efficiency percentages
 TRAINING_MATRIX: dict[int, list[int]] = {
     #        Untr,  A,   B,   C,   D,   E,   F,   G,   H,   I,   J
-    0: [      20,  61,  79,  89,  96, 100, 103, 106, 108, 109, 109],
-    1: [      21,  63,  81,  91,  98, 103, 106, 109, 111, 112, 112],
-    2: [      21,  64,  82,  93, 100, 104, 108, 110, 112, 114, 114],
-    3: [      21,  64,  83,  94, 101, 106, 109, 112, 114, 116, 116],
-    4: [      21,  65,  84,  95, 102, 107, 110, 113, 115, 117, 117],
-    5: [      22,  66,  85,  96, 103, 108, 111, 114, 116, 118, 118],
-    6: [      22,  66,  85,  96, 104, 108, 112, 115, 117, 118, 118],
-    7: [      22,  66,  86,  97, 104, 109, 112, 115, 117, 119, 119],
-    8: [      22,  67,  86,  97, 104, 109, 113, 116, 118, 120, 120],
-    9: [      22,  67,  87,  98, 105, 110, 113, 116, 118, 120, 120],
+    0: [20, 61, 79, 89, 96, 100, 103, 106, 108, 109, 109],
+    1: [21, 63, 81, 91, 98, 103, 106, 109, 111, 112, 112],
+    2: [21, 64, 82, 93, 100, 104, 108, 110, 112, 114, 114],
+    3: [21, 64, 83, 94, 101, 106, 109, 112, 114, 116, 116],
+    4: [21, 65, 84, 95, 102, 107, 110, 113, 115, 117, 117],
+    5: [22, 66, 85, 96, 103, 108, 111, 114, 116, 118, 118],
+    6: [22, 66, 85, 96, 104, 108, 112, 115, 117, 118, 118],
+    7: [22, 66, 86, 97, 104, 109, 112, 115, 117, 119, 119],
+    8: [22, 67, 86, 97, 104, 109, 113, 116, 118, 120, 120],
+    9: [22, 67, 87, 98, 105, 110, 113, 116, 118, 120, 120],
 }
 
 
@@ -217,8 +227,8 @@ def get_operator_efficiency(quality_tier: int, training_level: int) -> float:
 OPERATOR_TIME_EFFICIENCY: dict[str, float] = {
     "untrained_min": 0.20,  # From matrix: Tier 0, Level 0
     "untrained_max": 0.22,  # From matrix: Tier 9, Level 0
-    "trained_min": 1.09,    # From matrix: Tier 0, Level J
-    "trained_max": 1.20,    # From matrix: Tier 9, Level J
+    "trained_min": 1.09,  # From matrix: Tier 0, Level J
+    "trained_max": 1.20,  # From matrix: Tier 9, Level J
     "weeks_to_full_training": 10,  # Levels 0-10 (Untrained through J)
 }
 
@@ -256,8 +266,14 @@ STARTING_OPERATOR_PROFILES: dict[int, dict[str, any]] = {
     5: {"quality_tier": 5, "proficiency": 1.028},  # Normal performer
     6: {"quality_tier": 9, "proficiency": 0.836},  # Low proficiency despite high tier
     7: {"quality_tier": 9, "proficiency": 0.934},  # Below average proficiency
-    8: {"quality_tier": 2, "proficiency": 0.850},  # Low tier, low proficiency (estimated)
-    9: {"quality_tier": 2, "proficiency": 0.900},  # Low tier, low proficiency (estimated)
+    8: {
+        "quality_tier": 2,
+        "proficiency": 0.850,
+    },  # Low tier, low proficiency (estimated)
+    9: {
+        "quality_tier": 2,
+        "proficiency": 0.900,
+    },  # Low tier, low proficiency (estimated)
 }
 
 # =============================================================================

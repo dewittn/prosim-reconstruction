@@ -9,7 +9,6 @@ Each machine can be assigned an operator and scheduled for production.
 """
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -52,23 +51,20 @@ class MachineAssignment(BaseModel):
     Includes operator, part/product type, and scheduled hours.
     """
 
-    operator_id: Optional[int] = Field(
-        default=None,
-        description="Assigned operator ID (None if unassigned)"
+    operator_id: int | None = Field(
+        default=None, description="Assigned operator ID (None if unassigned)"
     )
-    part_type: Optional[str] = Field(
-        default=None,
-        description="Part or product type to produce"
+    part_type: str | None = Field(
+        default=None, description="Part or product type to produce"
     )
     scheduled_hours: float = Field(
         default=0.0,
         ge=0,
         le=50,  # Max 50 hours per week
-        description="Hours scheduled for production"
+        description="Hours scheduled for production",
     )
     send_for_training: bool = Field(
-        default=False,
-        description="Whether operator should be sent for training"
+        default=False, description="Whether operator should be sent for training"
     )
 
 
@@ -82,22 +78,17 @@ class Machine(BaseModel):
 
     machine_id: int = Field(ge=1, description="Unique machine identifier")
     department: Department = Field(description="Department this machine belongs to")
-    assignment: Optional[MachineAssignment] = Field(
-        default=None,
-        description="Current week's assignment"
+    assignment: MachineAssignment | None = Field(
+        default=None, description="Current week's assignment"
     )
     needs_repair: bool = Field(
-        default=False,
-        description="Whether machine broke down and needed repair"
+        default=False, description="Whether machine broke down and needed repair"
     )
     setup_hours: float = Field(
-        default=0.0,
-        ge=0,
-        description="Setup time if switching product types"
+        default=0.0, ge=0, description="Setup time if switching product types"
     )
-    last_part_type: Optional[str] = Field(
-        default=None,
-        description="Part type produced last week (for setup calculation)"
+    last_part_type: str | None = Field(
+        default=None, description="Part type produced last week (for setup calculation)"
     )
 
     @property
@@ -138,7 +129,9 @@ class Machine(BaseModel):
         """Clear current assignment."""
         return self.model_copy(update={"assignment": None})
 
-    def calculate_setup_time(self, new_part_type: str, default_setup: float = 2.0) -> float:
+    def calculate_setup_time(
+        self, new_part_type: str, default_setup: float = 2.0
+    ) -> float:
         """Calculate setup time if switching part types.
 
         Args:
@@ -181,11 +174,10 @@ class MachineFloor(BaseModel):
     """
 
     machines: dict[int, Machine] = Field(
-        default_factory=dict,
-        description="Map of machine_id to Machine"
+        default_factory=dict, description="Map of machine_id to Machine"
     )
 
-    def get_machine(self, machine_id: int) -> Optional[Machine]:
+    def get_machine(self, machine_id: int) -> Machine | None:
         """Get machine by ID."""
         return self.machines.get(machine_id)
 
@@ -211,9 +203,7 @@ class MachineFloor(BaseModel):
 
     def advance_week(self) -> "MachineFloor":
         """Prepare all machines for next week."""
-        new_machines = {
-            mid: m.advance_week() for mid, m in self.machines.items()
-        }
+        new_machines = {mid: m.advance_week() for mid, m in self.machines.items()}
         return self.model_copy(update={"machines": new_machines})
 
     @classmethod

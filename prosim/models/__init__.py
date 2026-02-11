@@ -11,6 +11,16 @@ This module contains Pydantic models representing:
 - Reports (REPT file)
 """
 
+from prosim.models.company import (
+    Company,
+    CompanyConfig,
+    GameState,
+)
+from prosim.models.decisions import (
+    Decisions,
+    MachineDecision,
+    PartOrders,
+)
 from prosim.models.inventory import (
     AllPartsInventory,
     AllProductsInventory,
@@ -18,12 +28,6 @@ from prosim.models.inventory import (
     PartsInventory,
     ProductsInventory,
     RawMaterialsInventory,
-)
-from prosim.models.operators import (
-    Department,
-    Operator,
-    TrainingStatus,
-    Workforce,
 )
 from prosim.models.machines import (
     Machine,
@@ -33,17 +37,18 @@ from prosim.models.machines import (
     ProductType,
     part_type_from_code,
 )
+from prosim.models.operators import (
+    Department,
+    Operator,
+    TrainingStatus,
+    Workforce,
+)
 from prosim.models.orders import (
     DemandForecast,
     DemandSchedule,
     Order,
     OrderBook,
     OrderType,
-)
-from prosim.models.decisions import (
-    Decisions,
-    MachineDecision,
-    PartOrders,
 )
 from prosim.models.report import (
     CostReport,
@@ -59,11 +64,6 @@ from prosim.models.report import (
     ProductsReport,
     RawMaterialsReport,
     WeeklyReport,
-)
-from prosim.models.company import (
-    Company,
-    CompanyConfig,
-    GameState,
 )
 
 __all__ = [

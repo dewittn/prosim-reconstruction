@@ -14,16 +14,12 @@ The flow is:
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.models.inventory import (
     AllPartsInventory,
     AllProductsInventory,
     Inventory,
-    PartsInventory,
-    ProductsInventory,
-    RawMaterialsInventory,
 )
 from prosim.models.orders import Order, OrderBook, OrderType
 
@@ -76,7 +72,7 @@ class InventoryManager:
     6. Ship products to fulfill demand
     """
 
-    def __init__(self, config: Optional[ProsimConfig] = None):
+    def __init__(self, config: ProsimConfig | None = None):
         """Initialize inventory manager.
 
         Args:
@@ -542,20 +538,17 @@ class InventoryManager:
         # Update products inventory
         new_x = inventory.products.x.model_copy(
             update={
-                "demand_fulfilled": inventory.products.x.demand_fulfilled
-                + shipped["X"]
+                "demand_fulfilled": inventory.products.x.demand_fulfilled + shipped["X"]
             }
         )
         new_y = inventory.products.y.model_copy(
             update={
-                "demand_fulfilled": inventory.products.y.demand_fulfilled
-                + shipped["Y"]
+                "demand_fulfilled": inventory.products.y.demand_fulfilled + shipped["Y"]
             }
         )
         new_z = inventory.products.z.model_copy(
             update={
-                "demand_fulfilled": inventory.products.z.demand_fulfilled
-                + shipped["Z"]
+                "demand_fulfilled": inventory.products.z.demand_fulfilled + shipped["Z"]
             }
         )
 

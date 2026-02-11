@@ -20,23 +20,19 @@ For Claude Code Agents:
     - See `DATA_REQUIREMENTS_FOR_TRUE_VALIDATION` for what we'd need
 """
 
+import math
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
-import math
-import struct
 
 from prosim.config.defaults import (
-    TRAINING_MATRIX,
-    PARTS_PRODUCTION_RATES,
     ASSEMBLY_PRODUCTION_RATES,
-    STARTING_OPERATOR_PROFILES,
+    PARTS_PRODUCTION_RATES,
+    TRAINING_MATRIX,
 )
+from prosim.io.rept_parser import parse_rept
 
 # Combined production rates for easier lookup
 PRODUCTION_RATES = {**PARTS_PRODUCTION_RATES, **ASSEMBLY_PRODUCTION_RATES}
-from prosim.io.rept_parser import parse_rept
-
 
 # ==============================================================================
 # CONSTANTS
@@ -69,8 +65,16 @@ REJECT_RATE_DATA = [
 
 # XTC float values extracted from prosim.xtc (verified)
 XTC_PROFICIENCY_FLOATS = [
-    0.6397, 0.7751, 0.8074, 0.8093, 0.8188,
-    0.8509, 0.9086, 0.9667, 1.0192, 1.0312
+    0.6397,
+    0.7751,
+    0.8074,
+    0.8093,
+    0.8188,
+    0.8509,
+    0.9086,
+    0.9667,
+    1.0192,
+    1.0312,
 ]
 XTC_SCALE_FACTOR = 1.088
 
@@ -79,9 +83,11 @@ XTC_SCALE_FACTOR = 1.088
 # DATA CLASSES
 # ==============================================================================
 
+
 @dataclass
 class ComponentAccuracy:
     """Accuracy measurement for a single component."""
+
     name: str
     description: str
     measured_accuracy: float  # 0-100%
@@ -98,16 +104,18 @@ class AccuracyBenchmarkResults:
     components: list[ComponentAccuracy] = field(default_factory=list)
 
     # Component weights for overall score
-    weights: dict[str, float] = field(default_factory=lambda: {
-        "production_rates": 0.20,
-        "training_matrix": 0.15,
-        "cost_constants": 0.20,
-        "reject_rate_formula": 0.10,
-        "operator_profiles": 0.10,
-        "xtc_proficiency_correlation": 0.10,
-        "inventory_flow": 0.10,
-        "stochastic_elements": 0.05,
-    })
+    weights: dict[str, float] = field(
+        default_factory=lambda: {
+            "production_rates": 0.20,
+            "training_matrix": 0.15,
+            "cost_constants": 0.20,
+            "reject_rate_formula": 0.10,
+            "operator_profiles": 0.10,
+            "xtc_proficiency_correlation": 0.10,
+            "inventory_flow": 0.10,
+            "stochastic_elements": 0.05,
+        }
+    )
 
     @property
     def overall_confidence_score(self) -> float:
@@ -149,7 +157,9 @@ class AccuracyBenchmarkResults:
             else:
                 uncertainties.append(1.0)
 
-        avg_uncertainty = sum(uncertainties) / len(uncertainties) if uncertainties else 5.0
+        avg_uncertainty = (
+            sum(uncertainties) / len(uncertainties) if uncertainties else 5.0
+        )
 
         return (max(0, base - avg_uncertainty), min(100, base + avg_uncertainty))
 
@@ -176,7 +186,9 @@ class AccuracyBenchmarkResults:
             weight = self.weights.get(c.name, 0.05)
             contribution = c.measured_accuracy * weight
             lines.append(f"{c.name}")
-            lines.append(f"  Accuracy: {c.measured_accuracy:.1f}% (weight: {weight:.0%}, contributes: {contribution:.1f}%)")
+            lines.append(
+                f"  Accuracy: {c.measured_accuracy:.1f}% (weight: {weight:.0%}, contributes: {contribution:.1f}%)"
+            )
             lines.append(f"  Method: {c.method}")
             lines.append(f"  Verified against: {c.verified_against}")
             lines.append(f"  Sample size: {c.sample_size}")
@@ -184,21 +196,23 @@ class AccuracyBenchmarkResults:
                 lines.append(f"  Notes: {c.notes}")
             lines.append("")
 
-        lines.extend([
-            "-" * 70,
-            "DATA REQUIREMENTS FOR TRUE END-TO-END VALIDATION",
-            "-" * 70,
-            "",
-            "To calculate actual DECS→REPT accuracy, we would need:",
-            "  1. Matched DECS + REPT pairs from the SAME game run",
-            "  2. Starting company state (Week 1 XTC or initialized state)",
-            "  3. Multiple sequential weeks to test cumulative accuracy",
-            "  4. Known random seed (or deterministic mode) for stochastic elements",
-            "",
-            "Current data gap: REPT12/13/14 are from DIFFERENT game runs,",
-            "not sequential weeks of the same game.",
-            "",
-        ])
+        lines.extend(
+            [
+                "-" * 70,
+                "DATA REQUIREMENTS FOR TRUE END-TO-END VALIDATION",
+                "-" * 70,
+                "",
+                "To calculate actual DECS→REPT accuracy, we would need:",
+                "  1. Matched DECS + REPT pairs from the SAME game run",
+                "  2. Starting company state (Week 1 XTC or initialized state)",
+                "  3. Multiple sequential weeks to test cumulative accuracy",
+                "  4. Known random seed (or deterministic mode) for stochastic elements",
+                "",
+                "Current data gap: REPT12/13/14 are from DIFFERENT game runs,",
+                "not sequential weeks of the same game.",
+                "",
+            ]
+        )
 
         return "\n".join(lines)
 
@@ -206,6 +220,7 @@ class AccuracyBenchmarkResults:
 # ==============================================================================
 # BENCHMARK FUNCTIONS
 # ==============================================================================
+
 
 def benchmark_production_rates() -> ComponentAccuracy:
     """
@@ -233,7 +248,10 @@ def benchmark_production_rates() -> ComponentAccuracy:
                     expected_production = machine.productive_hours * expected_rate
                     actual_production = machine.production
                     if expected_production > 0:
-                        error = abs(actual_production - expected_production) / expected_production
+                        error = (
+                            abs(actual_production - expected_production)
+                            / expected_production
+                        )
                         errors.append(error)
                         sample_count += 1
 
@@ -246,7 +264,10 @@ def benchmark_production_rates() -> ComponentAccuracy:
                     expected_production = machine.productive_hours * expected_rate
                     actual_production = machine.production
                     if expected_production > 0:
-                        error = abs(actual_production - expected_production) / expected_production
+                        error = (
+                            abs(actual_production - expected_production)
+                            / expected_production
+                        )
                         errors.append(error)
                         sample_count += 1
 
@@ -263,7 +284,7 @@ def benchmark_production_rates() -> ComponentAccuracy:
         sample_size=sample_count,
         method="Compare REPT production to (productive_hours × rate)",
         verified_against="REPT12.DAT, REPT13.DAT, REPT14.DAT",
-        notes="Parts: X'=60, Y'=50, Z'=40; Assembly: X=40, Y=30, Z=20"
+        notes="Parts: X'=60, Y'=50, Z'=40; Assembly: X=40, Y=30, Z=20",
     )
 
 
@@ -301,7 +322,7 @@ def benchmark_training_matrix() -> ComponentAccuracy:
         sample_size=len(XTC_PROFICIENCY_FLOATS),
         method="Compare XTC efficiency floats to training matrix values",
         verified_against="prosim.xtc, prosim1.xtc, ProsimTable.xls",
-        notes="Average error: 0.2% against XTC files"
+        notes="Average error: 0.2% against XTC files",
     )
 
 
@@ -326,7 +347,7 @@ def benchmark_cost_constants() -> ComponentAccuracy:
         sample_size=total,
         method="Direct comparison to week1.txt values",
         verified_against="week1.txt, PPT course materials",
-        notes="All 7 verified constants match exactly"
+        notes="All 7 verified constants match exactly",
     )
 
 
@@ -336,6 +357,7 @@ def benchmark_reject_rate_formula() -> ComponentAccuracy:
 
     Formula: reject_rate = 0.904 - 0.114 * ln(quality_budget)
     """
+
     def calculate_reject_rate(budget: float) -> float:
         rate = 0.904 - 0.114 * math.log(budget)
         return max(0.015, rate)  # Floor at 1.5%
@@ -357,7 +379,7 @@ def benchmark_reject_rate_formula() -> ComponentAccuracy:
         sample_size=len(REJECT_RATE_DATA),
         method="Compare formula prediction to empirical data points",
         verified_against="Graph-Table 1.csv (2004 spreadsheet)",
-        notes="Formula: 0.904 - 0.114*ln(budget), floor at 1.5%"
+        notes="Formula: 0.904 - 0.114*ln(budget), floor at 1.5%",
     )
 
 
@@ -383,7 +405,7 @@ def benchmark_operator_profiles() -> ComponentAccuracy:
     values = [prof for _, prof in op3_observations]
     mean = sum(values) / len(values)
     variance = sum((v - mean) ** 2 for v in values) / len(values)
-    std_dev = variance ** 0.5
+    std_dev = variance**0.5
 
     # Low std dev = high consistency = high accuracy
     # std_dev of 0.031 (3.1%) is excellent
@@ -402,7 +424,7 @@ def benchmark_operator_profiles() -> ComponentAccuracy:
         sample_size=len(op3_observations),
         method="Cross-game comparison of Operator 3 proficiency",
         verified_against="REPT12, REPT13, REPT14, week1.txt",
-        notes=f"Op 3 always expert, std dev {std_dev:.1%}"
+        notes=f"Op 3 always expert, std dev {std_dev:.1%}",
     )
 
 
@@ -414,8 +436,15 @@ def benchmark_xtc_proficiency_correlation() -> ComponentAccuracy:
     """
     # Our derived proficiency values
     derived_proficiency = {
-        1: 1.039, 2: 1.097, 3: 1.122, 4: 1.093, 5: 1.028,
-        6: 0.836, 7: 0.934, 8: 0.850, 9: 0.900,
+        1: 1.039,
+        2: 1.097,
+        3: 1.122,
+        4: 1.093,
+        5: 1.028,
+        6: 0.836,
+        7: 0.934,
+        8: 0.850,
+        9: 0.900,
     }
 
     errors = []
@@ -426,8 +455,7 @@ def benchmark_xtc_proficiency_correlation() -> ComponentAccuracy:
 
         # Find closest match in our derived values
         closest_op, closest_prof = min(
-            derived_proficiency.items(),
-            key=lambda x: abs(x[1] - scaled)
+            derived_proficiency.items(), key=lambda x: abs(x[1] - scaled)
         )
 
         error = abs(scaled - closest_prof)
@@ -446,7 +474,7 @@ def benchmark_xtc_proficiency_correlation() -> ComponentAccuracy:
         sample_size=len(XTC_PROFICIENCY_FLOATS),
         method="Scale XTC floats and match to derived proficiency",
         verified_against="prosim.xtc, prosim1.xtc",
-        notes=f"{matched}/{len(XTC_PROFICIENCY_FLOATS)} within 5% error"
+        notes=f"{matched}/{len(XTC_PROFICIENCY_FLOATS)} within 5% error",
     )
 
 
@@ -479,7 +507,9 @@ def benchmark_inventory_flow() -> ComponentAccuracy:
                 if abs(expected - actual) < 1:
                     valid_checks += 1
 
-    accuracy = (valid_checks / conservation_checks * 100) if conservation_checks > 0 else 85.0
+    accuracy = (
+        (valid_checks / conservation_checks * 100) if conservation_checks > 0 else 85.0
+    )
 
     return ComponentAccuracy(
         name="inventory_flow",
@@ -488,7 +518,7 @@ def benchmark_inventory_flow() -> ComponentAccuracy:
         sample_size=conservation_checks,
         method="Verify conservation equations in REPT files",
         verified_against="REPT12.DAT, REPT13.DAT, REPT14.DAT",
-        notes="Limited to internal consistency checks without matched pairs"
+        notes="Limited to internal consistency checks without matched pairs",
     )
 
 
@@ -510,13 +540,14 @@ def benchmark_stochastic_elements() -> ComponentAccuracy:
         sample_size=0,  # No direct verification possible
         method="Estimated based on observed patterns",
         verified_against="Sporadic $400 repair costs in REPT files",
-        notes="ESTIMATED - cannot verify without original random seed"
+        notes="ESTIMATED - cannot verify without original random seed",
     )
 
 
 # ==============================================================================
 # MAIN BENCHMARK RUNNER
 # ==============================================================================
+
 
 def run_full_benchmark() -> AccuracyBenchmarkResults:
     """

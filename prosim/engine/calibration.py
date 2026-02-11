@@ -43,8 +43,6 @@ Key Findings from Original Data:
 """
 
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Optional
 
 from prosim.config.schema import ProsimConfig, get_default_config
 
@@ -73,8 +71,8 @@ class RejectRateAnalysis:
     total_production: float
     total_rejects: float
     reject_rate: float
-    quality_budget: Optional[float]
-    maintenance_budget: Optional[float]
+    quality_budget: float | None
+    maintenance_budget: float | None
 
 
 @dataclass
@@ -90,7 +88,7 @@ class CalibrationReport:
 
 def analyze_reject_rate_from_report(
     report,  # WeeklyReport
-    quality_budget: Optional[float] = None,
+    quality_budget: float | None = None,
 ) -> RejectRateAnalysis:
     """Analyze reject rate from a single report.
 
@@ -153,7 +151,7 @@ def calculate_quality_adjusted_reject_rate(
 
 def analyze_production_rates_from_report(
     report,  # WeeklyReport
-    config: Optional[ProsimConfig] = None,
+    config: ProsimConfig | None = None,
 ) -> list[ProductionRateAnalysis]:
     """Analyze production rates from a single report.
 
@@ -176,9 +174,7 @@ def analyze_production_rates_from_report(
                 "productive_hours": 0.0,
                 "production": 0.0,  # This is gross
                 "rejects": 0.0,
-                "expected_rate": config.production.parts_rates.get(
-                    part_type, 0
-                ),
+                "expected_rate": config.production.parts_rates.get(part_type, 0),
             }
         by_type[part_type]["productive_hours"] += mp.productive_hours
         by_type[part_type]["production"] += mp.production
@@ -191,9 +187,7 @@ def analyze_production_rates_from_report(
                 "productive_hours": 0.0,
                 "production": 0.0,
                 "rejects": 0.0,
-                "expected_rate": config.production.assembly_rates.get(
-                    part_type, 0
-                ),
+                "expected_rate": config.production.assembly_rates.get(part_type, 0),
             }
         by_type[part_type]["productive_hours"] += mp.productive_hours
         by_type[part_type]["production"] += mp.production
@@ -211,17 +205,19 @@ def analyze_production_rates_from_report(
         rate_ratio = observed_rate / expected_rate if expected_rate > 0 else 0.0
         reject_rate = rejects / gross if gross > 0 else 0.0
 
-        results.append(ProductionRateAnalysis(
-            part_type=part_type,
-            total_productive_hours=productive_hours,
-            total_gross_production=gross,
-            total_rejects=rejects,
-            total_net_production=net,
-            observed_rate=observed_rate,
-            expected_rate=expected_rate,
-            rate_ratio=rate_ratio,
-            reject_rate=reject_rate,
-        ))
+        results.append(
+            ProductionRateAnalysis(
+                part_type=part_type,
+                total_productive_hours=productive_hours,
+                total_gross_production=gross,
+                total_rejects=rejects,
+                total_net_production=net,
+                observed_rate=observed_rate,
+                expected_rate=expected_rate,
+                rate_ratio=rate_ratio,
+                reject_rate=reject_rate,
+            )
+        )
 
     return results
 
@@ -289,13 +285,19 @@ def derive_carrying_cost_rates(
     Returns:
         Tuple of (parts_rate, products_rate) per unit per week
     """
-    parts_rate = parts_carrying_cost / avg_parts_inventory if avg_parts_inventory > 0 else 0.0
-    products_rate = products_carrying_cost / avg_products_inventory if avg_products_inventory > 0 else 0.0
+    parts_rate = (
+        parts_carrying_cost / avg_parts_inventory if avg_parts_inventory > 0 else 0.0
+    )
+    products_rate = (
+        products_carrying_cost / avg_products_inventory
+        if avg_products_inventory > 0
+        else 0.0
+    )
     return parts_rate, products_rate
 
 
 def create_calibrated_config(
-    base_config: Optional[ProsimConfig] = None,
+    base_config: ProsimConfig | None = None,
     quality_budget: float = 750.0,
     use_dynamic_reject_rate: bool = True,
 ) -> ProsimConfig:
@@ -332,8 +334,8 @@ def create_calibrated_config(
 CALIBRATION_DATA = {
     "reject_rates_by_week": {
         12: 0.1185,  # ~11.85%
-        13: 0.15,    # ~15%
-        14: 0.178,   # ~17.8%
+        13: 0.15,  # ~15%
+        14: 0.178,  # ~17.8%
     },
     "quality_budget_reject_correlation": {
         # Higher quality budget -> lower reject rate
@@ -536,20 +538,26 @@ def derive_cost_rates_from_report(
     for mp in report.production.assembly_department:
         total_hours += mp.scheduled_hours
 
-    # Total production for weighted averages
-    total_production = sum(
-        mp.production for mp in
-        report.production.parts_department + report.production.assembly_department
-    )
-
     # Raw materials
     rm = report.inventory.raw_materials
-    rm_cost = wc.x_costs.raw_materials + wc.y_costs.raw_materials + wc.z_costs.raw_materials
+    rm_cost = (
+        wc.x_costs.raw_materials + wc.y_costs.raw_materials + wc.z_costs.raw_materials
+    )
     rm_rate = rm_cost / rm.used_in_production if rm.used_in_production > 0 else 0.0
 
     return {
-        "labor_hourly": (wc.x_costs.labor + wc.y_costs.labor + wc.z_costs.labor) / total_hours if total_hours > 0 else 0.0,
-        "equipment_hourly": (wc.x_costs.equipment_usage + wc.y_costs.equipment_usage + wc.z_costs.equipment_usage) / total_hours if total_hours > 0 else 0.0,
+        "labor_hourly": (wc.x_costs.labor + wc.y_costs.labor + wc.z_costs.labor)
+        / total_hours
+        if total_hours > 0
+        else 0.0,
+        "equipment_hourly": (
+            wc.x_costs.equipment_usage
+            + wc.y_costs.equipment_usage
+            + wc.z_costs.equipment_usage
+        )
+        / total_hours
+        if total_hours > 0
+        else 0.0,
         "raw_materials_per_unit": rm_rate,
         "fixed_expense": wc.overhead.fixed_expense,
         "quality_planning": wc.overhead.quality_planning,
@@ -592,7 +600,9 @@ def estimate_machine_repair_probability_from_reports(
         total_repairs += repairs_this_week
 
         # Count machines active
-        machines_active = len(report.production.parts_department) + len(report.production.assembly_department)
+        machines_active = len(report.production.parts_department) + len(
+            report.production.assembly_department
+        )
         total_machine_weeks += machines_active
 
     if total_machine_weeks == 0:

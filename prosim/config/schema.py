@@ -9,7 +9,7 @@ All configuration parameters are documented with their sources
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 
 class ProductionRatesConfig(BaseModel):
@@ -118,7 +118,9 @@ class WorkforceCostsConfig(BaseModel):
 class WorkforceConfig(BaseModel):
     """Workforce configuration."""
 
-    efficiency: OperatorEfficiencyConfig = Field(default_factory=OperatorEfficiencyConfig)
+    efficiency: OperatorEfficiencyConfig = Field(
+        default_factory=OperatorEfficiencyConfig
+    )
     costs: WorkforceCostsConfig = Field(default_factory=WorkforceCostsConfig)
 
 
@@ -322,8 +324,7 @@ class ProsimConfig(BaseModel):
                 ) from e
         else:
             raise ValueError(
-                f"Unsupported config file format: {suffix}. "
-                "Use .json or .yaml/.yml"
+                f"Unsupported config file format: {suffix}. Use .json or .yaml/.yml"
             )
 
         return cls.from_dict(data)
@@ -363,8 +364,7 @@ class ProsimConfig(BaseModel):
                 ) from e
         else:
             raise ValueError(
-                f"Unsupported config file format: {suffix}. "
-                "Use .json or .yaml/.yml"
+                f"Unsupported config file format: {suffix}. Use .json or .yaml/.yml"
             )
 
     def merge(self, overrides: dict[str, Any]) -> "ProsimConfig":
@@ -389,11 +389,7 @@ def _deep_merge(base: dict[str, Any], overrides: dict[str, Any]) -> None:
         overrides: Values to merge in
     """
     for key, value in overrides.items():
-        if (
-            key in base
-            and isinstance(base[key], dict)
-            and isinstance(value, dict)
-        ):
+        if key in base and isinstance(base[key], dict) and isinstance(value, dict):
             _deep_merge(base[key], value)
         else:
             base[key] = value

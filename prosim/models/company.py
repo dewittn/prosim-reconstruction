@@ -5,8 +5,6 @@ The Company is the top-level container that holds all state
 for a single simulated manufacturing company.
 """
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from prosim.models.inventory import Inventory
@@ -22,12 +20,24 @@ class CompanyConfig(BaseModel):
     These parameters can be customized for different game scenarios.
     """
 
-    num_parts_machines: int = Field(default=4, ge=1, description="Number of Parts Department machines")
-    num_assembly_machines: int = Field(default=5, ge=1, description="Number of Assembly Department machines")
-    num_operators: int = Field(default=9, ge=1, description="Number of initial operators")
-    num_trained_operators: int = Field(default=0, ge=0, description="Number of operators that start trained")
-    initial_raw_materials: float = Field(default=0.0, ge=0, description="Starting raw materials inventory")
-    shipping_frequency: int = Field(default=4, ge=1, description="Weeks between shipping periods")
+    num_parts_machines: int = Field(
+        default=4, ge=1, description="Number of Parts Department machines"
+    )
+    num_assembly_machines: int = Field(
+        default=5, ge=1, description="Number of Assembly Department machines"
+    )
+    num_operators: int = Field(
+        default=9, ge=1, description="Number of initial operators"
+    )
+    num_trained_operators: int = Field(
+        default=0, ge=0, description="Number of operators that start trained"
+    )
+    initial_raw_materials: float = Field(
+        default=0.0, ge=0, description="Starting raw materials inventory"
+    )
+    shipping_frequency: int = Field(
+        default=4, ge=1, description="Weeks between shipping periods"
+    )
 
 
 class Company(BaseModel):
@@ -49,8 +59,7 @@ class Company(BaseModel):
 
     # Historical data
     reports: list[WeeklyReport] = Field(
-        default_factory=list,
-        description="Historical weekly reports"
+        default_factory=list, description="Historical weekly reports"
     )
 
     # Cumulative tracking
@@ -58,11 +67,11 @@ class Company(BaseModel):
     total_revenue: float = Field(default=0.0, ge=0, description="Cumulative revenue")
     total_units_shipped: dict[str, float] = Field(
         default_factory=lambda: {"X": 0.0, "Y": 0.0, "Z": 0.0},
-        description="Cumulative units shipped by product"
+        description="Cumulative units shipped by product",
     )
 
     @property
-    def latest_report(self) -> Optional[WeeklyReport]:
+    def latest_report(self) -> WeeklyReport | None:
         """Get the most recent weekly report."""
         if not self.reports:
             return None
@@ -73,7 +82,7 @@ class Company(BaseModel):
         """Calculate cumulative profit (revenue - costs)."""
         return self.total_revenue - self.total_costs
 
-    def get_report(self, week: int) -> Optional[WeeklyReport]:
+    def get_report(self, week: int) -> WeeklyReport | None:
         """Get report for a specific week."""
         for report in self.reports:
             if report.week == week:
@@ -103,7 +112,7 @@ class Company(BaseModel):
         cls,
         company_id: int,
         name: str = "",
-        config: Optional[CompanyConfig] = None,
+        config: CompanyConfig | None = None,
     ) -> "Company":
         """Create a new company with initial state.
 
@@ -164,18 +173,16 @@ class GameState(BaseModel):
 
     game_id: str = Field(description="Unique game identifier")
     companies: dict[int, Company] = Field(
-        default_factory=dict,
-        description="Map of company_id to Company"
+        default_factory=dict, description="Map of company_id to Company"
     )
     current_week: int = Field(default=1, ge=1, description="Current game week")
     max_weeks: int = Field(default=16, ge=1, description="Maximum simulation weeks")
     is_active: bool = Field(default=True, description="Whether game is still active")
-    random_seed: Optional[int] = Field(
-        default=None,
-        description="Random seed for reproducibility"
+    random_seed: int | None = Field(
+        default=None, description="Random seed for reproducibility"
     )
 
-    def get_company(self, company_id: int) -> Optional[Company]:
+    def get_company(self, company_id: int) -> Company | None:
         """Get company by ID."""
         return self.companies.get(company_id)
 
@@ -195,9 +202,7 @@ class GameState(BaseModel):
 
     def advance_week(self) -> "GameState":
         """Advance all companies to the next week."""
-        new_companies = {
-            cid: c.advance_week() for cid, c in self.companies.items()
-        }
+        new_companies = {cid: c.advance_week() for cid, c in self.companies.items()}
         new_week = self.current_week + 1
         is_active = new_week <= self.max_weeks
         return self.model_copy(
@@ -213,9 +218,9 @@ class GameState(BaseModel):
         cls,
         game_id: str,
         company_name: str = "",
-        config: Optional[CompanyConfig] = None,
+        config: CompanyConfig | None = None,
         max_weeks: int = 16,
-        random_seed: Optional[int] = None,
+        random_seed: int | None = None,
     ) -> "GameState":
         """Create a new single-player game.
 
@@ -248,9 +253,9 @@ class GameState(BaseModel):
         cls,
         game_id: str,
         num_companies: int,
-        config: Optional[CompanyConfig] = None,
+        config: CompanyConfig | None = None,
         max_weeks: int = 16,
-        random_seed: Optional[int] = None,
+        random_seed: int | None = None,
     ) -> "GameState":
         """Create a new multiplayer game.
 

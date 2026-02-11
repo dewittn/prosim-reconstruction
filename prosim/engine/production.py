@@ -23,8 +23,7 @@ is not always what it seems. Sometimes the best move is no move at all.
     -- N.D., Summer 2004
 """
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.engine.workforce import OperatorEfficiencyResult
@@ -38,8 +37,8 @@ class MachineProductionResult:
 
     machine_id: int
     department: Department
-    operator_id: Optional[int]
-    part_type: Optional[str]
+    operator_id: int | None
+    part_type: str | None
     scheduled_hours: float
     setup_hours: float
     productive_hours: float
@@ -85,7 +84,7 @@ class ProductionInput:
     """
 
     machine: Machine
-    efficiency_result: Optional[OperatorEfficiencyResult] = None
+    efficiency_result: OperatorEfficiencyResult | None = None
 
 
 class ProductionEngine:
@@ -98,7 +97,7 @@ class ProductionEngine:
     4. Net production after reject rate applied
     """
 
-    def __init__(self, config: Optional[ProsimConfig] = None):
+    def __init__(self, config: ProsimConfig | None = None):
         """Initialize production engine.
 
         Args:
@@ -109,7 +108,7 @@ class ProductionEngine:
     def calculate_setup_time(
         self,
         machine: Machine,
-        new_part_type: Optional[str],
+        new_part_type: str | None,
     ) -> float:
         """Calculate setup time for a machine.
 
@@ -313,9 +312,13 @@ class ProductionEngine:
         )
 
         # Calculate totals
-        total_gross = parts_result.total_gross_production + assembly_result.total_gross_production
+        total_gross = (
+            parts_result.total_gross_production + assembly_result.total_gross_production
+        )
         total_rejects = parts_result.total_rejects + assembly_result.total_rejects
-        total_net = parts_result.total_net_production + assembly_result.total_net_production
+        total_net = (
+            parts_result.total_net_production + assembly_result.total_net_production
+        )
 
         return ProductionResult(
             parts_department=parts_result,
@@ -438,7 +441,10 @@ class ProductionEngine:
         bom = self.config.production.bom
         parts_needed: dict[str, float] = {}
 
-        for product_type, gross_qty in assembly_production.gross_production_by_type.items():
+        for (
+            product_type,
+            gross_qty,
+        ) in assembly_production.gross_production_by_type.items():
             if product_type in bom:
                 for part_type, parts_per_product in bom[product_type].items():
                     parts_needed[part_type] = (

@@ -83,9 +83,15 @@ class CostReport(BaseModel):
     Includes per-product costs and overhead, both weekly and cumulative.
     """
 
-    x_costs: ProductCosts = Field(default_factory=lambda: ProductCosts(product_type="X"))
-    y_costs: ProductCosts = Field(default_factory=lambda: ProductCosts(product_type="Y"))
-    z_costs: ProductCosts = Field(default_factory=lambda: ProductCosts(product_type="Z"))
+    x_costs: ProductCosts = Field(
+        default_factory=lambda: ProductCosts(product_type="X")
+    )
+    y_costs: ProductCosts = Field(
+        default_factory=lambda: ProductCosts(product_type="Y")
+    )
+    z_costs: ProductCosts = Field(
+        default_factory=lambda: ProductCosts(product_type="Z")
+    )
     overhead: OverheadCosts = Field(default_factory=OverheadCosts)
 
     @property
@@ -158,16 +164,12 @@ class ProductionReport(BaseModel):
     def total_production_by_type(self, part_type: str) -> float:
         """Calculate total net production for a part type."""
         return sum(
-            mp.net_production
-            for mp in self.all_machines
-            if mp.part_type == part_type
+            mp.net_production for mp in self.all_machines if mp.part_type == part_type
         )
 
     def total_rejects_by_type(self, part_type: str) -> float:
         """Calculate total rejects for a part type."""
-        return sum(
-            mp.rejects for mp in self.all_machines if mp.part_type == part_type
-        )
+        return sum(mp.rejects for mp in self.all_machines if mp.part_type == part_type)
 
 
 class RawMaterialsReport(BaseModel):
@@ -287,13 +289,21 @@ class WeeklyReport(BaseModel):
     pending_orders: list[PendingOrderReport] = Field(default_factory=list)
 
     # Demand information
-    demand_x: DemandReport = Field(default_factory=lambda: DemandReport(product_type="X"))
-    demand_y: DemandReport = Field(default_factory=lambda: DemandReport(product_type="Y"))
-    demand_z: DemandReport = Field(default_factory=lambda: DemandReport(product_type="Z"))
+    demand_x: DemandReport = Field(
+        default_factory=lambda: DemandReport(product_type="X")
+    )
+    demand_y: DemandReport = Field(
+        default_factory=lambda: DemandReport(product_type="Y")
+    )
+    demand_z: DemandReport = Field(
+        default_factory=lambda: DemandReport(product_type="Z")
+    )
 
     # Performance metrics
     weekly_performance: PerformanceMetrics = Field(default_factory=PerformanceMetrics)
-    cumulative_performance: PerformanceMetrics = Field(default_factory=PerformanceMetrics)
+    cumulative_performance: PerformanceMetrics = Field(
+        default_factory=PerformanceMetrics
+    )
 
     def get_demand(self, product_type: str) -> DemandReport:
         """Get demand report by product type."""

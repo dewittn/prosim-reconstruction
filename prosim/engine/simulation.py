@@ -18,16 +18,19 @@ The simulation maintains state across weeks and tracks cumulative metrics.
 
 import random
 from dataclasses import dataclass, field
-from typing import Optional
 
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.engine.costs import (
     CostCalculationInput,
     CostCalculator,
     CumulativeCostReport,
-    OverheadCosts as EngineOverheadCosts,
-    ProductCosts as EngineProductCosts,
     WeeklyCostReport,
+)
+from prosim.engine.costs import (
+    OverheadCosts as EngineOverheadCosts,
+)
+from prosim.engine.costs import (
+    ProductCosts as EngineProductCosts,
 )
 from prosim.engine.demand import DemandManager, ShippingPeriodDemand
 from prosim.engine.inventory import DemandFulfillmentResult, InventoryManager
@@ -43,7 +46,6 @@ from prosim.models.company import Company
 from prosim.models.decisions import Decisions
 from prosim.models.inventory import Inventory
 from prosim.models.machines import MachineFloor, part_type_from_code
-from prosim.models.operators import Department, Workforce
 from prosim.models.orders import DemandSchedule, OrderBook
 from prosim.models.report import (
     CostReport,
@@ -78,8 +80,8 @@ class SimulationWeekResult:
     cumulative_cost_report: CumulativeCostReport
 
     # Shipping results (only on shipping weeks)
-    shipping_demand: Optional[ShippingPeriodDemand] = None
-    fulfillment_result: Optional[DemandFulfillmentResult] = None
+    shipping_demand: ShippingPeriodDemand | None = None
+    fulfillment_result: DemandFulfillmentResult | None = None
 
     # Updated state
     updated_company: Company = field(default=None)  # type: ignore
@@ -105,8 +107,8 @@ class Simulation:
 
     def __init__(
         self,
-        config: Optional[ProsimConfig] = None,
-        random_seed: Optional[int] = None,
+        config: ProsimConfig | None = None,
+        random_seed: int | None = None,
     ):
         """Initialize the simulation engine.
 
@@ -125,14 +127,12 @@ class Simulation:
         )
         self.production_engine = ProductionEngine(config=self.config)
         self.cost_calculator = CostCalculator(config=self.config)
-        self.demand_manager = DemandManager(
-            config=self.config, random_seed=random_seed
-        )
+        self.demand_manager = DemandManager(config=self.config, random_seed=random_seed)
 
         # Cumulative tracking
-        self._cumulative_costs: Optional[CumulativeCostReport] = None
+        self._cumulative_costs: CumulativeCostReport | None = None
 
-    def set_random_seed(self, seed: Optional[int]) -> None:
+    def set_random_seed(self, seed: int | None) -> None:
         """Set random seed for reproducible simulations.
 
         Args:
@@ -202,7 +202,9 @@ class Simulation:
             Repair counts by product type
         """
         repairs: dict[str, int] = {"X": 0, "Y": 0, "Z": 0}
-        repair_probability = self.config.equipment.repair.probability_per_machine_per_week
+        repair_probability = (
+            self.config.equipment.repair.probability_per_machine_per_week
+        )
 
         for machine in machine_floor.assigned_machines:
             if self._rng.random() < repair_probability:
@@ -265,7 +267,9 @@ class Simulation:
 
         # Get production by part type
         parts_production = production_result.parts_department.net_production_by_type
-        products_production = production_result.assembly_department.net_production_by_type
+        products_production = (
+            production_result.assembly_department.net_production_by_type
+        )
 
         parts_x = PartsReport(
             part_type="X'",
@@ -465,6 +469,7 @@ class Simulation:
         Returns:
             CostReport model for weekly report
         """
+
         def to_model_costs(pc: EngineProductCosts) -> ProductCosts:
             return ProductCosts(
                 product_type=pc.product_type,
@@ -512,6 +517,7 @@ class Simulation:
         Returns:
             CostReport model for weekly report
         """
+
         def to_model_costs(pc: EngineProductCosts) -> ProductCosts:
             return ProductCosts(
                 product_type=pc.product_type,
@@ -551,7 +557,7 @@ class Simulation:
         self,
         production_result: ProductionResult,
         weekly_costs: WeeklyCostReport,
-        fulfillment_result: Optional[DemandFulfillmentResult],
+        fulfillment_result: DemandFulfillmentResult | None,
     ) -> PerformanceMetrics:
         """Calculate weekly performance metrics.
 
@@ -638,9 +644,7 @@ class Simulation:
             )
 
         # 1. Apply decisions to machine floor
-        machine_floor = self.apply_decisions_to_machines(
-            company.machines, decisions
-        )
+        machine_floor = self.apply_decisions_to_machines(company.machines, decisions)
 
         # 2. Process workforce start of week
         operators_to_train = decisions.operators_training
@@ -695,7 +699,9 @@ class Simulation:
 
         # 7. Calculate production
         production_inputs = self.build_production_inputs(machine_floor, efficiency_map)
-        production_result = self.production_engine.calculate_production(production_inputs)
+        production_result = self.production_engine.calculate_production(
+            production_inputs
+        )
 
         # 8. Update machine floor with production results
         machine_floor = self.production_engine.update_machine_floor_after_production(
@@ -723,8 +729,8 @@ class Simulation:
         )
 
         # 13. Handle shipping week demand
-        shipping_demand: Optional[ShippingPeriodDemand] = None
-        fulfillment_result: Optional[DemandFulfillmentResult] = None
+        shipping_demand: ShippingPeriodDemand | None = None
+        fulfillment_result: DemandFulfillmentResult | None = None
         demand_shortage: dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         carryover: dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
 
@@ -874,8 +880,8 @@ class Simulation:
 def run_simulation(
     company: Company,
     decisions_list: list[Decisions],
-    config: Optional[ProsimConfig] = None,
-    random_seed: Optional[int] = None,
+    config: ProsimConfig | None = None,
+    random_seed: int | None = None,
 ) -> list[SimulationWeekResult]:
     """Run simulation for multiple weeks.
 

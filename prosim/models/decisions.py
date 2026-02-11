@@ -20,18 +20,12 @@ class MachineDecision(BaseModel):
     machine_id: int = Field(ge=1, description="Machine/operator identifier")
     send_for_training: bool = Field(
         default=False,
-        description="Whether to send operator for training (0=train, 1=work)"
+        description="Whether to send operator for training (0=train, 1=work)",
     )
     part_type: int = Field(
-        ge=1,
-        le=3,
-        description="Part/product type (1=X/X', 2=Y/Y', 3=Z/Z')"
+        ge=1, le=3, description="Part/product type (1=X/X', 2=Y/Y', 3=Z/Z')"
     )
-    scheduled_hours: float = Field(
-        ge=0,
-        le=50,
-        description="Hours to schedule (0-50)"
-    )
+    scheduled_hours: float = Field(ge=0, le=50, description="Hours to schedule (0-50)")
 
     @field_validator("send_for_training", mode="before")
     @classmethod
@@ -99,38 +93,26 @@ class Decisions(BaseModel):
 
     week: int = Field(ge=1, description="Simulation week number")
     company_id: int = Field(ge=1, description="Company identifier")
-    quality_budget: float = Field(
-        ge=0,
-        description="Budget for quality planning"
-    )
-    maintenance_budget: float = Field(
-        ge=0,
-        description="Budget for plant maintenance"
-    )
+    quality_budget: float = Field(ge=0, description="Budget for quality planning")
+    maintenance_budget: float = Field(ge=0, description="Budget for plant maintenance")
     raw_materials_regular: float = Field(
-        default=0.0,
-        ge=0,
-        description="Regular raw materials order (3 week lead)"
+        default=0.0, ge=0, description="Regular raw materials order (3 week lead)"
     )
     raw_materials_expedited: float = Field(
         default=0.0,
         ge=0,
-        description="Expedited raw materials order (1 week lead, +$1200)"
+        description="Expedited raw materials order (1 week lead, +$1200)",
     )
     part_orders: PartOrders = Field(
-        default_factory=PartOrders,
-        description="Purchased parts orders"
+        default_factory=PartOrders, description="Purchased parts orders"
     )
     machine_decisions: list[MachineDecision] = Field(
-        default_factory=list,
-        description="Machine assignments (9 machines)"
+        default_factory=list, description="Machine assignments (9 machines)"
     )
 
     @field_validator("machine_decisions")
     @classmethod
-    def validate_machine_count(
-        cls, v: list[MachineDecision]
-    ) -> list[MachineDecision]:
+    def validate_machine_count(cls, v: list[MachineDecision]) -> list[MachineDecision]:
         """Ensure we have exactly 9 machine decisions."""
         if len(v) != 9:
             raise ValueError(f"Expected 9 machine decisions, got {len(v)}")

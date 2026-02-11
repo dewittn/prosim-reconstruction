@@ -20,14 +20,13 @@ The efficiency model (verified Dec 2025):
 
 import random
 from dataclasses import dataclass
-from typing import Optional
 
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.models.machines import Machine
 from prosim.models.operators import (
-    Department,
     MAX_QUALITY_TIER,
     MIN_QUALITY_TIER,
+    Department,
     Operator,
     TrainingStatus,
     Workforce,
@@ -95,8 +94,8 @@ class OperatorManager:
 
     def __init__(
         self,
-        config: Optional[ProsimConfig] = None,
-        random_seed: Optional[int] = None,
+        config: ProsimConfig | None = None,
+        random_seed: int | None = None,
     ):
         """Initialize operator manager.
 
@@ -466,9 +465,7 @@ class OperatorManager:
         Returns:
             List of operators in the department
         """
-        return [
-            op for op in workforce.active_operators if op.department == department
-        ]
+        return [op for op in workforce.active_operators if op.department == department]
 
     def get_available_operators(
         self,
@@ -484,11 +481,7 @@ class OperatorManager:
         Returns:
             List of operators available for work
         """
-        return [
-            op
-            for op in workforce.active_operators
-            if not op.is_in_training_class
-        ]
+        return [op for op in workforce.active_operators if not op.is_in_training_class]
 
     def process_week_start(
         self,

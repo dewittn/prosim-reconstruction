@@ -85,9 +85,7 @@ def parse_decs(source: str | Path | TextIO) -> Decisions:
     lines = [line for line in lines if line.strip()]
 
     if len(lines) < 11:
-        raise DECSParseError(
-            f"DECS file must have at least 11 lines, got {len(lines)}"
-        )
+        raise DECSParseError(f"DECS file must have at least 11 lines, got {len(lines)}")
 
     # Parse Line 1: Header
     header = _parse_line_values(lines[0], 6, 1)
@@ -241,9 +239,7 @@ class DECSParser:
                 decisions_list.append(decisions)
             except DECSParseError as e:
                 if self.strict:
-                    raise DECSParseError(
-                        f"Error parsing {file_path}: {e}"
-                    ) from e
+                    raise DECSParseError(f"Error parsing {file_path}: {e}") from e
                 # In non-strict mode, we'd log and continue
 
         # Also try .txt extension
@@ -253,9 +249,7 @@ class DECSParser:
                 decisions_list.append(decisions)
             except DECSParseError as e:
                 if self.strict:
-                    raise DECSParseError(
-                        f"Error parsing {file_path}: {e}"
-                    ) from e
+                    raise DECSParseError(f"Error parsing {file_path}: {e}") from e
 
         # Sort by week
         decisions_list.sort(key=lambda d: (d.company_id, d.week))
