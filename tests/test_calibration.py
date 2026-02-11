@@ -12,7 +12,6 @@ from prosim.config.schema import get_default_config
 from prosim.engine.calibration import (
     CALIBRATION_DATA,
     ProductionRateAnalysis,
-    RejectRateAnalysis,
     analyze_operator_efficiency_from_report,
     analyze_production_rates_from_report,
     analyze_reject_rate_from_report,
@@ -31,7 +30,6 @@ from prosim.engine.calibration import (
     verify_production_formula,
 )
 from prosim.io.rept_parser import parse_rept
-
 
 # Test data paths
 ARCHIVE_DATA = Path(__file__).parent.parent / "archive" / "data"
@@ -100,7 +98,9 @@ class TestRejectRateCalibration:
     def test_get_calibrated_reject_rate(self) -> None:
         """Convenience function should use calibration data."""
         rate = get_calibrated_reject_rate(750.0)
-        expected = CALIBRATION_DATA["quality_budget_reject_correlation"]["base_rate_at_750"]
+        expected = CALIBRATION_DATA["quality_budget_reject_correlation"][
+            "base_rate_at_750"
+        ]
         assert rate == pytest.approx(expected, rel=0.01)
 
     def test_calibration_data_reject_rates(self) -> None:
@@ -469,7 +469,10 @@ class TestOriginalDataValidation:
         for rate_analysis in analysis:
             # Observed rate should be within 30% of expected
             # (accounting for efficiency variations)
-            if rate_analysis.expected_rate > 0 and rate_analysis.total_productive_hours > 0:
+            if (
+                rate_analysis.expected_rate > 0
+                and rate_analysis.total_productive_hours > 0
+            ):
                 assert rate_analysis.rate_ratio > 0.5, (
                     f"{rate_analysis.part_type} rate too low: "
                     f"{rate_analysis.observed_rate} vs expected {rate_analysis.expected_rate}"
@@ -560,8 +563,7 @@ class TestStochasticElementCalibration:
     def test_estimate_repair_probability(self) -> None:
         """Test machine repair probability estimation."""
         reports = [
-            parse_rept(ARCHIVE_DATA / f"REPT{week}.DAT")
-            for week in [12, 13, 14]
+            parse_rept(ARCHIVE_DATA / f"REPT{week}.DAT") for week in [12, 13, 14]
         ]
 
         prob = estimate_machine_repair_probability_from_reports(reports)

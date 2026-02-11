@@ -125,16 +125,12 @@ class TestProsimConfig:
     def test_validation_positive_costs(self) -> None:
         """Validate costs are non-negative."""
         # Valid
-        config = ProsimConfig.from_dict(
-            {"workforce": {"costs": {"hiring_cost": 0.0}}}
-        )
+        config = ProsimConfig.from_dict({"workforce": {"costs": {"hiring_cost": 0.0}}})
         assert config.workforce.costs.hiring_cost == 0.0
 
         # Invalid - negative
         with pytest.raises(ValueError):
-            ProsimConfig.from_dict(
-                {"workforce": {"costs": {"hiring_cost": -100.0}}}
-            )
+            ProsimConfig.from_dict({"workforce": {"costs": {"hiring_cost": -100.0}}})
 
 
 class TestConfigFiles:
@@ -282,17 +278,17 @@ class TestConfigDocumentation:
         config = ProsimConfig()
 
         # Check top-level fields
-        for field_name, field_info in ProsimConfig.model_fields.items():
+        for _field_name, field_info in ProsimConfig.model_fields.items():
             assert field_info.description is not None or True  # Nested models OK
 
         # Check production fields
         for field_name, field_info in type(config.production).model_fields.items():
-            assert (
-                field_info.description is not None
-            ), f"production.{field_name} missing description"
+            assert field_info.description is not None, (
+                f"production.{field_name} missing description"
+            )
 
         # Check simulation fields
         for field_name, field_info in type(config.simulation).model_fields.items():
-            assert (
-                field_info.description is not None
-            ), f"simulation.{field_name} missing description"
+            assert field_info.description is not None, (
+                f"simulation.{field_name} missing description"
+            )

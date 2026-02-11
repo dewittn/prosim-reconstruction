@@ -18,17 +18,13 @@ quality_tier (0-9) and training_level (0-10).
 import pytest
 
 from prosim.config.schema import (
-    OperatorEfficiencyConfig,
     ProsimConfig,
-    WorkforceCostsConfig,
     WorkforceConfig,
+    WorkforceCostsConfig,
 )
 from prosim.engine.workforce import (
     OperatorEfficiencyResult,
     OperatorManager,
-    TrainingResult,
-    WorkforceCostResult,
-    WorkforceSchedulingResult,
 )
 from prosim.models.machines import Machine, MachineAssignment
 from prosim.models.operators import (
@@ -119,7 +115,9 @@ class TestEfficiencyCalculations:
 
     def test_efficiency_is_deterministic(self):
         """Test that efficiency is deterministic (not random) from training matrix."""
-        operator = Operator(operator_id=1, quality_tier=5, training_level=3, proficiency=1.0)
+        operator = Operator(
+            operator_id=1, quality_tier=5, training_level=3, proficiency=1.0
+        )
 
         manager1 = OperatorManager(random_seed=12345)
         manager2 = OperatorManager(random_seed=99999)  # Different seed
@@ -135,7 +133,9 @@ class TestEfficiencyCalculations:
         manager = OperatorManager(random_seed=42)
 
         # Operator 3 profile: tier 9, level 8 (H), proficiency 1.122
-        expert = Operator(operator_id=3, quality_tier=9, training_level=8, proficiency=1.122)
+        expert = Operator(
+            operator_id=3, quality_tier=9, training_level=8, proficiency=1.122
+        )
 
         efficiency = manager.calculate_efficiency(expert)
 
@@ -220,7 +220,9 @@ class TestTrainingOperations:
         assert result.training_cost == 4500.0  # 3 * 1500
 
 
-def create_machine(machine_id: int, operator_id: int, part_type: str, scheduled_hours: float) -> Machine:
+def create_machine(
+    machine_id: int, operator_id: int, part_type: str, scheduled_hours: float
+) -> Machine:
     """Helper function to create a Machine with assignment."""
     department = Department.PARTS if machine_id <= 4 else Department.ASSEMBLY
     return Machine(
@@ -278,7 +280,11 @@ class TestSchedulingOperations:
 
         # Create workforce with operator who has been unscheduled
         operators = {
-            1: Operator(operator_id=1, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=1),
+            1: Operator(
+                operator_id=1,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=1,
+            ),
         }
         workforce = Workforce(operators=operators, next_operator_id=2)
 
@@ -393,9 +399,21 @@ class TestTerminationOperations:
 
         # Create workforce with operator who has been unscheduled 2 weeks
         operators = {
-            1: Operator(operator_id=1, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=2),
-            2: Operator(operator_id=2, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=1),
-            3: Operator(operator_id=3, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=0),
+            1: Operator(
+                operator_id=1,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=2,
+            ),
+            2: Operator(
+                operator_id=2,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=1,
+            ),
+            3: Operator(
+                operator_id=3,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=0,
+            ),
         }
         workforce = Workforce(operators=operators, next_operator_id=4)
 
@@ -411,9 +429,21 @@ class TestTerminationOperations:
         manager = OperatorManager(random_seed=42)
 
         operators = {
-            1: Operator(operator_id=1, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=2),
-            2: Operator(operator_id=2, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=3),
-            3: Operator(operator_id=3, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=0),
+            1: Operator(
+                operator_id=1,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=2,
+            ),
+            2: Operator(
+                operator_id=2,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=3,
+            ),
+            3: Operator(
+                operator_id=3,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=0,
+            ),
         }
         workforce = Workforce(operators=operators, next_operator_id=4)
 
@@ -440,9 +470,7 @@ class TestCostCalculations:
     def test_hiring_cost(self):
         """Test hiring cost calculation."""
         config = ProsimConfig(
-            workforce=WorkforceConfig(
-                costs=WorkforceCostsConfig(hiring_cost=2700.0)
-            )
+            workforce=WorkforceConfig(costs=WorkforceCostsConfig(hiring_cost=2700.0))
         )
         manager = OperatorManager(config=config, random_seed=42)
         workforce = Workforce.create_initial(num_operators=3, num_trained=3)
@@ -514,9 +542,7 @@ class TestCostCalculations:
         manager = OperatorManager(config=config, random_seed=42)
         workforce = Workforce.create_initial(num_operators=3, num_trained=3)
 
-        result = manager.calculate_weekly_costs(
-            workforce, operators_terminated=[1, 2]
-        )
+        result = manager.calculate_weekly_costs(workforce, operators_terminated=[1, 2])
 
         assert result.termination_cost == 800.0  # 2 * 400
         assert result.operators_terminated == 2
@@ -569,10 +595,30 @@ class TestHelperMethods:
         manager = OperatorManager(random_seed=42)
 
         operators = {
-            1: Operator(operator_id=1, quality_tier=5, training_level=5, department=Department.PARTS),
-            2: Operator(operator_id=2, quality_tier=5, training_level=5, department=Department.PARTS),
-            3: Operator(operator_id=3, quality_tier=5, training_level=5, department=Department.ASSEMBLY),
-            4: Operator(operator_id=4, quality_tier=5, training_level=5, department=Department.UNASSIGNED),
+            1: Operator(
+                operator_id=1,
+                quality_tier=5,
+                training_level=5,
+                department=Department.PARTS,
+            ),
+            2: Operator(
+                operator_id=2,
+                quality_tier=5,
+                training_level=5,
+                department=Department.PARTS,
+            ),
+            3: Operator(
+                operator_id=3,
+                quality_tier=5,
+                training_level=5,
+                department=Department.ASSEMBLY,
+            ),
+            4: Operator(
+                operator_id=4,
+                quality_tier=5,
+                training_level=5,
+                department=Department.UNASSIGNED,
+            ),
         }
         workforce = Workforce(operators=operators, next_operator_id=5)
 
@@ -589,9 +635,18 @@ class TestHelperMethods:
         manager = OperatorManager(random_seed=42)
 
         operators = {
-            1: Operator(operator_id=1, quality_tier=5, training_level=5),  # trained, available
-            2: Operator(operator_id=2, quality_tier=5, training_level=0),  # untrained, available
-            3: Operator(operator_id=3, quality_tier=5, training_level=0, is_in_training_class=True),  # in training, unavailable
+            1: Operator(
+                operator_id=1, quality_tier=5, training_level=5
+            ),  # trained, available
+            2: Operator(
+                operator_id=2, quality_tier=5, training_level=0
+            ),  # untrained, available
+            3: Operator(
+                operator_id=3,
+                quality_tier=5,
+                training_level=0,
+                is_in_training_class=True,
+            ),  # in training, unavailable
         }
         workforce = Workforce(operators=operators, next_operator_id=4)
 
@@ -636,8 +691,16 @@ class TestProcessWeekOperations:
         manager = OperatorManager(random_seed=42)
 
         operators = {
-            1: Operator(operator_id=1, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=2),
-            2: Operator(operator_id=2, training_status=TrainingStatus.TRAINED, consecutive_weeks_unscheduled=0),
+            1: Operator(
+                operator_id=1,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=2,
+            ),
+            2: Operator(
+                operator_id=2,
+                training_status=TrainingStatus.TRAINED,
+                consecutive_weeks_unscheduled=0,
+            ),
         }
         workforce = Workforce(operators=operators, next_operator_id=3)
 

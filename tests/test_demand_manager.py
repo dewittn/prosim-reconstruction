@@ -10,16 +10,14 @@ Tests cover:
 - Integration with fulfillment
 """
 
-import pytest
-
-from prosim.config.schema import DemandConfig, ProsimConfig, SimulationConfig
+from prosim.config.schema import ProsimConfig, SimulationConfig
 from prosim.engine.demand import (
     DemandGenerationResult,
     DemandManager,
     ForecastUpdateResult,
     ShippingPeriodDemand,
 )
-from prosim.models.orders import DemandForecast, DemandSchedule
+from prosim.models.orders import DemandSchedule
 
 
 class TestDemandManagerInit:
@@ -100,9 +98,6 @@ class TestForecastGeneration:
         """Test that forecast uncertainty decreases as shipping approaches."""
         manager = DemandManager(random_seed=123)
 
-        # Generate many forecasts at different weeks out
-        std_devs = manager.config.demand.forecast_std_dev_weeks_out
-
         # At 4 weeks out, std_dev should be 300
         assert manager.get_forecast_std_dev(4) == 300
         # At 2 weeks out, std_dev should be 200
@@ -130,7 +125,11 @@ class TestForecastGeneration:
         """Test forecast generation for all product types."""
         manager = DemandManager(random_seed=42)
 
-        for product_type, expected_base in [("X", 8467.0), ("Y", 6973.0), ("Z", 5475.0)]:
+        for product_type, expected_base in [
+            ("X", 8467.0),
+            ("Y", 6973.0),
+            ("Z", 5475.0),
+        ]:
             forecast = manager.generate_forecast(
                 product_type=product_type,
                 shipping_week=4,
@@ -307,7 +306,9 @@ class TestDemandScheduleManagement:
         schedule = manager.initialize_demand_schedule(start_week=1, periods_ahead=2)
 
         # Update to week 2
-        updated_schedule, result = manager.update_forecasts_for_week(schedule, current_week=2)
+        updated_schedule, result = manager.update_forecasts_for_week(
+            schedule, current_week=2
+        )
 
         assert isinstance(result, ForecastUpdateResult)
         assert result.week == 2
@@ -389,8 +390,8 @@ class TestDemandPenalty:
         shortage = manager.calculate_demand_penalty_units(demand, shipped)
 
         assert shortage["X"] == 100.0  # 8467 - 8367
-        assert shortage["Y"] == 0.0    # Fully shipped
-        assert shortage["Z"] == 50.0   # 5475 - 5425
+        assert shortage["Y"] == 0.0  # Fully shipped
+        assert shortage["Z"] == 50.0  # 5475 - 5425
 
     def test_calculate_demand_penalty_units_no_shortage(self):
         """Test when there's no shortage."""
@@ -478,7 +479,7 @@ class TestReproducibility:
             manager2.generate_forecast("Z", 4, 1),
         ]
 
-        for f1, f2 in zip(forecasts1, forecasts2):
+        for f1, f2 in zip(forecasts1, forecasts2, strict=True):
             assert f1.estimated_demand == f2.estimated_demand
 
     def test_different_seeds_different_forecasts(self):
@@ -522,8 +523,8 @@ class TestIntegration:
 
         # Verify carryover
         assert carryover["X"] == 100.0  # 8467 - 8367
-        assert carryover["Y"] == 50.0   # 6973 - 6923
-        assert carryover["Z"] == 0.0    # Fully shipped
+        assert carryover["Y"] == 50.0  # 6973 - 6923
+        assert carryover["Z"] == 0.0  # Fully shipped
 
         # Add next period forecasts
         final_schedule = manager.add_next_period_forecasts(

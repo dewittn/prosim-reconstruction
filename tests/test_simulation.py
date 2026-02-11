@@ -13,13 +13,11 @@ Tests cover:
 
 import pytest
 
-from prosim.config.schema import ProsimConfig, get_default_config
+from prosim.config.schema import get_default_config
 from prosim.engine.simulation import Simulation, SimulationWeekResult, run_simulation
 from prosim.models.company import Company, CompanyConfig
 from prosim.models.decisions import Decisions, MachineDecision, PartOrders
-from prosim.models.inventory import Inventory, RawMaterialsInventory
 from prosim.models.machines import MachineFloor
-from prosim.models.operators import Department, TrainingStatus, Workforce
 
 
 class TestSimulationInitialization:
@@ -191,9 +189,7 @@ class TestMachineRepairs:
             machine = floor.get_machine(i)
             part_type = "X'" if machine.is_parts_machine else "X"
             floor = floor.update_machine(
-                machine.assign(
-                    operator_id=i, part_type=part_type, scheduled_hours=40.0
-                )
+                machine.assign(operator_id=i, part_type=part_type, scheduled_hours=40.0)
             )
 
         # Run multiple times to check probability
@@ -370,7 +366,9 @@ class TestShippingWeek:
         result = simulation.process_week(company, decisions)
 
         # Should have shipping demand
-        assert result.shipping_demand is not None or result.fulfillment_result is not None
+        assert (
+            result.shipping_demand is not None or result.fulfillment_result is not None
+        )
 
 
 class TestMultiWeekSimulation:

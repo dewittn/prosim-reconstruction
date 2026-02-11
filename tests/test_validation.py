@@ -30,7 +30,9 @@ def valid_decisions():
         raw_materials_expedited=0.0,
         part_orders=PartOrders(x_prime=0.0, y_prime=0.0, z_prime=0.0),
         machine_decisions=[
-            MachineDecision(machine_id=i, send_for_training=False, part_type=1, scheduled_hours=40.0)
+            MachineDecision(
+                machine_id=i, send_for_training=False, part_type=1, scheduled_hours=40.0
+            )
             for i in range(1, 10)
         ],
     )
@@ -113,7 +115,9 @@ class TestValidateDecisions:
 
     def test_negative_maintenance_budget(self, sample_company, valid_decisions):
         """Test validation fails for negative maintenance budget."""
-        negative_budget = valid_decisions.model_copy(update={"maintenance_budget": -100.0})
+        negative_budget = valid_decisions.model_copy(
+            update={"maintenance_budget": -100.0}
+        )
         result = validate_decisions(negative_budget, sample_company)
         assert result.valid is False
         assert any("maintenance_budget" in e.field for e in result.errors)
@@ -127,7 +131,9 @@ class TestValidateDecisions:
 
     def test_negative_raw_materials(self, sample_company, valid_decisions):
         """Test validation fails for negative raw materials orders."""
-        negative_rm = valid_decisions.model_copy(update={"raw_materials_regular": -100.0})
+        negative_rm = valid_decisions.model_copy(
+            update={"raw_materials_regular": -100.0}
+        )
         result = validate_decisions(negative_rm, sample_company)
         assert result.valid is False
 
@@ -146,9 +152,7 @@ class TestValidateDecisions:
     def test_zero_parts_order(self, sample_company, valid_decisions):
         """Test validation accepts zero parts orders."""
         zero_parts = valid_decisions.model_copy(
-            update={
-                "part_orders": PartOrders(x_prime=0.0, y_prime=0.0, z_prime=0.0)
-            }
+            update={"part_orders": PartOrders(x_prime=0.0, y_prime=0.0, z_prime=0.0)}
         )
         result = validate_decisions(zero_parts, sample_company)
         # Zero is valid, no errors
@@ -228,7 +232,9 @@ class TestValidateDecisions:
         assert result.valid is True
         assert any("assembly" in w.message.lower() for w in result.warnings)
 
-    def test_strict_mode_treats_warnings_as_errors(self, sample_company, valid_decisions):
+    def test_strict_mode_treats_warnings_as_errors(
+        self, sample_company, valid_decisions
+    ):
         """Test that strict mode converts warnings to errors."""
         high_budget = valid_decisions.model_copy(update={"quality_budget": 15000.0})
 
@@ -248,13 +254,17 @@ class TestValidateDecisionsWithMessages:
 
     def test_valid_decisions_returns_no_messages(self, sample_company, valid_decisions):
         """Test that valid decisions return no messages."""
-        valid, messages = validate_decisions_with_messages(valid_decisions, sample_company)
+        valid, messages = validate_decisions_with_messages(
+            valid_decisions, sample_company
+        )
         assert valid is True
         # May have warnings, but no errors
         errors = [m for m in messages if "[ERROR]" in m]
         assert len(errors) == 0
 
-    def test_invalid_decisions_returns_error_messages(self, sample_company, valid_decisions):
+    def test_invalid_decisions_returns_error_messages(
+        self, sample_company, valid_decisions
+    ):
         """Test that invalid decisions return error messages."""
         wrong_week = valid_decisions.model_copy(update={"week": 5})
         valid, messages = validate_decisions_with_messages(wrong_week, sample_company)

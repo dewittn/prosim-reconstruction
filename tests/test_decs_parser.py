@@ -13,7 +13,6 @@ from prosim.io.decs_parser import (
 )
 from prosim.models.decisions import Decisions
 
-
 # Sample DECS file content matching archive/data/DECS12.txt format
 DECS12_CONTENT = """ 12            1             750           500           10000         10000
  600           500           400
@@ -107,18 +106,20 @@ class TestParseDecs:
 
     def test_parse_error_invalid_header(self) -> None:
         """Raise error when header has wrong number of values."""
-        content = " 12            1             750\n" + "\n".join([
-            " 600           500           400",
-            " 1             0             1             40",
-            " 2             1             2             40",
-            " 3             1             3             40",
-            " 4             0             1             40",
-            " 5             0             3             40",
-            " 6             1             2             40",
-            " 7             1             1             40",
-            " 8             0             3             40",
-            " 9             1             3             40",
-        ])
+        content = " 12            1             750\n" + "\n".join(
+            [
+                " 600           500           400",
+                " 1             0             1             40",
+                " 2             1             2             40",
+                " 3             1             3             40",
+                " 4             0             1             40",
+                " 5             0             3             40",
+                " 6             1             2             40",
+                " 7             1             1             40",
+                " 8             0             3             40",
+                " 9             1             3             40",
+            ]
+        )
         f = io.StringIO(content)
 
         with pytest.raises(DECSParseError) as exc_info:
@@ -184,16 +185,20 @@ class TestWriteDecs:
         assert reparsed.part_orders.z_prime == original.part_orders.z_prime
 
         for i, (orig_md, new_md) in enumerate(
-            zip(original.machine_decisions, reparsed.machine_decisions)
+            zip(original.machine_decisions, reparsed.machine_decisions, strict=True)
         ):
-            assert new_md.machine_id == orig_md.machine_id, f"Machine {i+1} ID mismatch"
-            assert (
-                new_md.send_for_training == orig_md.send_for_training
-            ), f"Machine {i+1} training mismatch"
-            assert new_md.part_type == orig_md.part_type, f"Machine {i+1} part mismatch"
-            assert (
-                new_md.scheduled_hours == orig_md.scheduled_hours
-            ), f"Machine {i+1} hours mismatch"
+            assert new_md.machine_id == orig_md.machine_id, (
+                f"Machine {i + 1} ID mismatch"
+            )
+            assert new_md.send_for_training == orig_md.send_for_training, (
+                f"Machine {i + 1} training mismatch"
+            )
+            assert new_md.part_type == orig_md.part_type, (
+                f"Machine {i + 1} part mismatch"
+            )
+            assert new_md.scheduled_hours == orig_md.scheduled_hours, (
+                f"Machine {i + 1} hours mismatch"
+            )
 
 
 class TestDECSParser:

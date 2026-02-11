@@ -25,19 +25,16 @@ Since DECS files don't always match REPT files (different companies), we use:
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import pytest
 
 from prosim.config.schema import ProsimConfig, get_default_config
-from prosim.engine.costs import CostCalculator
 from prosim.engine.production import ProductionEngine, ProductionInput
-from prosim.engine.simulation import Simulation, run_simulation
-from prosim.engine.workforce import OperatorEfficiencyResult, OperatorManager
+from prosim.engine.simulation import Simulation
+from prosim.engine.workforce import OperatorEfficiencyResult
 from prosim.io.decs_parser import parse_decs
 from prosim.io.rept_parser import parse_rept
 from prosim.models.company import Company, CompanyConfig
-from prosim.models.decisions import Decisions
 from prosim.models.inventory import (
     AllPartsInventory,
     AllProductsInventory,
@@ -50,7 +47,6 @@ from prosim.models.machines import Machine, MachineAssignment, MachineFloor
 from prosim.models.operators import Department, Operator, TrainingStatus, Workforce
 from prosim.models.orders import OrderBook
 from prosim.models.report import WeeklyReport
-
 
 # Test data paths
 ARCHIVE_DATA = Path(__file__).parent.parent.parent / "archive" / "data"
@@ -93,7 +89,9 @@ class AccuracyMetrics:
         )
 
 
-def calculate_percent_accuracy(actual: float, expected: float, tolerance: float = 0.0) -> float:
+def calculate_percent_accuracy(
+    actual: float, expected: float, tolerance: float = 0.0
+) -> float:
     """Calculate accuracy percentage between actual and expected values.
 
     Returns 100.0 if values match exactly, decreasing as difference increases.
@@ -158,7 +156,9 @@ def compare_reports(
         sim_assembly_production, orig_assembly_production
     )
 
-    total_production_accuracy = (parts_production_accuracy + assembly_production_accuracy) / 2
+    total_production_accuracy = (
+        parts_production_accuracy + assembly_production_accuracy
+    ) / 2
 
     # Inventory accuracy
     inventory_accuracies = []
@@ -174,14 +174,18 @@ def compare_reports(
         sim_part = getattr(simulated.inventory, part_attr)
         orig_part = getattr(original.inventory, part_attr)
         inventory_accuracies.append(
-            calculate_percent_accuracy(sim_part.ending_inventory, orig_part.ending_inventory)
+            calculate_percent_accuracy(
+                sim_part.ending_inventory, orig_part.ending_inventory
+            )
         )
     # Products
     for prod_attr in ["products_x", "products_y", "products_z"]:
         sim_prod = getattr(simulated.inventory, prod_attr)
         orig_prod = getattr(original.inventory, prod_attr)
         inventory_accuracies.append(
-            calculate_percent_accuracy(sim_prod.ending_inventory, orig_prod.ending_inventory)
+            calculate_percent_accuracy(
+                sim_prod.ending_inventory, orig_prod.ending_inventory
+            )
         )
 
     inventory_accuracy = sum(inventory_accuracies) / len(inventory_accuracies)
@@ -204,7 +208,7 @@ def compare_reports(
 
 def create_company_from_report(
     report: WeeklyReport,
-    config: Optional[ProsimConfig] = None,
+    config: ProsimConfig | None = None,
 ) -> Company:
     """Create a Company with state matching the beginning of a report week.
 
@@ -257,7 +261,7 @@ def create_company_from_report(
     # Create workforce with mix of trained/untrained based on production data
     # Look at productive hours to infer training status
     operators = []
-    for i, mp in enumerate(report.production.parts_department):
+    for mp in report.production.parts_department:
         if mp.scheduled_hours > 0:
             efficiency = mp.productive_hours / mp.scheduled_hours
             is_trained = efficiency >= 0.95
@@ -268,11 +272,13 @@ def create_company_from_report(
             Operator(
                 operator_id=mp.operator_id,
                 department=Department.PARTS,
-                status=TrainingStatus.TRAINED if is_trained else TrainingStatus.UNTRAINED,
+                status=TrainingStatus.TRAINED
+                if is_trained
+                else TrainingStatus.UNTRAINED,
             )
         )
 
-    for i, mp in enumerate(report.production.assembly_department):
+    for mp in report.production.assembly_department:
         if mp.scheduled_hours > 0:
             efficiency = mp.productive_hours / mp.scheduled_hours
             is_trained = efficiency >= 0.95
@@ -283,7 +289,9 @@ def create_company_from_report(
             Operator(
                 operator_id=mp.operator_id,
                 department=Department.ASSEMBLY,
-                status=TrainingStatus.TRAINED if is_trained else TrainingStatus.UNTRAINED,
+                status=TrainingStatus.TRAINED
+                if is_trained
+                else TrainingStatus.UNTRAINED,
             )
         )
 
@@ -476,12 +484,16 @@ class TestProductionRateVerification:
             is_in_training=False,
         )
 
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
         result = engine.calculate_machine_production(production_input)
 
         # Verify formula: no setup (first production), full efficiency
         expected_productive_hours = 40.0 * 1.0  # scheduled * efficiency
-        assert result.productive_hours == pytest.approx(expected_productive_hours, rel=0.01)
+        assert result.productive_hours == pytest.approx(
+            expected_productive_hours, rel=0.01
+        )
 
         expected_gross = expected_productive_hours * 60.0  # X' rate = 60/hr
         assert result.gross_production == pytest.approx(expected_gross, rel=0.01)
@@ -670,7 +682,9 @@ class TestProductiveHoursVerification:
 
         # Should have some variation
         if len(efficiencies) > 1:
-            assert max(efficiencies) - min(efficiencies) >= 0.0  # At least some variation
+            assert (
+                max(efficiencies) - min(efficiencies) >= 0.0
+            )  # At least some variation
 
 
 # ==============================================================================
@@ -778,7 +792,9 @@ class TestSimulationIntegration:
             results.append(result.weekly_report)
 
         # Compare results
-        assert results[0].weekly_costs.total_costs == results[1].weekly_costs.total_costs
+        assert (
+            results[0].weekly_costs.total_costs == results[1].weekly_costs.total_costs
+        )
 
     def test_multi_week_simulation(self) -> None:
         """Verify multi-week simulation accumulates correctly."""
@@ -1093,7 +1109,9 @@ class TestCrossWeekValidation:
 
         for report in reports:
             # Cumulative should be >= weekly (equal only on week 1)
-            assert report.cumulative_costs.total_costs >= report.weekly_costs.total_costs
+            assert (
+                report.cumulative_costs.total_costs >= report.weekly_costs.total_costs
+            )
 
     def test_internal_inventory_balance(self) -> None:
         """Verify inventory conservation within each report.
@@ -1108,7 +1126,9 @@ class TestCrossWeekValidation:
         for report in reports:
             # Raw materials
             rm = report.inventory.raw_materials
-            expected_rm = rm.beginning_inventory + rm.orders_received - rm.used_in_production
+            expected_rm = (
+                rm.beginning_inventory + rm.orders_received - rm.used_in_production
+            )
             assert rm.ending_inventory == pytest.approx(expected_rm, abs=1.0)
 
             # Parts (one example)
@@ -1222,4 +1242,6 @@ class TestSimulationVsOriginal:
         # With 9 machines at 40 hours each and $20/hr
         total_hours = 9 * 40
         expected_equipment = total_hours * 20.0
-        assert expected_equipment == 7200.0  # Note: week1.txt shows $8000, which is 10 machine-weeks
+        assert (
+            expected_equipment == 7200.0
+        )  # Note: week1.txt shows $8000, which is 10 machine-weeks

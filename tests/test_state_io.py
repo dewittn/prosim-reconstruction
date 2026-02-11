@@ -1,6 +1,5 @@
 """Tests for game state persistence."""
 
-import json
 import tempfile
 from pathlib import Path
 
@@ -25,7 +24,7 @@ from prosim.io.state_io import (
     load_game_from_path,
     save_game,
 )
-from prosim.models.company import Company, GameState
+from prosim.models.company import GameState
 
 
 @pytest.fixture
@@ -287,7 +286,9 @@ class TestListSaves:
         saves = list_saves(temp_saves_dir)
         assert saves == []
 
-    def test_list_saves_multiple(self, temp_saves_dir, sample_game_state, sample_game_state_advanced):
+    def test_list_saves_multiple(
+        self, temp_saves_dir, sample_game_state, sample_game_state_advanced
+    ):
         """Test listing multiple saves."""
         save_game(sample_game_state, slot=1, saves_dir=temp_saves_dir)
         save_game(sample_game_state_advanced, slot=2, saves_dir=temp_saves_dir)
@@ -441,7 +442,9 @@ class TestIntegration:
         assert saved.config is not None
         assert saved.config.production.reject_rate == config.production.reject_rate
 
-    def test_multiple_slots(self, temp_saves_dir, sample_game_state, sample_game_state_advanced):
+    def test_multiple_slots(
+        self, temp_saves_dir, sample_game_state, sample_game_state_advanced
+    ):
         """Test using multiple save slots."""
         save_game(sample_game_state, slot=1, saves_dir=temp_saves_dir)
         save_game(sample_game_state_advanced, slot=2, saves_dir=temp_saves_dir)

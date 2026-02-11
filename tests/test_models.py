@@ -3,37 +3,37 @@ Unit tests for PROSIM data models.
 """
 
 import pytest
+
 from prosim.models import (
-    # Inventory
-    Inventory,
-    PartsInventory,
-    ProductsInventory,
-    RawMaterialsInventory,
-    # Operators
-    Department,
-    Operator,
-    TrainingStatus,
-    Workforce,
-    # Machines
-    Machine,
-    MachineFloor,
-    # Orders
-    DemandSchedule,
-    Order,
-    OrderBook,
-    OrderType,
-    # Decisions
-    Decisions,
-    MachineDecision,
-    PartOrders,
-    # Report
-    CostReport,
-    ProductCosts,
-    WeeklyReport,
     # Company
     Company,
     CompanyConfig,
+    # Report
+    CostReport,
+    # Decisions
+    Decisions,
+    # Orders
+    DemandSchedule,
+    # Operators
+    Department,
     GameState,
+    # Inventory
+    Inventory,
+    # Machines
+    Machine,
+    MachineDecision,
+    MachineFloor,
+    Operator,
+    OrderBook,
+    OrderType,
+    PartOrders,
+    PartsInventory,
+    ProductCosts,
+    ProductsInventory,
+    RawMaterialsInventory,
+    TrainingStatus,
+    WeeklyReport,
+    Workforce,
 )
 
 
@@ -122,14 +122,18 @@ class TestOperators:
 
     def test_operator_efficiency_in_training(self) -> None:
         """Test that operator in training class has 0% efficiency."""
-        op = Operator(operator_id=1, quality_tier=5, training_level=0, is_in_training_class=True)
+        op = Operator(
+            operator_id=1, quality_tier=5, training_level=0, is_in_training_class=True
+        )
         assert op.efficiency == 0.0
         assert op.training_status == TrainingStatus.TRAINING
 
     def test_two_component_efficiency_model(self) -> None:
         """Test the two-component efficiency model: efficiency = time_eff × proficiency."""
         # Operator 3 profile from ProsimTable.xls Week 16 data
-        op = Operator(operator_id=3, quality_tier=9, training_level=8, proficiency=1.122)
+        op = Operator(
+            operator_id=3, quality_tier=9, training_level=8, proficiency=1.122
+        )
 
         # Time efficiency from training matrix (tier 9, level H=8)
         assert op.time_efficiency == 1.18  # 118%
@@ -145,8 +149,12 @@ class TestOperators:
 
         # Both have same tier, so same time efficiency at max level
         # But different max efficiency due to proficiency
-        assert expert.max_efficiency == pytest.approx(1.20 * 1.122, rel=0.001)  # ~134.6%
-        assert normal.max_efficiency == pytest.approx(1.20 * 0.934, rel=0.001)  # ~112.1%
+        assert expert.max_efficiency == pytest.approx(
+            1.20 * 1.122, rel=0.001
+        )  # ~134.6%
+        assert normal.max_efficiency == pytest.approx(
+            1.20 * 0.934, rel=0.001
+        )  # ~112.1%
 
     def test_operator_termination_threshold(self) -> None:
         op = Operator(operator_id=1, consecutive_weeks_unscheduled=1)
@@ -209,7 +217,9 @@ class TestMachines:
         assert machine.assignment.scheduled_hours == 40.0
 
     def test_machine_setup_time(self) -> None:
-        machine = Machine(machine_id=1, department=Department.PARTS, last_part_type="X'")
+        machine = Machine(
+            machine_id=1, department=Department.PARTS, last_part_type="X'"
+        )
         assert machine.calculate_setup_time("X'") == 0.0
         assert machine.calculate_setup_time("Y'") == 2.0
 

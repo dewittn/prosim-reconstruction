@@ -8,14 +8,11 @@ Tests cover:
 - Cumulative cost tracking
 """
 
-import pytest
-
 from prosim.config.schema import (
     CarryingCostRatesConfig,
     CostsConfig,
     EquipmentConfig,
     EquipmentRatesConfig,
-    FixedCostsConfig,
     LaborRatesConfig,
     MachineRepairConfig,
     ProsimConfig,
@@ -23,7 +20,6 @@ from prosim.config.schema import (
 from prosim.engine.costs import (
     CostCalculationInput,
     CostCalculator,
-    CumulativeCostReport,
     OverheadCosts,
     ProductCosts,
     WeeklyCostReport,
@@ -101,9 +97,15 @@ def create_mock_production_result(
         gross_production_by_type={k: v * 60 for k, v in parts_by_type.items()},
         rejects_by_type={k: v * 60 * 0.178 for k, v in parts_by_type.items()},
         net_production_by_type={k: v * 60 * 0.822 for k, v in parts_by_type.items()},
-        total_gross_production=sum(v * 60 for v in parts_by_type.values()) if parts_by_type else 0,
-        total_rejects=sum(v * 60 * 0.178 for v in parts_by_type.values()) if parts_by_type else 0,
-        total_net_production=sum(v * 60 * 0.822 for v in parts_by_type.values()) if parts_by_type else 0,
+        total_gross_production=sum(v * 60 for v in parts_by_type.values())
+        if parts_by_type
+        else 0,
+        total_rejects=sum(v * 60 * 0.178 for v in parts_by_type.values())
+        if parts_by_type
+        else 0,
+        total_net_production=sum(v * 60 * 0.822 for v in parts_by_type.values())
+        if parts_by_type
+        else 0,
     )
 
     assembly_result = DepartmentProductionResult(
@@ -111,21 +113,31 @@ def create_mock_production_result(
         machine_results=assembly_machine_results,
         total_scheduled_hours=sum(assembly_by_type.values()) if assembly_by_type else 0,
         total_setup_hours=0.0,
-        total_productive_hours=sum(assembly_by_type.values()) if assembly_by_type else 0,
+        total_productive_hours=sum(assembly_by_type.values())
+        if assembly_by_type
+        else 0,
         gross_production_by_type={k: v * 40 for k, v in assembly_by_type.items()},
         rejects_by_type={k: v * 40 * 0.178 for k, v in assembly_by_type.items()},
         net_production_by_type={k: v * 40 * 0.822 for k, v in assembly_by_type.items()},
-        total_gross_production=sum(v * 40 for v in assembly_by_type.values()) if assembly_by_type else 0,
-        total_rejects=sum(v * 40 * 0.178 for v in assembly_by_type.values()) if assembly_by_type else 0,
-        total_net_production=sum(v * 40 * 0.822 for v in assembly_by_type.values()) if assembly_by_type else 0,
+        total_gross_production=sum(v * 40 for v in assembly_by_type.values())
+        if assembly_by_type
+        else 0,
+        total_rejects=sum(v * 40 * 0.178 for v in assembly_by_type.values())
+        if assembly_by_type
+        else 0,
+        total_net_production=sum(v * 40 * 0.822 for v in assembly_by_type.values())
+        if assembly_by_type
+        else 0,
     )
 
     return ProductionResult(
         parts_department=parts_result,
         assembly_department=assembly_result,
-        total_gross_production=parts_result.total_gross_production + assembly_result.total_gross_production,
+        total_gross_production=parts_result.total_gross_production
+        + assembly_result.total_gross_production,
         total_rejects=parts_result.total_rejects + assembly_result.total_rejects,
-        total_net_production=parts_result.total_net_production + assembly_result.total_net_production,
+        total_net_production=parts_result.total_net_production
+        + assembly_result.total_net_production,
     )
 
 
@@ -163,9 +175,15 @@ def create_mock_inventory(
             ),
         ),
         products=AllProductsInventory(
-            x=ProductsInventory(product_type="X", beginning=products_ending.get("X", 0.0)),
-            y=ProductsInventory(product_type="Y", beginning=products_ending.get("Y", 0.0)),
-            z=ProductsInventory(product_type="Z", beginning=products_ending.get("Z", 0.0)),
+            x=ProductsInventory(
+                product_type="X", beginning=products_ending.get("X", 0.0)
+            ),
+            y=ProductsInventory(
+                product_type="Y", beginning=products_ending.get("Y", 0.0)
+            ),
+            z=ProductsInventory(
+                product_type="Z", beginning=products_ending.get("Z", 0.0)
+            ),
         ),
     )
 
@@ -371,9 +389,7 @@ class TestRepairCosts:
     def test_repair_costs_custom_rate(self):
         """Test repair costs with custom rate."""
         config = ProsimConfig(
-            equipment=EquipmentConfig(
-                repair=MachineRepairConfig(cost_per_repair=500.0)
-            )
+            equipment=EquipmentConfig(repair=MachineRepairConfig(cost_per_repair=500.0))
         )
         calculator = CostCalculator(config)
         repairs = {"X": 1}

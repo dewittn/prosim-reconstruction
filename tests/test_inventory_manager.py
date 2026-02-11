@@ -11,14 +11,9 @@ Tests cover:
 - Available inventory queries
 """
 
-import pytest
-
-from prosim.config.schema import ProsimConfig, ProductionRatesConfig
+from prosim.config.schema import ProductionRatesConfig, ProsimConfig
 from prosim.engine.inventory import (
-    ConsumptionResult,
-    DemandFulfillmentResult,
     InventoryManager,
-    OrderReceiptResult,
 )
 from prosim.models.inventory import (
     AllPartsInventory,
@@ -28,7 +23,7 @@ from prosim.models.inventory import (
     ProductsInventory,
     RawMaterialsInventory,
 )
-from prosim.models.orders import Order, OrderBook, OrderType
+from prosim.models.orders import OrderBook, OrderType
 
 
 class TestOrderReceiving:
@@ -173,7 +168,8 @@ class TestPlaceOrders:
 
         # Check regular RM (due week 4)
         rm_regular = [
-            o for o in new_book.orders
+            o
+            for o in new_book.orders
             if o.order_type == OrderType.RAW_MATERIALS_REGULAR
         ]
         assert len(rm_regular) == 1
@@ -182,7 +178,8 @@ class TestPlaceOrders:
 
         # Check expedited RM (due week 2)
         rm_exp = [
-            o for o in new_book.orders
+            o
+            for o in new_book.orders
             if o.order_type == OrderType.RAW_MATERIALS_EXPEDITED
         ]
         assert len(rm_exp) == 1
@@ -240,15 +237,11 @@ class TestRawMaterialConsumption:
         manager = InventoryManager()
 
         # Start with 500 RM
-        inventory = Inventory(
-            raw_materials=RawMaterialsInventory(beginning=500.0)
-        )
+        inventory = Inventory(raw_materials=RawMaterialsInventory(beginning=500.0))
 
         gross_production = {"X'": 100.0, "Y'": 200.0}  # Needs 300 RM
 
-        new_inv, result = manager.consume_raw_materials(
-            inventory, gross_production
-        )
+        new_inv, result = manager.consume_raw_materials(inventory, gross_production)
 
         assert result.raw_materials_consumed == 300.0
         assert result.raw_materials_shortage == 0.0
@@ -260,15 +253,11 @@ class TestRawMaterialConsumption:
         manager = InventoryManager()
 
         # Start with only 200 RM
-        inventory = Inventory(
-            raw_materials=RawMaterialsInventory(beginning=200.0)
-        )
+        inventory = Inventory(raw_materials=RawMaterialsInventory(beginning=200.0))
 
         gross_production = {"X'": 100.0, "Y'": 200.0}  # Needs 300 RM
 
-        new_inv, result = manager.consume_raw_materials(
-            inventory, gross_production
-        )
+        new_inv, result = manager.consume_raw_materials(inventory, gross_production)
 
         assert result.raw_materials_consumed == 200.0  # Only what's available
         assert result.raw_materials_shortage == 100.0
@@ -553,7 +542,9 @@ class TestAvailableInventoryQueries:
                 used_in_production=30.0,
             ),
             parts=AllPartsInventory(
-                x_prime=PartsInventory(part_type="X'", beginning=100.0, production=50.0),
+                x_prime=PartsInventory(
+                    part_type="X'", beginning=100.0, production=50.0
+                ),
                 y_prime=PartsInventory(part_type="Y'", beginning=200.0),
                 z_prime=PartsInventory(part_type="Z'", beginning=150.0),
             ),

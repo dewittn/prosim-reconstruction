@@ -12,7 +12,6 @@ from prosim.io.rept_parser import (
     write_rept,
     write_rept_human_readable,
 )
-from prosim.models.report import WeeklyReport
 
 
 class TestParseRept:
@@ -119,12 +118,18 @@ class TestParseRept:
 
         # Weekly performance
         assert report.weekly_performance.total_standard_costs == 20214.0
-        assert report.weekly_performance.percent_efficiency == pytest.approx(54.86, abs=0.01)
-        assert report.weekly_performance.variance_per_unit == pytest.approx(-4.03, abs=0.01)
+        assert report.weekly_performance.percent_efficiency == pytest.approx(
+            54.86, abs=0.01
+        )
+        assert report.weekly_performance.variance_per_unit == pytest.approx(
+            -4.03, abs=0.01
+        )
 
         # Cumulative performance
         assert report.cumulative_performance.total_standard_costs == 49123.0
-        assert report.cumulative_performance.percent_efficiency == pytest.approx(60.25, abs=0.01)
+        assert report.cumulative_performance.percent_efficiency == pytest.approx(
+            60.25, abs=0.01
+        )
 
     def test_parse_error_insufficient_lines(self) -> None:
         """Raise error when file has too few lines."""
@@ -161,8 +166,12 @@ class TestWriteRept:
         assert reparsed.company_id == original.company_id
 
         # Check costs
-        assert reparsed.weekly_costs.x_costs.labor == original.weekly_costs.x_costs.labor
-        assert reparsed.weekly_costs.y_costs.labor == original.weekly_costs.y_costs.labor
+        assert (
+            reparsed.weekly_costs.x_costs.labor == original.weekly_costs.x_costs.labor
+        )
+        assert (
+            reparsed.weekly_costs.y_costs.labor == original.weekly_costs.y_costs.labor
+        )
 
         # Check inventory
         assert (
@@ -268,4 +277,6 @@ class TestOriginalFiles:
             + report.weekly_costs.y_costs.subtotal
             + report.weekly_costs.z_costs.subtotal
         )
-        assert report.weekly_costs.product_subtotal == pytest.approx(calc_subtotal, abs=1.0)
+        assert report.weekly_costs.product_subtotal == pytest.approx(
+            calc_subtotal, abs=1.0
+        )

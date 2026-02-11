@@ -12,7 +12,7 @@ Tests cover:
 
 import pytest
 
-from prosim.config.schema import ProsimConfig, ProductionRatesConfig
+from prosim.config.schema import ProductionRatesConfig, ProsimConfig
 from prosim.engine.production import (
     DepartmentProductionResult,
     MachineProductionResult,
@@ -218,7 +218,9 @@ class TestMachineProductionCalculations:
 
         machine = create_parts_machine(1, 1, "X'", 40.0)
         efficiency = create_efficiency_result(1, 40.0, 1.0)
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
@@ -239,7 +241,9 @@ class TestMachineProductionCalculations:
 
         machine = create_parts_machine(1, 1, "Y'", 50.0)
         efficiency = create_efficiency_result(1, 50.0, 0.80)
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
@@ -253,7 +257,9 @@ class TestMachineProductionCalculations:
 
         machine = create_parts_machine(1, 1, "Y'", 40.0, last_part_type="X'")
         efficiency = create_efficiency_result(1, 40.0, 1.0)
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
@@ -268,7 +274,9 @@ class TestMachineProductionCalculations:
 
         machine = create_assembly_machine(5, 1, "X", 40.0)
         efficiency = create_efficiency_result(1, 40.0, 1.0)
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
@@ -292,14 +300,14 @@ class TestMachineProductionCalculations:
 
     def test_custom_reject_rate(self):
         """Test production with custom reject rate."""
-        config = ProsimConfig(
-            production=ProductionRatesConfig(reject_rate=0.10)
-        )
+        config = ProsimConfig(production=ProductionRatesConfig(reject_rate=0.10))
         engine = ProductionEngine(config)
 
         machine = create_parts_machine(1, 1, "X'", 40.0)
         efficiency = create_efficiency_result(1, 40.0, 1.0)
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
@@ -387,8 +395,12 @@ class TestDepartmentAggregation:
             ),
         ]
 
-        parts_result = engine.aggregate_department_results(machine_results, Department.PARTS)
-        assembly_result = engine.aggregate_department_results(machine_results, Department.ASSEMBLY)
+        parts_result = engine.aggregate_department_results(
+            machine_results, Department.PARTS
+        )
+        assembly_result = engine.aggregate_department_results(
+            machine_results, Department.ASSEMBLY
+        )
 
         assert len(parts_result.machine_results) == 1
         assert parts_result.total_gross_production == 2400.0
@@ -445,7 +457,9 @@ class TestFullProduction:
         engine = ProductionEngine()
 
         # Create machine floor
-        machine_floor = MachineFloor.create_default(num_parts_machines=2, num_assembly_machines=2)
+        machine_floor = MachineFloor.create_default(
+            num_parts_machines=2, num_assembly_machines=2
+        )
 
         # Assign machines
         machine1 = machine_floor.get_machine(1)
@@ -556,7 +570,9 @@ class TestMachineFloorUpdates:
         """Test that machine floor updates last_part_type after production."""
         engine = ProductionEngine()
 
-        machine_floor = MachineFloor.create_default(num_parts_machines=2, num_assembly_machines=1)
+        machine_floor = MachineFloor.create_default(
+            num_parts_machines=2, num_assembly_machines=1
+        )
 
         # Assign machine 1 to produce X'
         machine1 = machine_floor.get_machine(1)
@@ -633,7 +649,9 @@ class TestIntegration:
         # Simulate production similar to REPT14.DAT data
         machine = create_parts_machine(1, 1, "X'", 42.5)
         efficiency = create_efficiency_result(1, 42.5, 1.0)
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
@@ -652,7 +670,9 @@ class TestIntegration:
 
         machine = create_parts_machine(1, 1, "X'", 40.0)
         efficiency = create_efficiency_result(1, 40.0, 0.90)  # 90% efficiency
-        production_input = ProductionInput(machine=machine, efficiency_result=efficiency)
+        production_input = ProductionInput(
+            machine=machine, efficiency_result=efficiency
+        )
 
         result = engine.calculate_machine_production(production_input)
 
