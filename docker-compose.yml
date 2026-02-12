@@ -21,6 +21,28 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    develop:
+      watch:
+        # CSS, templates, static assets — sync without restart
+        - action: sync
+          path: ./web/static
+          target: /app/web/static
+        - action: sync
+          path: ./web/templates
+          target: /app/web/templates
+        # Python source changes — sync + restart uvicorn
+        - action: sync+restart
+          path: ./web
+          target: /app/web
+          ignore:
+            - static/
+            - templates/
+        - action: sync+restart
+          path: ./prosim
+          target: /app/prosim
+        # Dependency changes — full rebuild
+        - action: rebuild
+          path: ./pyproject.toml
 
   # Development service with hot reload
   prosim-dev:
