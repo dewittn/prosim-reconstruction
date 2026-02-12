@@ -184,6 +184,14 @@ fieldset {
     vertical-align: middle;
 }
 
+/* Prevent horizontal overflow */
+footer small {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .form-row {
