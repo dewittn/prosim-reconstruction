@@ -3,14 +3,16 @@
 {% block title %}Help{% endblock %}
 
 {% block content %}
-<h1>How to Play PROSIM</h1>
+<header>
+    <h1>How to Play PROSIM III</h1>
+    <p>Complete guide to managing your production company</p>
+</header>
 
 <nav>
-    <strong>Contents:</strong>
-    <a href="#objective">Objective</a> |
-    <a href="#production">Production</a> |
-    <a href="#decisions">Weekly Decisions</a> |
-    <a href="#costs">Costs</a> |
+    <a href="#objective">Objective</a>
+    <a href="#production">Production</a>
+    <a href="#decisions">Weekly Decisions</a>
+    <a href="#costs">Costs</a>
     <a href="#tips">Strategy Tips</a>
 </nav>
 
@@ -30,23 +32,48 @@
     <h2>Production System</h2>
 
     <h3>Production Flow</h3>
-    <pre>
-Raw Materials → Parts Department → Parts (X', Y', Z') → Assembly Department → Products (X, Y, Z)
-    </pre>
+    <div class="flow-diagram">
+        <div class="flow-step">
+            <div class="flow-box">Raw Materials</div>
+            <div class="flow-arrow">&rarr;</div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-box flow-parts">Parts Dept<small>Machines 1&ndash;4</small></div>
+            <div class="flow-arrow">&rarr;</div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-box">Parts<small>X', Y', Z'</small></div>
+            <div class="flow-arrow">&rarr;</div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-box flow-assembly">Assembly Dept<small>Machines 5&ndash;9</small></div>
+            <div class="flow-arrow">&rarr;</div>
+        </div>
+        <div class="flow-step">
+            <div class="flow-box">Products<small>X, Y, Z</small></div>
+        </div>
+    </div>
 
     <h3>Departments</h3>
-    <p><strong>Parts Department</strong> (Machines 1-4)</p>
-    <ul>
-        <li>Converts raw materials into parts</li>
-        <li>Production rates: X' = 60/hr, Y' = 50/hr, Z' = 40/hr</li>
-    </ul>
-
-    <p><strong>Assembly Department</strong> (Machines 5-9)</p>
-    <ul>
-        <li>Converts parts into finished products</li>
-        <li>Production rates: X = 40/hr, Y = 30/hr, Z = 20/hr</li>
-        <li>Each product requires 1 part (X→X', Y→Y', Z→Z')</li>
-    </ul>
+    <div class="dept-grid">
+        <div class="dept-card dept-parts">
+            <h4>Parts Department</h4>
+            <p>Machines 1&ndash;4</p>
+            <ul>
+                <li>Converts raw materials into parts</li>
+                <li>X' = 60/hr, Y' = 50/hr, Z' = 40/hr</li>
+            </ul>
+        </div>
+        <div class="dept-card dept-assembly">
+            <h4>Assembly Department</h4>
+            <p>Machines 5&ndash;9</p>
+            <ul>
+                <li>Converts parts into finished products</li>
+                <li>X = 40/hr, Y = 30/hr, Z = 20/hr</li>
+                <li>Each product requires 1 part</li>
+            </ul>
+        </div>
+    </div>
 
     <h3>Workforce</h3>
     <ul>

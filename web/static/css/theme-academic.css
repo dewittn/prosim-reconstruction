@@ -287,6 +287,15 @@
   border: none;
 }
 
+/* Active page indicator — brighter background */
+.theme-academic > header nav ul li a[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.theme-academic > header nav ul li a[aria-current="page"]:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
 /* ---------------------------------------------------------------------------
    6. Content Sections — Card-based Layout
    --------------------------------------------------------------------------- */
@@ -329,8 +338,9 @@
   box-shadow: var(--acad-shadow-sm);
 }
 
-/* When header is followed by a section, connect them visually */
-.theme-academic main > header + section {
+/* When header is followed by content, connect them visually */
+.theme-academic main > header + section,
+.theme-academic main > header + nav {
   border-top: none;
   border-radius: 0 0 10px 10px;
   margin-top: 0;
@@ -584,7 +594,7 @@
 
 .theme-academic fieldset legend {
   font-family: "Crimson Pro", "Georgia", serif;
-  font-size: 1.125rem;
+  font-size: 1.375rem;
   font-weight: 600;
   padding: 0 0.75rem;
   color: var(--acad-navy);
@@ -669,9 +679,15 @@
    12. Game Cards — Course Module Cards
    --------------------------------------------------------------------------- */
 .theme-academic .game-list {
-  display: grid;
+  display: grid !important;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Override Simple.css article sizing inside game-list */
+.theme-academic .game-list > article {
+  max-width: none;
+  margin: 0;
 }
 
 .theme-academic .game-card {
@@ -977,7 +993,7 @@
    18. Help Page — Chapter/Section Textbook Feel
    --------------------------------------------------------------------------- */
 
-/* Table of contents navigation */
+/* Table of contents navigation — pill buttons */
 .theme-academic main > nav {
   background: var(--acad-surface);
   padding: 1rem 1.5rem;
@@ -985,28 +1001,126 @@
   border: 1px solid var(--acad-border-light);
   box-shadow: var(--acad-shadow-sm);
   margin-bottom: 1.25rem;
-  font-size: 0.9375rem;
-}
-
-.theme-academic main > nav strong {
-  font-family: "Crimson Pro", "Georgia", serif;
-  color: var(--acad-navy);
-  font-size: 1rem;
-  font-weight: 600;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .theme-academic main > nav a {
+  background: var(--acad-navy-pale);
   color: var(--acad-navy-light);
   text-decoration: none;
+  font-size: 0.8125rem;
   font-weight: 500;
-  padding: 0.125rem 0;
-  border-bottom: 1px dotted var(--acad-border);
-  transition: border-color 0.15s ease;
+  padding: 0.375rem 0.875rem;
+  border-radius: 6px;
+  border: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .theme-academic main > nav a:hover {
-  border-bottom-style: solid;
-  border-bottom-color: var(--acad-navy);
+  background: var(--acad-navy);
+  color: #ffffff;
+}
+
+/* Production flow diagram */
+.theme-academic .flow-diagram {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--acad-bg);
+  border-radius: 8px;
+  border: 1px solid var(--acad-border-light);
+  overflow-x: auto;
+}
+
+.theme-academic .flow-step {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.theme-academic .flow-box {
+  background: var(--acad-surface);
+  border: 1.5px solid var(--acad-border);
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--acad-navy);
+  text-align: center;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.theme-academic .flow-box small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--acad-text-secondary);
+  margin-top: 0.125rem;
+}
+
+.theme-academic .flow-box.flow-parts {
+  border-color: var(--acad-success);
+  background: var(--acad-success-bg);
+}
+
+.theme-academic .flow-box.flow-assembly {
+  border-color: var(--acad-navy-light);
+  background: var(--acad-navy-pale);
+}
+
+.theme-academic .flow-arrow {
+  font-size: 1.25rem;
+  color: var(--acad-gold);
+  padding: 0 0.5rem;
+  font-weight: 700;
+}
+
+/* Department two-column grid */
+.theme-academic .dept-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.75rem 0;
+}
+
+.theme-academic .dept-card {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--acad-border);
+  background: var(--acad-bg);
+}
+
+.theme-academic .dept-card h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.theme-academic .dept-card > p {
+  font-size: 0.8125rem;
+  color: var(--acad-text-secondary);
+  margin: 0 0 0.5rem;
+}
+
+.theme-academic .dept-card ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.theme-academic .dept-card.dept-parts {
+  border-color: var(--acad-success);
+}
+
+.theme-academic .dept-card.dept-assembly {
+  border-color: var(--acad-navy-light);
 }
 
 /* Numbered lists in help — styled like textbook enumerations */
@@ -1367,6 +1481,14 @@
     grid-template-columns: 1fr;
   }
 
+  .theme-academic .dept-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-academic .flow-diagram {
+    justify-content: center;
+  }
+
   .theme-academic .machine-grid {
     grid-template-columns: 1fr;
   }
@@ -1422,12 +1544,12 @@
     padding: 0 0.5rem;
   }
 
-  /* Help page TOC nav links */
+  /* Help page TOC nav pills */
   .theme-academic main > nav a {
-    display: inline-block;
     min-height: 44px;
-    line-height: 44px;
-    padding: 0 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
   }
 
   /* Generic small-text links — footer, back links */

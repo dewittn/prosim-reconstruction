@@ -1,11 +1,12 @@
 <header>
     <nav>
-        <a href="/" class="brand"><strong>PROSIM</strong></a>
+        <a href="/" class="brand"><strong>PROSIM III</strong></a>
 
         <ul>
-            <li><a href="/">Games</a></li>
-            <li><a href="/new">New Game</a></li>
-            <li><a href="/help">Help</a></li>
+            {% set path = request.url.path %}
+            <li><a href="/"{% if path == '/' %} aria-current="page"{% endif %}>Games</a></li>
+            <li><a href="/new"{% if path == '/new' %} aria-current="page"{% endif %}>New Game</a></li>
+            <li><a href="/help"{% if path == '/help' %} aria-current="page"{% endif %}>Help</a></li>
             <li class="theme-switcher">
                 {% set current_theme = request.state.theme if request.state.theme is defined else 'win95' %}
                 <form method="post" action="/theme" id="theme-form">
