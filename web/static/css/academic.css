@@ -1,0 +1,12 @@
+/* =============================================================================
+   PROSIM — Academic Theme (Barrel File)
+   =============================================================================
+   A warm, inviting university-inspired design that feels like a beautifully
+   designed college textbook meets a modern learning management system.
+   ============================================================================= */
+
+@import url('./academic/variables.css');
+@import url('./academic/typography.css');
+@import url('./academic/layout.css');
+@import url('./academic/components.css');
+@import url('./academic/responsive.css');

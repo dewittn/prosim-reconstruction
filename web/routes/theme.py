@@ -42,5 +42,6 @@ async def set_theme(
         max_age=60 * 60 * 24 * 365,  # 1 year
         httponly=False,  # JS needs to read this for instant switching
         samesite="lax",
+        path="/",
     )
     return response

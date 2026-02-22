@@ -8,21 +8,19 @@
     <!-- Simple.css - Classless CSS framework -->
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 
-    <!-- Custom styles -->
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
-
-    <!-- Theme CSS (loaded based on cookie preference) -->
-    {% set current_theme = request.state.theme if request.state.theme is defined else 'win95' %}
-    <link rel="stylesheet"
-          id="theme-css"
-          href="{{ url_for('static', path='css/theme-' + current_theme + '.css') }}">
+    <!-- Academic theme -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/academic/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/academic/typography.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/academic/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/academic/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/academic/responsive.css') }}">
 
     <!-- HTMX for dynamic interactions -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
     {% block head %}{% endblock %}
 </head>
-<body class="theme-{{ current_theme }}">
+<body class="theme-academic">
     {% include "components/navbar.html" %}
 
     <main>
@@ -48,27 +46,6 @@
             <small>Reconstructed from the 1996 original by Chu, Hottenstein &amp; Greenlaw</small>
         </p>
     </footer>
-
-    <script>
-    function setTheme(theme) {
-        // Update body class
-        document.body.className = document.body.className
-            .replace(/theme-\w+/, 'theme-' + theme);
-        // Swap CSS file
-        var link = document.getElementById('theme-css');
-        link.href = '/static/css/theme-' + theme + '.css';
-        // Persist in cookie (1 year)
-        document.cookie = 'prosim_theme=' + theme +
-            ';path=/;max-age=31536000;samesite=lax';
-        // Update selector to match
-        var sel = document.getElementById('theme-select');
-        if (sel) sel.value = theme;
-        // Also persist server-side so cookie is set via Set-Cookie header
-        var form = new FormData();
-        form.append('theme', theme);
-        fetch('/theme', { method: 'POST', body: form, redirect: 'manual' });
-    }
-    </script>
 
     {% block scripts %}{% endblock %}
 </body>
