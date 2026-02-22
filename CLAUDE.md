@@ -162,9 +162,43 @@ cd prosim-reconstruction
 # Run tests
 .venv/bin/pytest
 
-# Run web interface
+# Run web interface (without Docker)
 .venv/bin/uvicorn web.app:app --reload
 ```
+
+## Docker Development
+
+Local dev uses the dev profile via OrbStack. Source code is bind-mounted into the container, so file changes are reflected instantly — no rebuild needed.
+
+### Pre-flight
+```bash
+docker context show          # Should be "orbstack"
+docker context use orbstack  # Switch if needed
+```
+
+### Start / stop
+```bash
+# First run or after changing pyproject.toml (rebuild needed)
+docker compose --profile dev up prosim-dev --build
+
+# Day-to-day startup (no rebuild)
+docker compose --profile dev up prosim-dev
+
+# Stop
+docker compose --profile dev down
+```
+
+### How changes are picked up
+| Change | Mechanism | Effect |
+|--------|-----------|--------|
+| `web/static/`, `web/templates/` | Bind mount | Instant — refresh browser |
+| `web/*.py`, `prosim/**/*.py` | Bind mount + uvicorn `--reload` | Auto-restart (~1s) |
+| `pyproject.toml` | Requires rebuild | `--build` flag needed |
+
+### Data
+- Named volume: `prosim_dev_data`
+- Database: SQLite at `/app/data/prosim.db` inside container
+- Port: `localhost:8000` (configurable via `PROSIM_PORT`)
 
 ## Original Data Location
 
