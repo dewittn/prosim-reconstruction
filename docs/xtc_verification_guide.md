@@ -108,8 +108,8 @@ Two record types only:
 |-------|-------|----------------------|
 | Float1 | 0.64–1.03 | Fixed per-operator proficiency/speed coefficient (medium-high) |
 | Float2 | 0.549–0.678 (one outlier ≈1.0145) | Fixed per-operator second coefficient — quality/yield axis (medium) |
-| Float3 | 0–~18k | Period-to-date accumulator, resets ~every 4 weeks (medium) |
-| Float4 | ~1.9k–22.8k | Lifetime cumulative accumulator, monotonically grows (medium-high) |
+| Float3 | 0–~18k | **Global running event counter** — increases across consecutive log records regardless of identity (~300–600/record), sawtooth resets (corrected Jul 2026, see Discovery #16) |
+| Float4 | ~1.9k–22.8k | **Group-scoped aggregate** — near-constant across each consecutive run ("week × department crew"), jumps between plateaus; NOT a lifetime accumulator (corrected Jul 2026, #16) |
 
 **`0x12` + two float32 (9 bytes) — period separator:** both floats ≈2.80
 (sentinel value). These delimit shipping-period blocks.
@@ -124,10 +124,13 @@ Records within a block group into department teams (4 Parts + 5 Assembly
 slots). Records with `f1=f2≈2.80` are idle-slot sentinels (present at week 9,
 filled by week 13).
 
-**Identity**: the pair (Float1, Float2) identifies an operator. All 11
-identities appear byte-identically in both files. Float1 alone is NOT unique —
-0.818824 is shared by two operators with different Float2 values (0.549020 vs
-0.583333).
+**Identity**: the pair (Float1, Float2) identifies an operator — there are
+**11 identities**, all appearing byte-identically in both files. Float1 alone
+is NOT unique — 0.818824 is shared by two operators (different Float2:
+0.549020 vs 0.583333) who sit in *different departments*. Department per
+identity is encoded in the packed-record tag byte (`0x87` = Parts ×4,
+`0x86` = Assembly ×5, `0x82`/`0x84` = variant scheme, likely hired
+operators). Authoritative table: `analysis/xtc/c2_constants_corrected.csv`.
 
 ### Extraction pitfalls (learned the hard way)
 
