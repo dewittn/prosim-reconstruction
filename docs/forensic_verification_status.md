@@ -107,10 +107,10 @@ To calculate actual **DECS→REPT accuracy** (not component accuracy), we would 
 |---------|--------|------------|--------|
 | Training matrix (11×10) | ✅ VERIFIED | 99.8% | XTC files, spreadsheet |
 | Two-component efficiency model | ✅ VERIFIED | 95% | week1.txt analysis |
-| Fixed operator profiles (ops 1-9) | ✅ VERIFIED | 90% | Cross-game XTC analysis |
+| Fixed operator profiles (ops 1-9) | ✅ VERIFIED | 90% | Cross-game REPT analysis + XTC constants (note: both XTC files are the SAME game — see key_discoveries.md #14) |
 | Starting operator assignments | ✅ VERIFIED | 85% | Multiple REPT files |
 | Hired operator randomization (ops 10+) | ⚠️ PARTIAL | 60% | Limited data points |
-| XTC Float2 component meaning | ❓ UNKNOWN | 30% | Hypotheses only |
+| XTC Float2 component meaning | 🟡 PARTIAL | 60% | Fixed-at-hire efficiency-band coefficient (Jul 2026, see #14); exact formula open |
 | Training progression formula | ⚠️ PARTIAL | 65% | Inferred from matrix |
 
 ### Cost System
@@ -390,26 +390,29 @@ VERIFIED_COSTS = {
 
 ### 7. XTC File Float2 Component
 
-**Status**: ❓ UNKNOWN (30% confidence)
+**Status**: 🟡 PARTIAL (60% confidence) — *updated Jul 2026, see `key_discoveries.md` #14*
 
-**Current Understanding**:
-- XTC files store TWO floats per operator after 0x15 delimiter
-- Float1: Correlates with proficiency (scale factor ~1.088)
-- Float2: Purpose unknown
+**Current Understanding** (Jul 2026 re-analysis):
+- XTC operator records are `0x15`-tagged with FOUR floats: [f1, f2, f3, f4]
+- Float1: Fixed per-operator proficiency-like coefficient (the ×1.088 scale is exact only for Op 3; treat as approximate)
+- Float2: **Fixed per-operator coefficient set at hire**, range 0.549–0.678 (one outlier ≈1.01). Not a training-matrix cell; band matches PROSIM's reported "Percent of Efficiency" (54–65%). Interpretation: the quality/yield axis of the two-component model. Exact formula still open.
+- Float3: period-to-date accumulator (resets ~every 4 weeks)
+- Float4: lifetime cumulative accumulator
+- (f1,f2) is the operator identity; f1 alone is not unique
 
-**Hypotheses** (from `docs/xtc_verification_guide.md`):
+**Hypothesis verdicts** (Jul 2026):
 
-| Hypothesis | Prediction | Evidence |
-|------------|------------|----------|
-| A: Quality Tier Factor | Float2 clusters around tier values | Inconclusive |
-| B: Training Level | Float2 changes with training | NOT observed (identical across weeks) |
-| C: Another Fixed Property | Float2 constant per operator | Consistent with data |
-| D: Player Didn't Train | Constant because no training occurred | Plausible |
+| Hypothesis | Verdict |
+|------------|---------|
+| A: Quality Tier Factor | REFUTED (no tier-derived ratio fits) |
+| B: Training Level | REFUTED (fixed across weeks 9→13 of the same game) |
+| C: Another Fixed Property | **CONFIRMED** (constant per operator; efficiency-band valued) |
+| D: Player Didn't Train | Superseded — constancy holds regardless |
 
-**Data Needed to Resolve**:
-1. XTC files from games WITH active training
-2. XTC files from multiple different game instances
-3. Week 1 XTC before any training
+**Data Needed to Fully Resolve**:
+1. A matched XTC + REPT pair from the SAME game (regress f2 against reported efficiency/hours/rejects)
+2. A third XTC save from the instructor game (any other week)
+3. Decoding the XTC packed region (>95% of each file, still unparsed)
 4. Original PROSIM documentation (if found)
 
 **Source Files**:

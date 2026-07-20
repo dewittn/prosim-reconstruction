@@ -35,22 +35,30 @@ Line 24+:   Inventory, orders, demand, performance metrics
 
 ### 3. XTC Files (Game State)
 **Location:** `archive/` (prosim.xtc, prosim1.xtc)
-**Format:** Binary with 0x15 delimiter
+**Format:** Binary, tagged records (corrected July 2026 — see `xtc_verification_guide.md` for the full grammar)
 
 #### Header Structure (first 87 bytes)
 | Byte | Meaning |
 |------|---------|
-| 9 | Number of operators |
-| 40 | Max simulation weeks (24) |
-| 44 | Week-related counter |
+| 9 | **Week number** (9 / 13) — NOT operator count (corrected Jul 2026; actual roster from REPT12-14 is 8-9 operators, never 13) |
+| 40 | Max simulation weeks (24) — sits in a static config block, byte-identical across saves |
+| 44 | Unknown (reads 9 / 8; the old "week counter" claim is refuted — it doesn't track week) |
 
 #### Record Structure
-Records are delimited by `0x15` (ASCII NAK). Key record types:
+The body (offset 78 to ~912/~1355) contains two tagged record types; the
+remaining >95% of each file is a high-entropy packed region (unanalyzed log).
 
-**Operator Records (16 bytes):**
+**Operator Records — tag `0x15` + 16 bytes (17 total):**
 ```
-[Efficiency:float32] [Proficiency:float32] [Unknown:float32] [Cumulative:float32]
+[f1:float32] [f2:float32] [f3:float32] [f4:float32]
+f1 = fixed proficiency-like coefficient (per-operator constant)
+f2 = fixed second coefficient, ~0.55-0.68 (per-operator constant)
+f3 = period-to-date accumulator (resets ~every 4 weeks)
+f4 = lifetime cumulative accumulator (monotonically grows)
 ```
+
+**Period Separators — tag `0x12` + 8 bytes:** two float32 ≈ 2.80 (sentinel);
+these delimit shipping-period blocks within the operator log.
 
 ## Verification Procedures
 
@@ -119,19 +127,24 @@ for seg in segments:
 | 85.1% | Tier 5, Level B (85%) | 0.1% off |
 | 103.1% | Tier 0, Level F (103%) | 0.1% off |
 
-### 3. Verify Operator Count
+### 3. Verify Week Number
+
+> **Corrected July 2026**: byte 9 is the **week number**, not the operator
+> count. The two happened to coincide (9/9) in prosim.xtc, which caused the
+> original misreading. REPT12-14 show the actual roster stayed at 8-9
+> operators; it never reached 13.
 
 **Procedure:**
 ```python
 with open('prosim.xtc', 'rb') as f:
     data = f.read()
 
-print(f"Operator count (byte 9): {data[9]}")  # Should be 9
+print(f"Week number (byte 9): {data[9]}")  # Should be 9
 
 with open('prosim1.xtc', 'rb') as f:
     data = f.read()
 
-print(f"Operator count (byte 9): {data[9]}")  # Should be 13 (hired 4 more)
+print(f"Week number (byte 9): {data[9]}")  # Should be 13
 ```
 
 ### 4. Verify Training Matrix from Spreadsheet

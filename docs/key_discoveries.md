@@ -70,6 +70,8 @@
 | 11 | [ProsimTable.xls Evolution Traced](#11-prosimtablexls-evolution-traced) | Dec 2025 | Archive insight |
 | 12 | [PROSIM VII Doctoral Thesis Found (1992)](#12-prosim-vii-doctoral-thesis-found-1992) | Dec 2025 | Historical context |
 | 13 | [Two Separate PROSIM Product Lines Identified](#13-two-separate-prosim-product-lines-identified) | Dec 2025 | **CRITICAL** - Changes project understanding |
+| 14 | [XTC Format Fully Re-Analyzed](#14-xtc-format-fully-re-analyzed--same-game-tagged-grammar-float2-bounded) | Jul 2026 | Critical - Corrects #6; same-game saves; Float2 bounded |
+| 15 | [XTC Packed Region Structure Decoded](#15-xtc-packed-region-structure-decoded) | Jul 2026 | Critical - The unread 95% of the saves has a mapped structure |
 
 ---
 
@@ -329,15 +331,22 @@ The `.xtc` files (prosim.xtc, prosim1.xtc) are **PROSIM game state save files** 
 
 ### Evidence
 
-**File structure decoded**:
+> **UPDATE (Jul 2026)**: See Discovery #14 — a full re-analysis corrected
+> several claims below. Byte 9 is the **week number**, not operator count
+> (the game never had 13 operators). Byte 44 is NOT a week counter. 0x15 is
+> a record *tag*, not a delimiter, and the files are same-game saves whose
+> operator log grows in shipping-period blocks, not weekly snapshots.
+
+**File structure decoded** (as corrected by Discovery #14):
 ```
 Header (87 bytes):
-  Byte 9:  Number of operators
+  Byte 9:  Week number (9 / 13)
   Byte 40: Max simulation weeks (24)
-  Byte 44: Week counter
+  Byte 44: Unknown (NOT a week counter)
 
-Records delimited by 0x15 (ASCII NAK):
-  [Float1:4 bytes][Float2:4 bytes][?:4 bytes][?:4 bytes]
+Body records, tag byte + payload:
+  0x15 + [Float1:4][Float2:4][Float3:4][Float4:4]  (operator record)
+  0x12 + [~2.80:4][~2.80:4]                        (period separator)
 ```
 
 **Float1 values correlate with proficiency** (scale factor 1.088):
@@ -350,14 +359,15 @@ XTC Float1 × 1.088 ≈ Derived Proficiency
 ```
 
 **File size indicates game progress**:
-- prosim.xtc (18,963 bytes) = Week 9, 9 operators
-- prosim1.xtc (29,088 bytes) = Week 13, 13 operators (4 hired)
+- prosim.xtc (18,963 bytes) = Week 9 save
+- prosim1.xtc (29,088 bytes) = Week 13 save (same game, later point — see #14)
+- File grows ~2,000-2,100 bytes per game week (packed log region)
 
 ### Implications
 
 1. **New validation source**: Can verify proficiency model against binary data
-2. **Weekly snapshots**: File grows as game progresses (state history)
-3. **Float2 unknown**: Second float's purpose still undetermined
+2. **Growing log**: File grows as game progresses (shipping-period blocks, not weekly snapshots — see #14)
+3. **Float2 partially resolved**: See Discovery #14 — a fixed per-operator efficiency/quality coefficient
 4. **Instructor data**: These are from Professor Rourke's computer (instructor-side files)
 5. **Not used in 2004**: All original reverse-engineering was done without this data - the training matrix and efficiency formulas were derived purely from REPT/DECS observation
 6. **Obtained in 2005**: Files grabbed during senior project reconstruction attempt, sat undecoded for 20 years
@@ -854,14 +864,132 @@ MIZE LINEAGE (Academic) - UNRELATED
 
 ---
 
+## 14. XTC Format Fully Re-Analyzed — Same Game, Tagged Grammar, Float2 Bounded
+
+**Date Discovered**: July 2026
+
+**Category**: Formula Correction / Format Understanding
+
+### The Discovery
+
+A systematic multi-agent re-analysis of `prosim.xtc` / `prosim1.xtc` (byte-accounting parse, cross-file diffing, REPT cross-reference) corrected several prior claims and established: **both files are saves of the SAME game** at weeks 9 and 13, the operator log is a **growing tagged record structure** (not weekly snapshots or a fixed table), and **Float2 is a fixed per-operator coefficient** in the 0.55–0.68 band (one outlier ≈1.01), complementary to Float1.
+
+### Evidence
+
+**Corrected file layout** (verified by exhaustive byte-accounting parse; scripts in `analysis/xtc/`):
+
+| Region | prosim.xtc | prosim1.xtc | Content |
+|--------|-----------|-------------|---------|
+| Preamble | 0–16 | 0–16 | Byte 9 = week number; unknown counters at bytes 1-2, 6 (+5/wk), 8 (+26/wk) |
+| Header TLV | 16–78 | 16–78 | ASCII-digit-tagged records ('5','2','3','8'); '8' holds a +Inf placeholder |
+| Operator log | 78–912 | 78–1355 | `0x15`+4×float32 operator records; `0x12` period separators |
+| Packed region | 912–EOF | 1355–EOF | >95% of file; high-entropy per-week log, unparsed (see below) |
+
+**Key corrections to prior claims**:
+
+| Prior claim | Verdict | Evidence |
+|-------------|---------|----------|
+| Byte 9 = number of operators | **REFUTED** | REPT12-14 rosters show 8-9 active operators, never 13. Byte 9 = week number; week and claimed headcount coincidentally matched (9/9, 13/13) |
+| Byte 44 = week counter | **REFUTED** | Reads 9 (wk9 file) and 8 (wk13 file) |
+| Byte 40 = max weeks (24) | **CONFIRMED** | 0x18 in a byte-identical static config block in both files |
+| 0x15 = record delimiter | **CORRECTED** | 0x15 is a record *tag* (17-byte records); irregular gaps were 0x15 bytes inside float mantissas plus interleaved 9-byte `0x12` separator records |
+| Files = weekly snapshots | **REFUTED** | Operator log has 48 records in runs [45,3] (wk9) vs 73 in runs [44,7,9,13] (wk13) — blocks track ~4-week shipping periods, not weeks |
+| Float1 × 1.088 = proficiency | **WEAKENED** | Exact only for Op 3 (1.0312×1.088=1.122); does not reproduce the other documented proficiencies. Float1 is a fixed proficiency-*like* per-operator constant |
+| Two files from different games | **REFUTED** | All 11 (f1,f2) identities appear byte-identically in both files, and the lifetime accumulator (Float4) advances for every operator wk9→wk13 — same game, later save |
+
+**New understanding of the four floats** (moderate confidence):
+
+- **Float1**: fixed per-operator proficiency/speed coefficient (hire constant, does not change with training)
+- **Float2**: fixed per-operator second coefficient, range 0.549–0.678 (outlier 1.0145). Not a training-matrix cell; best-fit rationals share no common denominator, so it is a *computed* value stored at hire. Its band coincides with PROSIM's reported "Percent of Efficiency" range (54–65% in REPT data). Interpretation: the quality/yield axis of the two-component operator model. Exact formula still open.
+- **Float3**: period-to-date accumulator — resets every ~4 weeks (sawtooth visible when ordered by Float4); bounded ~16–18k in both saves
+- **Float4**: lifetime cumulative accumulator — grows monotonically for every operator between the two saves (e.g. expert: 12,578 → 22,775 ≈ 1,752/week)
+- One Float1 value (0.818824) is shared by **two different operators** with different Float2 values (0.549020 / 0.583333) — (f1,f2) is the identity, not f1 alone
+- Records group into department teams (4 Parts + 5 Assembly slots); `f1=f2≈2.80` records are idle-slot sentinels, present at week 9 and filled by week 13
+
+**The unparsed 95%**: the packed region grows ~2,000–2,100 bytes/game-week in both files, resists standard decodings (not fixed-width bit-packing, RLE, or deflate), but contains a 66-byte block repeated identically 3×/7× and a 414-byte block 4×/6× (counts scale with weeks), each preceded by the same 16-byte prefix and followed by a monotonically increasing counter — consistent with a custom-packed per-week state log. This is now the largest untapped data source in the archive.
+
+### Implications
+
+1. **The instructor game's operator history is recoverable**: full extraction with block structure is in `analysis/xtc/synth_full_table.csv` (125 records)
+2. **Float2 hypothesis space narrowed**: it is fixed-at-hire and efficiency-band-valued; Hypotheses A/B from `xtc_verification_guide.md` (tier factor / training level) are effectively dead — it does not change across 4 game weeks
+3. **Shipping-period (~4-week month) structure exists in the engine** — matches the "Demand This Month" concept in reports and should inform our simulation's month handling
+4. **Validation caution**: any prior analysis that used the naive 0x15-scan extraction (value-filtered float pairs) sampled an incomplete record set
+5. **Next unlock is the packed region**: decoding it would likely yield authoritative per-week state for 13 weeks of a real game — the matched DECS+REPT-equivalent data the project has been missing
+
+### References
+
+- `docs/xtc_verification_guide.md` (updated with corrected grammar)
+- `analysis/xtc/` (all analysis scripts + `synth_full_table.csv`, `quads_history.csv`)
+- `archive/data/prosim.xtc`, `archive/data/prosim1.xtc`
+
+---
+
+## 15. XTC Packed Region Structure Decoded
+
+**Date Discovered**: July 2026
+
+**Category**: Format Understanding / New Data Source
+
+### The Discovery
+
+The high-entropy "packed region" (>95% of each XTC file, flagged as undecoded in Discovery #14) is a **numbered sequence of per-entity state records aligned 1:1 with the operator log**. Each record's payload is an identity-keyed template with a dynamic queue-like suffix and an event-tail marker. The macro structure is now fully mapped; payload internals are partially decoded.
+
+### Evidence
+
+**Record framing (high confidence)**: Records are marked `[n][0x0a]` with n incrementing. Complete gap-free chains: prosim.xtc n=1–49 (first marker at offset 1350), prosim1.xtc n=1–76 (first at 2111). These counts equal the body-log entry counts exactly (48 `0x15` + 1 `0x12` = 49; 73 + 3 = 76), and the alignment is verified: stripping the 2-byte marker, identical payload contents map to the same body (f1,f2) identity with a **100% match rate** (54/54 same-content pairs in file a, 179/179 in file b).
+
+**Identity-keyed templates (high confidence)**: Only ~12 distinct identities exist (consistent with 9 operator/machine slots — 4 Parts + 5 Assembly — plus 3 products). The same identity produces byte-identical payloads across different weeks and different f3/f4 accumulator values — the payload does NOT encode the body floats (searched; never found). Payload sizes cluster per identity (88–414 bytes core).
+
+**Payload anatomy (medium-high confidence)**:
+```
+[n][0x0a]                          record marker
+[varint][varint]                   two LEB128 constants per identity
+                                   (e.g. 410/327, 304/212 — meaning unknown)
+[0x86 or 0x87]                     tag byte
+[u16be][u16be]                     paired values, usually consecutive (+1)
+[dense body...]                    identity template (repeats when unchanged)
+[transient suffix]                 grows/shrinks between occurrences (queue)
+[event tail][0x17]                 decoration tokens 0x0d/0x1a/0x09,
+                                   prepended per event; 0x17 = sentinel
+```
+
+**Dynamics (from consecutive same-identity diffs)**:
+- Most identities: stable core, changes are pure append/remove at the end — e.g. one identity goes 248 → 927 → back to exactly 248 bytes (enqueue/dequeue behavior)
+- One identity oscillates between exactly two full templates (307 ↔ 339 bytes) repeatedly — alternating-assignment behavior (machine/product changeover hypothesis)
+- Occasional transient spikes (637–2,405 bytes) appear and vanish — discrete events
+- The `f1=f2≈2.80` identities carry genuinely variable-length payloads with negative f3 — best hypothesis: **product records (X/Y/Z)** with order/demand queues
+
+**Separator records**: all four body `0x12` separators (across both files) carry the event-tail decoration `0x0d _ 0x1a _ 0x09 _ 0x17` at payload end — a deterministic structural signature.
+
+**Cross-file behavior (important)**: file b is a **full re-serialization**, not an append of file a — only 2/49 record positions have identical payloads (coincidence), and body identities at the same n match only ~8% between files. Record number n is a within-save key only. The body log order is therefore NOT a stable chronological history across saves.
+
+**Preamble**: 438 bytes (a) / 756 bytes (b) before record 1 remain undecoded — dense varint-like data, not a sparse bitfield; b's does not contain a's.
+
+### Implications
+
+1. **The packed region is no longer a black box** — record boundaries, entity attribution, and change events are all extractable (`analysis/xtc/map_alignment.csv`)
+2. **Per-entity event history is recoverable in principle**: change points in an identity's template sequence mark discrete game events (training/reassignment/repair candidates); the transient suffixes are queues whose contents are the next decode target
+3. **The 9-slot + 3-product structure** visible here reframes the "operator records" as likely machine/slot records with assigned-operator constants — relevant to how the reconstruction models assignments
+4. **The re-serialization finding constrains save semantics**: PROSIM rebuilt the whole state table each save (with dynamic ordering), so cross-save byte comparisons are only meaningful per-identity, never positional
+5. Remaining unknowns: queue/suffix contents, the preamble, the two per-identity head varints, the event-tail token semantics, and the cross-save ordering rule
+
+### References
+
+- `docs/xtc_verification_guide.md` (packed-region section updated)
+- `analysis/xtc/` — `lead_tiling.py`, `map_*.py` + `map_alignment.csv`, `pay_*.py`
+- Discovery #14 (grammar and float model this builds on)
+
+---
+
 ## Future Discoveries Needed
 
-### High Priority (Awaiting Textbook)
+### High Priority
 
-1. **PROSIM III Textbook arrival** - 224-page manual may resolve all unknowns below
-2. **XTC Float2 meaning**: What does the second float represent?
+1. **Decode XTC packed-record payload internals** - macro structure solved (see #15); remaining: queue/suffix contents, the 438/756-byte preamble, per-identity head varints, event-tail token semantics
+2. **XTC Float2 exact formula**: Now known to be a fixed-at-hire efficiency-band coefficient (see #14); exact computation still open
 3. **Machine repair probability**: Exact formula and maintenance budget effect
 4. **Starting company state**: What are Week 0 values?
+5. **PROSIM III Textbook** - Amazon order never arrived (as of Jul 2026); authors/archives not yet contacted (see #13 action items)
 
 ### Medium Priority
 
@@ -887,6 +1015,8 @@ MIZE LINEAGE (Academic) - UNRELATED
 | Dec 2025 | Added #12: PROSIM VII thesis (1992) found - establishes academic lineage |
 | Dec 2025 | **MAJOR UPDATE** - Added #13: Two separate PROSIM product lines identified. Updated #12 to clarify Mize lineage is NOT our ancestor. PROSIM III (Greenlaw, 1969-1996) is our actual target. |
 | Dec 2025 | Added research report findings to #13: Living co-author contact (Hottenstein), Instructor's Manual ISBN, ABSEL archives, academic citations. |
+| Jul 2026 | Added #14: Full XTC re-analysis (multi-agent). Corrected #6 (byte 9 = week number, not operator count; log grows in shipping-period blocks, not weekly snapshots; same-game saves). Float2 bounded to fixed per-operator efficiency coefficient. |
+| Jul 2026 | Added #15: Packed region structure decoded (numbered records 1:1 with body log, identity-keyed templates, queue suffixes, event tails). Archive sweep confirmed no third save / no original software; third DECS14 variant captured as `DECS14_Aroot.DAT`. |
 
 ---
 

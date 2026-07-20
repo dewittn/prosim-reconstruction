@@ -1,6 +1,26 @@
 # XTC Verification Guide
 
-This document provides a reproducible methodology for verifying the two-component operator efficiency model against PROSIM XTC game state files.
+This document describes the binary format of the PROSIM XTC game-state files and the methodology used to verify the two-component operator efficiency model against them.
+
+> **Major revision (July 2026)**: A multi-agent forensic re-analysis (exhaustive
+> byte-accounting parse, cross-file diffing, REPT cross-reference) corrected
+> several claims in the original December 2025 analysis. Key changes:
+>
+> - Byte 9 of the header is the **week number**, not the operator count
+> - `0x15` is a record **tag**, not a delimiter; a second record type (`0x12`
+>   period separators) exists and the original extraction missed all records
+>   after the first separator
+> - The two files are saves of the **same game** (weeks 9 and 13), and the
+>   operator log **grows** in ~4-week shipping-period blocks
+> - Float3/Float4 are period-to-date and lifetime accumulators respectively
+> - Float2 is a **fixed per-operator coefficient** (0.55–0.68 band); the
+>   "training level" and "tier factor" hypotheses are dead
+> - Over 95% of each file is a "packed region" — its structure was
+>   subsequently decoded (see Discovery #15 and the packed-region section
+>   below); payload internals remain partially open
+>
+> See `key_discoveries.md` Discovery #14 for the full evidence trail.
+> Analysis scripts are preserved in `analysis/xtc/`.
 
 ## Overview
 
@@ -12,9 +32,11 @@ Combined_Efficiency = Time_Efficiency × Proficiency
 
 Where:
 - **Time Efficiency**: Determined by training matrix lookup `TRAINING_MATRIX[tier][level]`
-- **Proficiency**: Fixed multiplier assigned at operator hire (range: ~0.83-1.12)
+- **Proficiency**: Fixed multiplier assigned at operator hire
 
-This guide explains how to verify these findings using the original XTC game state files.
+The XTC files store two fixed per-operator constants (Float1, Float2) plus two
+accumulators (Float3, Float4), providing independent binary evidence for the
+two-component model.
 
 ---
 
@@ -24,388 +46,234 @@ This guide explains how to verify these findings using the original XTC game sta
 
 | File | Location | Purpose |
 |------|----------|---------|
-| `prosim.xtc` | `archive/` | Week 9 game save |
-| `prosim1.xtc` | `archive/` | Week 13 game save |
+| `prosim.xtc` | `archive/data/` | Week 9 save (instructor's game) |
+| `prosim1.xtc` | `archive/data/` | Week 13 save (same game, later point) |
 | `ProsimTable.xls` | `archive/spreadsheets/` | Reverse-engineered spreadsheet |
 | `Operators-Table 1.csv` | `archive/spreadsheets/ProsimTable CVS Export/` | Operator efficiency data |
+| REPT12/13/14.DAT | `archive/data/` | Ground-truth rosters (student games) |
 
 ### Required Knowledge
 
-- IEEE 754 floating-point format (little-endian)
+- IEEE 754 float32, little-endian
 - Basic Python/hex analysis
-- Understanding of the training matrix in `prosim/config/defaults.py`
+- The training matrix in `prosim/config/defaults.py`
 
 ---
 
-## Verification Steps
+## File Format (verified July 2026)
 
-### Step 1: Extract Float Pairs from XTC Files
+Both files share this layout:
 
-The XTC files contain operator data encoded as pairs of 4-byte IEEE 754 floats, delimited by `0x15` bytes.
+| Region | prosim.xtc | prosim1.xtc | Content |
+|--------|-----------|-------------|---------|
+| Preamble | 0–16 | 0–16 | Fixed-width fields (see below) |
+| Header TLV | 16–78 | 16–78 | ASCII-digit-tagged records |
+| Operator log | 78–912 | 78–1355 | `0x15` operator records + `0x12` separators |
+| Packed region | 912–EOF | 1355–EOF | High-entropy per-week log, **undecoded** |
+
+### Preamble fields
+
+| Offset | prosim.xtc | prosim1.xtc | Meaning |
+|--------|-----------|-------------|---------|
+| 0 | 0x00 | 0x00 | constant |
+| 1–2 (u16 LE) | 38031 | 58268 | unknown (checksum theory tested and refuted) |
+| 3–5 | `01 1d 04` | `01 1d 04` | constant (version/magic?) |
+| 6 | 234 | 254 | unknown counter (+5/week) |
+| 7 | 10 | 10 | constant |
+| 8 | 132 | 236 | unknown counter (+26/week) |
+| **9** | **9** | **13** | **WEEK NUMBER** (confirmed via REPT cross-reference) |
+| 40 | 24 | 24 | max simulation weeks, inside static config block (bytes 34–42) |
+| 44 | 9 | 8 | unknown — NOT a week counter (old claim refuted) |
+
+The old "byte 9 = number of operators" claim arose because week number and
+assumed headcount coincided in both files (9/9, 13/13). REPT12–14 show the
+actual roster held at 8–9 active operators and never reached 13.
+
+### Header TLV records (offsets 16–78)
+
+Tag (1 ASCII-digit byte) + length + payload. Tags `'5'`, `'2'`, `'3'`, `'8'`.
+Two record pairs are byte-identical between the two saves but appear in
+**exactly reversed order** — a recency/sort reordering on save whose rule is
+undetermined (needs a third save to disambiguate). Tag `'8'` contains a
+float32 `+Infinity` placeholder. These tag bytes do NOT recur as tags
+elsewhere in the file; they are header-local framing.
+
+### Operator log records (offset 78 → 912/1355)
+
+Two record types only:
+
+**`0x15` + four float32 LE (17 bytes) — operator record:**
+
+| Field | Range | Meaning (confidence) |
+|-------|-------|----------------------|
+| Float1 | 0.64–1.03 | Fixed per-operator proficiency/speed coefficient (medium-high) |
+| Float2 | 0.549–0.678 (one outlier ≈1.0145) | Fixed per-operator second coefficient — quality/yield axis (medium) |
+| Float3 | 0–~18k | Period-to-date accumulator, resets ~every 4 weeks (medium) |
+| Float4 | ~1.9k–22.8k | Lifetime cumulative accumulator, monotonically grows (medium-high) |
+
+**`0x12` + two float32 (9 bytes) — period separator:** both floats ≈2.80
+(sentinel value). These delimit shipping-period blocks.
+
+Record counts: prosim.xtc = 48 records in runs `[45, 3]`;
+prosim1.xtc = 73 records in runs `[44, 7, 9, 13]`. The log grows as the game
+advances; blocks correspond to ~4-week shipping periods (2 → 4 boundaries
+between week 9 and week 13), matching the "Demand This Month" concept in the
+weekly reports.
+
+Records within a block group into department teams (4 Parts + 5 Assembly
+slots). Records with `f1=f2≈2.80` are idle-slot sentinels (present at week 9,
+filled by week 13).
+
+**Identity**: the pair (Float1, Float2) identifies an operator. All 11
+identities appear byte-identically in both files. Float1 alone is NOT unique —
+0.818824 is shared by two operators with different Float2 values (0.549020 vs
+0.583333).
+
+### Extraction pitfalls (learned the hard way)
+
+1. **Do not scan for 0x15 bytes naively** — 0x15 occurs inside float mantissas
+   of genuine records and throughout the packed region. Walk the file from
+   offset 87 with tag dispatch: `0x15` → consume 17 bytes, `0x12` → consume
+   9 bytes, anything else → end of log (both files terminate at byte `0x1e`).
+2. **Do not value-filter floats** (the original `0.1 < f < 2.0` filter
+   discarded Float3/Float4 and all records after the first separator).
+3. Reference extraction: `analysis/xtc/synth_full_table.csv` (all 125
+   records, both files, with block indices and identity labels).
 
 ```python
-import struct
-
-def extract_operator_floats(filepath):
-    """Extract potential operator float pairs from XTC file."""
-    with open(filepath, 'rb') as f:
-        data = f.read()
-
-    pairs = []
-    for i, byte in enumerate(data):
-        if byte == 0x15 and i + 9 <= len(data):
-            try:
-                float1 = struct.unpack('<f', data[i+1:i+5])[0]
-                float2 = struct.unpack('<f', data[i+5:i+9])[0]
-
-                # Filter for reasonable efficiency values
-                if 0.1 < float1 < 2.0 and 0.1 < float2 < 2.0:
-                    pairs.append((round(float1, 4), round(float2, 4)))
-            except:
-                pass
-
-    return pairs
-
-# Extract from both files
-pairs_week9 = extract_operator_floats('prosim.xtc')
-pairs_week13 = extract_operator_floats('prosim1.xtc')
+def walk_operator_log(data, start=87):
+    """Correct extraction: tag-dispatch walk, no value filtering."""
+    import struct
+    records, blocks, block = [], [], 0
+    i = start
+    while i < len(data):
+        tag = data[i]
+        if tag == 0x15:
+            f1, f2, f3, f4 = struct.unpack('<4f', data[i+1:i+17])
+            records.append((block, i, f1, f2, f3, f4))
+            i += 17
+        elif tag == 0x12:
+            block += 1
+            i += 9
+        else:
+            break  # end of structured region (0x1e in both files)
+    return records, i  # i = boundary of packed region
 ```
 
-**Expected Result**:
-- Both files should contain the same 11 unique float pairs
-- This confirms the values are fixed (not training-dependent)
+### The packed region (912/1355 → EOF) — structure decoded July 2026
 
-### Step 2: Verify Week Numbers
+Over 95% of each file. Structure (see `key_discoveries.md` #15 for evidence):
 
-The XTC files encode the week number at offset 9:
+- **Preamble** (a: 912–1350, b: 1355–2111): undecoded dense varint-like data;
+  not shared between saves.
+- **Numbered records**: marker `[n][0x0a]`, n = 1..49 (a) / 1..76 (b),
+  complete gap-free chains. **Aligned 1:1 with the operator-log entries**
+  (operator records and separators, in order) — verified at 100% identity
+  match rate on payload contents.
+- **Payload anatomy**: `[n][0x0a]` + two LEB128 varints (per-identity
+  constants, meaning unknown) + tag `0x86`/`0x87` + two big-endian uint16
+  (usually consecutive values) + dense identity template + transient
+  queue-like suffix + event-tail tokens (`0x0d`/`0x1a`/`0x09`) ending in
+  sentinel `0x17`.
+- Payloads are **identity-keyed templates**: byte-identical for the same
+  (f1,f2) identity while its state is unchanged, regardless of week or
+  accumulator values (the body floats are NOT encoded in the payload).
+  Changes between occurrences are append/remove at the payload end
+  (queue behavior), template alternation (assignment changeover), or
+  transient spikes (event processing). All body `0x12` separators carry the
+  event-tail decoration — a deterministic signature.
+- **Cross-save**: each save is a full re-serialization with dynamic ordering;
+  record number n is a within-save key only. Compare per-identity, never
+  positionally.
 
-```python
-def get_xtc_week(filepath):
-    """Extract week number from XTC file."""
-    with open(filepath, 'rb') as f:
-        data = f.read()
-    return data[9]
+Chain-walk extraction: for n = 1, 2, 3…, find the earliest offset past the
+previous marker where `byte[i] == n and byte[i+1] == 0x0a`. Reference
+implementation: `analysis/xtc/map_common.py`; full alignment table:
+`analysis/xtc/map_alignment.csv`.
 
-# Expected: prosim.xtc = 9, prosim1.xtc = 13
-```
+**Remaining unknowns**: queue/suffix contents, preamble encoding, the two
+per-identity head varints, event-tail token semantics, cross-save ordering
+rule.
 
-**Verification**: Week numbers should differ, confirming these are different save points.
+---
 
-### Step 3: Compare Float1 to Derived Proficiency
+## Verification: Float1 vs Proficiency
 
-Our model derived proficiency values from Week 16 spreadsheet analysis:
+The original headline claim was `Float1 × 1.088 ≈ proficiency`. Status after
+re-analysis: **exact for Operator 3 only** (1.03125 × 1.088 = 1.1220 vs
+documented 1.122); the same scale factor does not reproduce the other derived
+proficiencies. Treat Float1 as a proficiency-*like* fixed constant whose exact
+relationship to the REPT-derived values is still open.
 
 ```python
 # Proficiency values derived from ProsimTable.xls Week 16 data
-# Formula: Proficiency = Actual_Efficiency / Estimated_Efficiency
-DERIVED_PROFICIENCY = {
-    1: 1.039,  # 116.35% / 112%
-    2: 1.097,  # 118.45% / 108%
-    3: 1.122,  # 132.40% / 118% (EXPERT)
-    4: 1.093,  # 118.05% / 108%
-    5: 1.028,  # 111.05% / 108%
-    6: 0.836,  # 98.62% / 118%
-    7: 0.934,  # 110.25% / 118%
-    8: 0.850,  # Estimated
-    9: 0.900,  # Estimated
-}
-
-# XTC float1 values (sorted)
-XTC_FLOAT1 = [0.6397, 0.7751, 0.8074, 0.8093, 0.8188, 0.8509, 0.9086, 0.9667, 1.0192, 1.0312]
-
-# Scale factor to convert XTC to our model
-SCALE_FACTOR = 1.088
-
-# Verification
-for f1 in XTC_FLOAT1:
-    scaled = f1 * SCALE_FACTOR
-    closest_op = min(DERIVED_PROFICIENCY.items(), key=lambda x: abs(x[1] - scaled))
-    error = abs(scaled - closest_op[1])
-    print(f"XTC {f1:.4f} × {SCALE_FACTOR} = {scaled:.4f} → Op {closest_op[0]} ({closest_op[1]}) error={error:.4f}")
-```
-
-**Expected Result**:
-- `1.0312 × 1.088 = 1.1219` should match Op 3's proficiency of `1.122` (error < 0.001)
-- Most operators should have error < 0.05
-
-### Step 4: Verify Float Consistency Across Saves
-
-```python
-unique_pairs_week9 = set(pairs_week9)
-unique_pairs_week13 = set(pairs_week13)
-
-# Should be identical
-assert unique_pairs_week9 == unique_pairs_week13, "Float pairs should be identical across saves"
-print(f"Common pairs: {len(unique_pairs_week9 & unique_pairs_week13)}")
-print(f"Only in Week 9: {unique_pairs_week9 - unique_pairs_week13}")
-print(f"Only in Week 13: {unique_pairs_week13 - unique_pairs_week9}")
-```
-
-**Expected Result**: All pairs should be common to both files.
-
-### Step 5: Cross-Reference with Spreadsheet Data
-
-Load the CSV export and verify efficiency calculations:
-
-```python
-import csv
-
-# From Operators-Table 1.csv (Week 16 data)
-# Columns: Operator, Actual Efficiency, Estimated Efficiency (from training matrix)
-with open('archive/spreadsheets/ProsimTable CVS Export/Operators-Table 1.csv') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        op_id = int(row['Operator'])
-        actual = float(row['Actual Efficiency'].rstrip('%')) / 100
-        estimated = float(row['Estimated Efficiency'].rstrip('%')) / 100
-
-        # Derived proficiency = actual / estimated
-        proficiency = actual / estimated
-        print(f"Op {op_id}: {actual:.4f} / {estimated:.4f} = {proficiency:.4f}")
-```
-
----
-
-## Verification Checklist
-
-| Check | Expected | Status |
-|-------|----------|--------|
-| Float pairs identical across Week 9 and Week 13 | Yes | |
-| XTC float1 × 1.088 ≈ derived proficiency | Within 5% | |
-| Op 3 has highest float1 value (1.0312) | Yes | |
-| Op 6 has lowest float1 value (~0.64) | Yes | |
-| 11 unique float pairs found | Yes | |
-| Week numbers differ (9 vs 13) | Yes | |
-
----
-
-## Eliminating Float2 Uncertainty
-
-### Current Understanding
-
-- **Float1**: Strongly correlates with proficiency (scale factor 1.088)
-- **Float2**: Unknown component, possibly tier-related or another fixed property
-
-### Additional Data Needed
-
-To definitively determine what Float2 represents, we need:
-
-#### 1. XTC Files with Varied Training Levels
-
-**What**: XTC saves from a game where operators were actively trained at different points.
-
-**Why**: If Float2 represents training progress, it should vary when operators have different training levels. If it remains constant like Float1, it's another fixed property.
-
-**How to obtain**:
-- Play PROSIM and create saves at weeks 1, 5, 10, 15
-- Train different operators at different weeks
-- Compare Float2 values across saves
-
-#### 2. XTC Files from Multiple Game Instances
-
-**What**: XTC files from completely different game runs (not just different weeks of the same game).
-
-**Why**: This would reveal whether Float1/Float2 are:
-- Randomly generated per game (like our proficiency model)
-- Fixed across all games (hardcoded starting values)
-- A combination (fixed for ops 1-9, random for hired ops 10+)
-
-**How to obtain**:
-- Start multiple new games in PROSIM
-- Save immediately at Week 1
-- Compare float values
-
-#### 3. Week 1 XTC with Known Initial State
-
-**What**: An XTC save from Week 1 before any training or production.
-
-**Why**: Would show the "baseline" values before any game progression, helping isolate what Float2 represents at game start.
-
-**Expected pattern if Float2 = training factor**:
-- Week 1: Float2 should be ~0.20-0.22 (training level 0)
-- Week 13: Float2 should be higher if training occurred
-
-**Expected pattern if Float2 = fixed property**:
-- Week 1 and Week 13 Float2 should be identical
-
-#### 4. PROSIM Source Code or Documentation
-
-**What**: Original PROSIM III source code or technical documentation.
-
-**Why**: Would definitively explain the data structures and formulas.
-
-**Where to look**:
-- PROSIM vendor (if still exists)
-- Academic archives from 2004-era coursework
-- Instructor materials from MGMT475 course
-
-#### 5. Controlled Experiment Data
-
-**What**: A systematic play-through recording decisions and outcomes.
-
-**Format needed**:
-```
-Week | Operator | Training Decision | Hours Worked | Production | Rejects
------|----------|-------------------|--------------|------------|--------
-1    | 3        | No training       | 40           | 1535       | 274
-2    | 3        | Sent to training  | 0            | 0          | 0
-3    | 3        | Working           | 40           | 1680       | 290
-```
-
-**Why**: Could calculate actual efficiency per week and correlate with training progression to reverse-engineer the Float2 component.
-
----
-
-## Hypotheses to Test
-
-### Hypothesis A: Float2 = Quality Tier Factor
-
-**Prediction**: Float2 values should cluster around tier-related values.
-
-| Tier | Expected Float2 (if max efficiency / 2) |
-|------|----------------------------------------|
-| 0 | ~0.55 (109% / 2) |
-| 5 | ~0.55 (109% / 2) |
-| 9 | ~0.60 (120% / 2) |
-
-**Test**: Compare Float2 distribution to tier assignments.
-
-### Hypothesis B: Float2 = Normalized Training Level
-
-**Prediction**: Float2 should correlate with training level at time of save.
-
-**Test**: Need XTC from game WITH active training to see if Float2 changes.
-
-### Hypothesis C: Float2 = Another Fixed Property
-
-**Prediction**: Float2 is a second fixed multiplier (like "skill" or "quality").
-
-**Test**: Compare Float2 across multiple game instances. If always the same per operator, it's fixed.
-
-### Hypothesis D: Player Didn't Train (Current Hypothesis)
-
-**Prediction**: The constant Float2 values indicate no training progression occurred.
-
-**Supporting evidence**:
-- Float2 identical across Week 9 and Week 13
-- Products (Float1 × Float2) are 42-70%, lower than trained operator efficiency
-- No training cost visible in archived data
-
----
-
-## Automated Verification Script
-
-Save as `verify_xtc.py`:
-
-```python
-#!/usr/bin/env python3
-"""
-XTC Verification Script for PROSIM Two-Component Model
-
-Usage: python verify_xtc.py <path_to_xtc_file> [<path_to_second_xtc>]
-"""
-
-import struct
-import sys
-from pathlib import Path
-
 DERIVED_PROFICIENCY = {
     1: 1.039, 2: 1.097, 3: 1.122, 4: 1.093, 5: 1.028,
     6: 0.836, 7: 0.934, 8: 0.850, 9: 0.900,
 }
-SCALE_FACTOR = 1.088
-
-def extract_floats(filepath):
-    with open(filepath, 'rb') as f:
-        data = f.read()
-
-    week = data[9] if len(data) > 9 else 0
-    pairs = []
-
-    for i, byte in enumerate(data):
-        if byte == 0x15 and i + 9 <= len(data):
-            try:
-                f1 = struct.unpack('<f', data[i+1:i+5])[0]
-                f2 = struct.unpack('<f', data[i+5:i+9])[0]
-                if 0.1 < f1 < 2.0 and 0.1 < f2 < 2.0:
-                    pairs.append((round(f1, 4), round(f2, 4)))
-            except:
-                pass
-
-    return week, pairs
-
-def verify_proficiency_correlation(pairs):
-    unique_f1 = sorted(set(p[0] for p in pairs))
-
-    print("\nProficiency Correlation Check:")
-    print("-" * 60)
-
-    total_error = 0
-    for f1 in unique_f1:
-        scaled = f1 * SCALE_FACTOR
-        closest = min(DERIVED_PROFICIENCY.items(), key=lambda x: abs(x[1] - scaled))
-        error = abs(scaled - closest[1])
-        total_error += error
-        status = "✓" if error < 0.02 else "~" if error < 0.05 else "✗"
-        print(f"  {f1:.4f} × {SCALE_FACTOR} = {scaled:.4f} → Op {closest[0]} ({closest[1]:.3f}) {status}")
-
-    avg_error = total_error / len(unique_f1)
-    print(f"\nAverage error: {avg_error:.4f}")
-    return avg_error < 0.05
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python verify_xtc.py <xtc_file> [<second_xtc_file>]")
-        sys.exit(1)
-
-    file1 = Path(sys.argv[1])
-    week1, pairs1 = extract_floats(file1)
-    unique1 = set(pairs1)
-
-    print(f"=== {file1.name} (Week {week1}) ===")
-    print(f"Unique float pairs: {len(unique1)}")
-
-    if verify_proficiency_correlation(pairs1):
-        print("\n✓ Proficiency correlation VERIFIED")
-    else:
-        print("\n✗ Proficiency correlation FAILED")
-
-    if len(sys.argv) >= 3:
-        file2 = Path(sys.argv[2])
-        week2, pairs2 = extract_floats(file2)
-        unique2 = set(pairs2)
-
-        print(f"\n=== {file2.name} (Week {week2}) ===")
-        print(f"Unique float pairs: {len(unique2)}")
-
-        print(f"\n=== Cross-file Comparison ===")
-        common = unique1 & unique2
-        only1 = unique1 - unique2
-        only2 = unique2 - unique1
-
-        print(f"Common pairs: {len(common)}")
-        print(f"Only in {file1.name}: {len(only1)}")
-        print(f"Only in {file2.name}: {len(only2)}")
-
-        if unique1 == unique2:
-            print("\n✓ Float pairs IDENTICAL across saves (proficiency is fixed)")
-        else:
-            print("\n! Float pairs DIFFER (investigate training progression)")
-
-if __name__ == "__main__":
-    main()
 ```
+
+The training-matrix correlation (XTC values 64.0% → Tier 2 Level A,
+80.7% → Tier 1 Level B, 103.1% → Tier 0 Level F, avg error 0.2%) remains valid
+as evidence that XTC floats live on the training-matrix scale.
+
+---
+
+## Float2 Status
+
+### What is now known (July 2026)
+
+- **Fixed at hire**: identical for every operator across the week-9 and
+  week-13 saves → NOT training progress (old Hypothesis B dead)
+- **Not a training-matrix cell** and not tier-derived via any simple ratio
+  (old Hypothesis A dead): best-fit rationals share no common denominator, so
+  it is a computed value, not a table constant
+- **Range matches PROSIM's "Percent of Efficiency"** band (54–65% in REPT
+  data); the one outlier (≈1.0145) pairs with the also-anomalous f1≈1.0192
+- **Interpretation**: the quality/yield axis of the two-component model —
+  the second fixed operator constant complementing Float1's speed axis
+
+### What would resolve it completely
+
+1. **A matched XTC + REPT pair from the same game** — regress Float2 against
+   scheduled/productive hours, rejects, and reported efficiency
+2. **A third XTC save** from the same game (any other week) — confirms Float4
+   monotonicity, pins the Float3 reset period, disambiguates the header
+   record reordering, and tests the preamble counters (+5/wk, +26/wk)
+3. **Decoding the packed region** — likely contains per-week operator state
+   that would over-determine the formula
+4. **Original documentation** — the PROSIM III textbook (ISBN 978-0256214352)
+   or Instructor's Manual (ISBN 978-0256214369); see `key_discoveries.md`
+   Discovery #13 action items
+
+---
+
+## Reproducing the Analysis
+
+All scripts from the July 2026 re-analysis are in `analysis/xtc/`:
+
+| Prefix | Focus |
+|--------|-------|
+| `grammar_*` | Region boundaries, record grammar, exhaustive byte-accounting parse |
+| `quads_*` | Quad extraction, identity mapping, time series |
+| `tail_*` | Packed-region statistics, repeated-block discovery |
+| `header_*` | Preamble/TLV field map, checksum tests, claim adjudication |
+| `synth_*` | Full-table re-extraction (`synth_full_table.csv`), Float2/block analysis |
+| `lead_tiling.py` | Packed-region repeat/literal tiling (found the numbered-record structure) |
+| `map_*` | Packed↔body alignment (`map_common.py` = reference walkers, `map_alignment.csv`) |
+| `pay_*` | Payload field decoding, varint analysis, preamble characterization |
 
 ---
 
 ## References
 
-- `prosim/config/defaults.py` - Training matrix and operator profiles
-- `prosim/models/operators.py` - Two-component efficiency implementation
-- `docs/algorithms.md` - Full algorithm documentation
-- `archive/spreadsheets/ProsimTable.xls` - Original analysis spreadsheet
+- `prosim/config/defaults.py` — Training matrix and operator profiles
+- `prosim/models/operators.py` — Two-component efficiency implementation
+- `docs/algorithms.md` — Full algorithm documentation
+- `docs/key_discoveries.md` — Discovery #6 (original) and #14 (re-analysis)
+- `archive/spreadsheets/ProsimTable.xls` — Original analysis spreadsheet
 
 ---
 
 *Document created: December 2025*
-*Last verified: December 2025*
+*Major revision: July 2026 (multi-agent forensic re-analysis)*
