@@ -74,6 +74,7 @@
 | 15 | [XTC Packed Region Structure Decoded](#15-xtc-packed-region-structure-decoded) | Jul 2026 | Critical - The unread 95% of the saves has a mapped structure |
 | 16 | [Departments, Deterministic Production, Event Flags](#16-departments-deterministic-production-event-flags) | Jul 2026 | Critical - Corrects f3/f4 model; 11 operators; deterministic weekly output |
 | 17 | [Spreadsheet Prediction Accuracy Quantified](#17-spreadsheet-prediction-accuracy-quantified) | Jul 2026 | Important - 2004 model fidelity exact; DECS14↔REPT14 matched pair found |
+| 18 | [Packed Payload Interiors Resist Decoding — Binary Frontier Closed](#18-packed-payload-interiors-resist-decoding--binary-frontier-closed) | Jul 2026 | Closure - Exhaustive transform hunt; clean negatives documented |
 
 ---
 
@@ -959,7 +960,7 @@ The high-entropy "packed region" (>95% of each XTC file, flagged as undecoded in
 
 **Dynamics (from consecutive same-identity diffs)**:
 - Most identities: stable core, changes are pure append/remove at the end — e.g. one identity goes 248 → 927 → back to exactly 248 bytes (enqueue/dequeue behavior)
-- One identity oscillates between exactly two full templates (307 ↔ 339 bytes) repeatedly — alternating-assignment behavior (machine/product changeover hypothesis)
+- ~~One identity oscillates between exactly two full templates (307 ↔ 339 bytes) — changeover hypothesis~~ **CORRECTED (see #18)**: the "oscillation" was the two f1-sharing operators alternating in the log under the f1-only labeler; each operator's own template is stable
 - Occasional transient spikes (637–2,405 bytes) appear and vanish — discrete events
 - The `f1=f2≈2.80` identities carry genuinely variable-length payloads with negative f3 — best hypothesis: **product records (X/Y/Z)** with order/demand queues
 
@@ -1081,11 +1082,50 @@ The 2004 ProsimTable.xls forecasting pipeline was scored against actual game res
 
 ---
 
+## 18. Packed Payload Interiors Resist Decoding — Binary Frontier Closed
+
+**Date Discovered**: July 2026
+
+**Category**: Negative Result / Project Closure
+
+### The Discovery
+
+A systematic "transform hunt" on the XTC packed-payload interiors — using **known-plaintext leverage** (each payload's exact associated float values and production deltas) — returned **clean negatives across every era-plausible encoding family**. The interiors are an application-specific opaque serialization. Without the original software, source, or documentation, further decoding of the remaining ~85% of payload bytes is not achievable from these two files. The binary analysis frontier is closed, deliberately and with the negatives documented so no future effort re-treads this ground.
+
+### What was tested (all with chance-baseline controls)
+
+| Family | Result |
+|--------|--------|
+| Bitstream / variable-bit-width packing | **REFUTED** — all within-identity payload variation is byte-aligned prefix/suffix growth (99.8–100% agreement at zero bit shift; ~55% chance ceiling); no cross-identity sub-byte sharing (0/66 pairs) |
+| Microsoft Binary Format floats (MBF32/64) | Zero hits, both files, raw + all transforms |
+| VB Currency (int64 ×10⁴), scaled ints, fixed-point 16.16/8.24, packed BCD | Zero surviving hits after multiple-comparison and identity-duplication corrections |
+| Base-128 VLQ (MIDI-style) | 5,357 candidate sequences; zero decode to any known target value |
+| Rice/Golomb (k=0–8), Elias gamma/delta, unary — both bit orders | No self-consistent decode of the sparse regions |
+| XOR (all 255 keys, positional, marker-derived), byte-delta, nibble-swap, bit-reverse | Every transform *increased* entropy; nothing dropped below 6 bits/byte |
+| zlib/deflate, LZSS, RLE (round 1) | Already ruled out |
+
+**Methodological notes worth keeping**: two false-positive machines were identified and corrected — zero-padding collisions (small ints as u32 match structural zero bytes) and identity-payload duplication (records sharing an identity share bytes, so "N confirmations" can be one coincidence replayed N times). Both are documented in `analysis/xtc/t4m_search.py` / `t4b_*.py`.
+
+**Labeler bug found and fixed**: `map_common.py`'s original identity labeler keyed on f1 only, silently merging the two operators sharing f1=0.818824. This produced #16's now-corrected "template oscillation" claim. A corrected labeler (`build_identity_labeler2`, keyed on exact (f1,f2)) is now in `map_common.py`; the authoritative identity table remains `c2_constants_corrected.csv`.
+
+### Implications
+
+1. **What the XTC files can still give is already extracted**: format grammar, week numbers, 11 operator identities with departments, deterministic production signatures, event flags, the identity constants, and the queue/growth dynamics (Discoveries #14–#16)
+2. **The remaining unknowns route through non-binary paths**: the PROSIM III textbook/Instructor's Manual, author outreach (Hottenstein, Biggs), or an original installation surfacing
+3. **The negatives are an asset**: any future analyst (or a future model with better tooling) can start from `analysis/xtc/t4*_*.py` knowing exactly which hypothesis space is exhausted
+
+### References
+
+- `analysis/xtc/t4m_*.py` (known-plaintext encoding search, `t4m_hits.csv` raw data), `t4b_*.py` (bit-level and transform sweep)
+- Discoveries #14–#16 (what *was* decoded), #13 action items (the non-binary paths)
+
+---
+
 ## Future Discoveries Needed
 
 ### High Priority
 
-1. **Decode XTC packed-record payload internals** - macro structure solved (see #15); remaining: queue/suffix contents, the 438/756-byte preamble, per-identity head varints, event-tail token semantics
+1. ~~Decode XTC packed-record payload internals~~ **CLOSED (see #18)** — exhaustive transform hunt returned clean negatives; remaining payload bytes need the original software/docs, not more binary analysis
 2. **XTC Float2 exact formula**: Now known to be a fixed-at-hire efficiency-band coefficient (see #14); exact computation still open
 3. **Machine repair probability**: Exact formula and maintenance budget effect
 4. **Starting company state**: What are Week 0 values?
@@ -1119,6 +1159,7 @@ The 2004 ProsimTable.xls forecasting pipeline was scored against actual game res
 | Jul 2026 | Added #15: Packed region structure decoded (numbered records 1:1 with body log, identity-keyed templates, queue suffixes, event tails). Archive sweep confirmed no third save / no original software; third DECS14 variant captured as `DECS14_Aroot.DAT`. |
 | Jul 2026 | Added #16: Department tags, 11-identity correction, deterministic crew production signatures, reversible event flags, f3/f4 model corrected (supersedes #14 verdicts c/d). |
 | Jul 2026 | Added #17: Spreadsheet prediction accuracy quantified (mechanics exact, forecasts 89-93%); DECS14↔REPT14 matched pair identified; REPT14 roster corrected. |
+| Jul 2026 | Added #18: Transform hunt closed with documented clean negatives; #16 oscillation claim corrected (labeler bug, fixed in map_common.py). Binary frontier closed. |
 
 ---
 

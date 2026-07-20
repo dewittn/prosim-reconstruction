@@ -196,7 +196,11 @@ implementation: `analysis/xtc/map_common.py`; full alignment table:
 
 **Remaining unknowns**: queue/suffix contents, preamble encoding, the two
 per-identity head varints, event-tail token semantics, cross-save ordering
-rule.
+rule. **Status (Jul 2026): the binary attack on these is CLOSED** — an
+exhaustive transform hunt (bitstream codes, MBF/Currency/fixed-point/BCD
+known-plaintext search, VLQ, XOR/delta/nibble/bit-reverse sweeps, all with
+chance-baseline controls) returned clean negatives; see Discovery #18.
+Resolution now requires the original software or documentation.
 
 ---
 
