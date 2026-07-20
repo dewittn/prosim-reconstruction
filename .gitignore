@@ -64,5 +64,5 @@ Thumbs.db
 # Project specific
 *.log
 saves/
-data/
+/data/
 .claude/
