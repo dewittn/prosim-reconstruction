@@ -33,6 +33,11 @@ def body_walk(data, start=BODY_START):
 
 
 # --- identity labeling: consistent across files, order of first appearance a-then-b ---
+# WARNING: this labeler keys on f1 ONLY and silently merges the two distinct
+# operators that share f1=0.818824 (they differ in f2: 0.583333 vs 0.549020).
+# Kept unchanged so labels in previously recorded outputs (map_alignment.csv,
+# Discovery #15/#16 text) stay reproducible. For correct identity resolution
+# use build_identity_labeler2 below, which keys on the exact (f1, f2) pair.
 def build_identity_labeler():
     lbl = {}
     nxt = [1]
@@ -46,6 +51,31 @@ def build_identity_labeler():
         key = struct.pack("<f", f1).hex()
         if key not in lbl:
             lbl[key] = "ID%02d" % nxt[0]
+            nxt[0] += 1
+        return lbl[key]
+
+    return L
+
+
+def build_identity_labeler2():
+    """Correct identity labeler: keys on the exact (f1, f2) byte pair.
+
+    Distinguishes all 11 real operator identities, including the two that
+    share f1=0.818824. Label numbering differs from build_identity_labeler;
+    the authoritative identity table is c2_constants_corrected.csv.
+    """
+    lbl = {}
+    nxt = [1]
+
+    def L(entry):
+        if entry["tag"] == 0x12:
+            return "SEP"
+        if 2.7 < entry["f1"] < 2.9:
+            return "SENT"
+        key = (struct.pack("<f", entry["f1"]).hex(),
+               struct.pack("<f", entry["f2"]).hex())
+        if key not in lbl:
+            lbl[key] = "OP%02d" % nxt[0]
             nxt[0] += 1
         return lbl[key]
 
