@@ -1,0 +1,11 @@
+identity,n_occurrences,f1,f1_constant,f2,f2_constant,v1,v1_constant,v2,v2_constant,tag,tag_constant,p1,p1_constant,p2,p2_constant
+ID01,11,0.850856,True,0.610354,True,410,True,327,True,0x87,True,0xe2fe,True,0xe2ff,True
+ID02,12,0.807425,True,0.569975,True,165,True,141,True,0x86,True,0xe18a,True,0xe18b,True
+ID03,23,0.818824,True,0.54902|0.583333,False,304|336|19428548609,False,60|212|388,False,0x1a|0x86|0x87,False,0xf06|0xe0ea|0xe2b8,False,0x82c1|0xe0eb|0xe2b9,False
+ID04,10,0.639706,True,0.663704,True,228,True,178,True,0x87,True,0xe070,True,0xe071,True
+ID05,11,0.809302,True,0.558603,True,303,True,320,True,0x86,True,0xe08a,True,0xe08b,True
+ID06,13,0.775056,True,0.61708,True,373,True,383,True,0x86,True,0xe248,True,0xe249,True
+ID07,5,0.966667,True,0.594164,True,282,True,196,True,0x87,True,0xe2b2,True,0xe29f,True
+ID08,13,1.03125,True,0.677761,True,63|111,False,26|114,False,0x82|0x83,False,0xfe00|0xfe09,False,0x2fe|0x93f8,False
+ID09,9,0.908616,True,0.555143,True,264,True,239,True,0x86,True,0xe12a,True,0xe12b,True
+ID10,10,1.019231,True,1.014493,True,85,True,135,True,0x84,True,0xf8a7,True,0x3e29,True

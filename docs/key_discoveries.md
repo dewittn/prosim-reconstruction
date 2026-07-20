@@ -72,6 +72,7 @@
 | 13 | [Two Separate PROSIM Product Lines Identified](#13-two-separate-prosim-product-lines-identified) | Dec 2025 | **CRITICAL** - Changes project understanding |
 | 14 | [XTC Format Fully Re-Analyzed](#14-xtc-format-fully-re-analyzed--same-game-tagged-grammar-float2-bounded) | Jul 2026 | Critical - Corrects #6; same-game saves; Float2 bounded |
 | 15 | [XTC Packed Region Structure Decoded](#15-xtc-packed-region-structure-decoded) | Jul 2026 | Critical - The unread 95% of the saves has a mapped structure |
+| 16 | [Departments, Deterministic Production, Event Flags](#16-departments-deterministic-production-event-flags) | Jul 2026 | Critical - Corrects f3/f4 model; 11 operators; deterministic weekly output |
 
 ---
 
@@ -897,7 +898,9 @@ A systematic multi-agent re-analysis of `prosim.xtc` / `prosim1.xtc` (byte-accou
 | Float1 × 1.088 = proficiency | **WEAKENED** | Exact only for Op 3 (1.0312×1.088=1.122); does not reproduce the other documented proficiencies. Float1 is a fixed proficiency-*like* per-operator constant |
 | Two files from different games | **REFUTED** | All 11 (f1,f2) identities appear byte-identically in both files, and the lifetime accumulator (Float4) advances for every operator wk9→wk13 — same game, later save |
 
-**New understanding of the four floats** (moderate confidence):
+**New understanding of the four floats** (moderate confidence;
+> **Float3/Float4 interpretations below were superseded by Discovery #16** —
+> f3 is a global running counter and f4 a group-scoped aggregate):
 
 - **Float1**: fixed per-operator proficiency/speed coefficient (hire constant, does not change with training)
 - **Float2**: fixed per-operator second coefficient, range 0.549–0.678 (outlier 1.0145). Not a training-matrix cell; best-fit rationals share no common denominator, so it is a *computed* value stored at hire. Its band coincides with PROSIM's reported "Percent of Efficiency" range (54–65% in REPT data). Interpretation: the quality/yield axis of the two-component operator model. Exact formula still open.
@@ -981,6 +984,55 @@ The high-entropy "packed region" (>95% of each XTC file, flagged as undecoded in
 
 ---
 
+## 16. Departments, Deterministic Production, Event Flags
+
+**Date Discovered**: July 2026 (round 2 of the packed-region analysis)
+
+**Category**: Core Mechanic / Formula Correction
+
+### The Discovery
+
+Round two of the XTC analysis decoded the department encoding, corrected the Float3/Float4 model from Discovery #14, established that there are **11 operator identities** (not 10), and — most significantly — showed that **weekly production is deterministic given the crew configuration**: the same crew produces byte-identical production deltas in different weeks and even across the two save files.
+
+### Evidence
+
+**Department tag byte (high confidence)**: each packed payload carries a tag byte after its two head varints: `0x87` for exactly 4 identities, `0x86` for exactly 5 — matching `parts_machines=4` / `assembly_machines=5` in the engine config. Two further identities use variant tags `0x82`/`0x84` with much smaller payloads and out-of-band field values — best interpreted as **hired operators** with a different record scheme (unconfirmed).
+
+**11 identities, not 10**: two different operators share the exact same Float1 (0.818824) but differ in Float2 (0.583333 vs 0.549020) and in every packed-record constant. Any analysis keying identity on f1 alone conflates them. Corrected table: `analysis/xtc/c2_constants_corrected.csv`.
+
+**Float3/Float4 corrected** (supersedes #14's verdicts c and d):
+- **Float3 is a GLOBAL running counter**, not per-operator: it increases monotonically across *consecutive log records regardless of identity* (~300–600 per record), with sawtooth resets. Same-identity records within one group show f3 values from the shared global sequence.
+- **Float4 is a group-scoped aggregate**: nearly constant (±few %) across each run of consecutive records, then jumps to a new plateau. Plateaus are NOT monotonic (e.g. 9,200 → 2,500) — **not** a lifetime accumulator. Groups ≈ calendar buckets (likely week × department crew).
+
+**Deterministic production signatures (high confidence, the headline)**: segmenting the log by f4 plateaus yields crew groups whose *identity sequence and exact f3 delta sequence repeat*:
+- prosim1.xtc groups n=1–7 and n=23–29: same crew `ID02,ID09,ID03b,ID06,ID10,ID09,ID02`, same deltas `+416,+479,+487,+295,+539,+484` — different weeks, identical amounts
+- Three distinct crew signatures each appear twice in prosim1.xtc; one five-record signature (`+469,+467,+386,+515`) appears in **both files**
+- Implication: whatever randomness PROSIM has, per-event operator production amounts are **deterministic functions of the crew configuration**
+
+**Event flags, not counters (high confidence)**: the small payload-tail changes are additions/removals of complete 2-byte tokens (`0x0d/0x1a/0x09` + gap byte), and they are **reversible** — a token appears at one occurrence and disappears at a later one. These behave as independent boolean event flags (repair / training / assignment-state candidates), refining round one's "counter" guess.
+
+**66-byte repeated block resolved**: all 10 occurrences map 1:1 onto identity ID04's payloads at the same internal offset, byte-identical across weeks and files — compiled-in per-operator constant data, consistent with the fixed `STARTING_OPERATOR_PROFILES`.
+
+**Negative results (documented so they aren't retried)**:
+- The two per-identity head varints (V1,V2) match **no** arithmetic function of f1/f2/rates/training-matrix values (exhaustive search, <2% tolerance, all-identity requirement)
+- The dense payload interiors and the preamble are not plaintext numerics (no varint/float/int16 structure, entropy ~7.3 bits/byte) — but share an internal grammar: `[0x80–0x87][0xF8–0xFE]` sub-headers every ~20–90 bytes and nested `[value][0x0a]` delimiters. A decoding transform (XOR/delta/bit-level code) is still needed.
+- The preamble uses the same queue grammar globally (5 segments at week 9 → 11 at week 13); candidate: order backlog / global event queue / RNG buffer
+
+### Implications
+
+1. **Reconstruction constraint**: per-event production amounts must be modeled as deterministic functions of crew configuration — no per-week noise in operator output
+2. **The f3 delta table is directly harvestable** as ground-truth production quantities per (crew, slot) — usable for calibrating the output formula once slots are tied to operators/machines
+3. **Department membership per operator is now known exactly** — including that the two "same-f1" operators sit in *different* departments
+4. **Known-plaintext attack is now possible** on the dense payload interiors: we know each payload's week produced specific f3 deltas, giving target values to search for under candidate transforms
+5. Any prior analysis keying operators on Float1 alone (including parts of #14) needs the 11-identity correction
+
+### References
+
+- `analysis/xtc/c2_constants_corrected.csv` (identity table), `c2_*.py`, `q2_*.py`, `ev_timeline*.py`, `q2_spans.csv`
+- Discovery #14 (float model — verdicts c/d superseded), #15 (packed-region structure)
+
+---
+
 ## Future Discoveries Needed
 
 ### High Priority
@@ -1017,6 +1069,7 @@ The high-entropy "packed region" (>95% of each XTC file, flagged as undecoded in
 | Dec 2025 | Added research report findings to #13: Living co-author contact (Hottenstein), Instructor's Manual ISBN, ABSEL archives, academic citations. |
 | Jul 2026 | Added #14: Full XTC re-analysis (multi-agent). Corrected #6 (byte 9 = week number, not operator count; log grows in shipping-period blocks, not weekly snapshots; same-game saves). Float2 bounded to fixed per-operator efficiency coefficient. |
 | Jul 2026 | Added #15: Packed region structure decoded (numbered records 1:1 with body log, identity-keyed templates, queue suffixes, event tails). Archive sweep confirmed no third save / no original software; third DECS14 variant captured as `DECS14_Aroot.DAT`. |
+| Jul 2026 | Added #16: Department tags, 11-identity correction, deterministic crew production signatures, reversible event flags, f3/f4 model corrected (supersedes #14 verdicts c/d). |
 
 ---
 
