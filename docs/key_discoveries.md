@@ -73,6 +73,7 @@
 | 14 | [XTC Format Fully Re-Analyzed](#14-xtc-format-fully-re-analyzed--same-game-tagged-grammar-float2-bounded) | Jul 2026 | Critical - Corrects #6; same-game saves; Float2 bounded |
 | 15 | [XTC Packed Region Structure Decoded](#15-xtc-packed-region-structure-decoded) | Jul 2026 | Critical - The unread 95% of the saves has a mapped structure |
 | 16 | [Departments, Deterministic Production, Event Flags](#16-departments-deterministic-production-event-flags) | Jul 2026 | Critical - Corrects f3/f4 model; 11 operators; deterministic weekly output |
+| 17 | [Spreadsheet Prediction Accuracy Quantified](#17-spreadsheet-prediction-accuracy-quantified) | Jul 2026 | Important - 2004 model fidelity exact; DECS14↔REPT14 matched pair found |
 
 ---
 
@@ -1033,6 +1034,53 @@ Round two of the XTC analysis decoded the department encoding, corrected the Flo
 
 ---
 
+## 17. Spreadsheet Prediction Accuracy Quantified
+
+**Date Discovered**: July 2026
+
+**Category**: Validation / Historical Record
+
+### The Discovery
+
+The 2004 ProsimTable.xls forecasting pipeline was scored against actual game results wherever prediction/actual pairs exist in the archive. **The spreadsheet's production formula reproduces game output EXACTLY when inputs are correct** (`gross = productive_hours × standard_rate × efficiency` holds to the unit for all 8 REPT12 operators). Forward *forecast* accuracy was 89% per-operator / 93% on net output — the error came from coarse efficiency estimates, not wrong mechanics. The remembered "97% accuracy" is best explained as the **cumulative game-efficiency score** (0.949 at the last saved snapshot, trending toward ~0.97 in the final weeks) fusing with the genuine experience of exact model fidelity.
+
+### Evidence
+
+**Workbook pipeline** (all three versions): paste last week's report (`Entry`/`Sheet1`) → derive per-operator efficiency (`Operators`) → forecast the coming week (`Results`, `Weekly Planing`, `Forcasting`) → emit decision (`DECS14` tab).
+
+**Snapshot dating**: Nelson.xls-era version (May 25) holds an exact paste of REPT12.DAT; Week3 version (Jun 5) plans game week 6; final version (Jul 13) plans game week 16 — which is why its forecasts cannot be scored against REPT14 (week 14).
+
+**Accuracy table** (`analysis/xtc/v3_accuracy.csv`):
+
+| Category | n | Mean accuracy | Note |
+|---|---|---|---|
+| Per-operator efficiency forecast | 9 | 89.3% | round estimates vs actual, systematic −6.8% under-forecast |
+| Per-operator production forecast | 9 | 89.3% | proportional to efficiency estimate |
+| Aggregate net output | — | 93.2% | errors partially cancel |
+| Mechanics fidelity (known inputs) | 8 | **100.0%** | exact to the unit, REPT12 operators |
+| Cumulative game efficiency (score, not forecast) | — | 94.9% | `Eff` tab, weeks 1–14; last weeks 1.288/1.282 |
+
+**Corrections to prior records**:
+- REPT14.DAT's roster is {1,2,3,4,5,6,7,18,26}; the "op 13" roster belongs to REPT13 (Shorty's)
+- **DECS14.DAT is the actual submission that produced REPT14** — 9/9 match on operator, product, and scheduled hours. The archive DOES contain one matched decisions→report pair (partially easing Discovery #1's constraint; full end-to-end replay still needs the week-13 starting state)
+- DECS14_week3.DAT is a different scenario (0/9 vs REPT14); DECS14_Aroot.DAT is a generic template identical to DECS12.txt except the week number
+- The Results tab's daily "Should/Actual" columns are an internal what-if (a modeled raw-material-shortage factor of 0.7828), NOT recorded game actuals
+
+### Implications
+
+1. **The 2004 reverse-engineering was mechanically correct** — the production identity was nailed 20 years ago; only the efficiency *inputs* were estimates
+2. **The reconstruction's validation target sharpens**: match the exact identity `gross = productive_hours × rate × efficiency` (already implemented) and treat 2004 forecast error as input uncertainty, not model error
+3. **DECS14 + REPT14 form a usable constraint pair** for the simulation: given any candidate week-13 state, processing DECS14.DAT must produce REPT14.DAT
+4. The "97%" memory is a fusion of a real ~95% efficiency score and real exact-fidelity experience — both flattering in substance, neither literally a 97% forecast metric
+
+### References
+
+- `analysis/xtc/v3_accuracy.csv`, `v3_*.py` scripts
+- `archive/spreadsheets/ProsimTable*.xls` (three versions), `archive/data/REPT12-14.DAT`, `DECS14*.DAT`
+- Discovery #1 (matched-pair constraint, partially eased), #9 (game efficiency vs operator efficiency — the same conflation trap)
+
+---
+
 ## Future Discoveries Needed
 
 ### High Priority
@@ -1070,6 +1118,7 @@ Round two of the XTC analysis decoded the department encoding, corrected the Flo
 | Jul 2026 | Added #14: Full XTC re-analysis (multi-agent). Corrected #6 (byte 9 = week number, not operator count; log grows in shipping-period blocks, not weekly snapshots; same-game saves). Float2 bounded to fixed per-operator efficiency coefficient. |
 | Jul 2026 | Added #15: Packed region structure decoded (numbered records 1:1 with body log, identity-keyed templates, queue suffixes, event tails). Archive sweep confirmed no third save / no original software; third DECS14 variant captured as `DECS14_Aroot.DAT`. |
 | Jul 2026 | Added #16: Department tags, 11-identity correction, deterministic crew production signatures, reversible event flags, f3/f4 model corrected (supersedes #14 verdicts c/d). |
+| Jul 2026 | Added #17: Spreadsheet prediction accuracy quantified (mechanics exact, forecasts 89-93%); DECS14↔REPT14 matched pair identified; REPT14 roster corrected. |
 
 ---
 

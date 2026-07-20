@@ -1,0 +1,22 @@
+category,item,predicted,actual,pct_error,accuracy_pct,note
+operator_efficiency_forecast,op3,1.18,1.324,10.88,89.12,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op7,1.18,1.1025,7.03,92.97,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op26,1.05,1.2389,15.25,84.75,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op2,1.05,1.1845,11.36,88.64,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op6,1.18,0.9862,19.65,80.35,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op4,1.05,1.1805,11.05,88.95,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op1,1.1,1.1635,5.46,94.54,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op5,1.05,1.1105,5.45,94.55,predicted (round est) vs game-reported operator efficiency
+operator_efficiency_forecast,op18,1.1,1.2237,10.11,89.89,predicted (round est) vs game-reported operator efficiency
+operator_production_forecast,op3,3606.0,4046.0,10.88,89.12,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op7,2904.0,2714.0,7.03,92.97,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op26,2139.0,2524.0,15.25,84.75,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op2,3150.0,3554.0,11.36,88.64,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op6,1051.0,879.0,19.65,80.35,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op4,936.0,1052.0,11.05,88.95,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op1,1120.0,1185.0,5.46,94.54,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op5,1070.0,1132.0,5.45,94.55,production=hours*std*eff; predicted uses estimated eff
+operator_production_forecast,op18,1494.0,1663.0,10.11,89.89,production=hours*std*eff; predicted uses estimated eff
+AGGREGATE_production,all_operators_total,17471.0,18747.0,6.81,93.19,net total; per-op over/under errors partially cancel
+REFERENCE_game_efficiency,cumulative_Eff!I24,,0.9486,,94.86,"GAME cost-efficiency (std cost/actual cost), NOT forecast accuracy"
+REFERENCE_game_efficiency,mean_weekly_1_14,,0.9505,,95.05,mean of 14 weekly game efficiencies (0.647..1.282)
