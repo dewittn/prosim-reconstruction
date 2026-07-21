@@ -8,6 +8,8 @@ Tests cover:
 - Cumulative cost tracking
 """
 
+import pytest
+
 from prosim.config.schema import (
     CarryingCostRatesConfig,
     CostsConfig,
@@ -65,8 +67,8 @@ def create_mock_production_result(
                 productive_hours=hours,
                 efficiency=1.0,
                 gross_production=hours * 60,  # Simplified
-                rejects=hours * 60 * 0.178,
-                net_production=hours * 60 * 0.822,
+                rejects=hours * 60 * 0.1514,
+                net_production=hours * 60 * 0.8486,
             )
         )
 
@@ -83,8 +85,8 @@ def create_mock_production_result(
                 productive_hours=hours,
                 efficiency=1.0,
                 gross_production=hours * 40,  # Simplified
-                rejects=hours * 40 * 0.178,
-                net_production=hours * 40 * 0.822,
+                rejects=hours * 40 * 0.1514,
+                net_production=hours * 40 * 0.8486,
             )
         )
 
@@ -95,15 +97,15 @@ def create_mock_production_result(
         total_setup_hours=0.0,
         total_productive_hours=sum(parts_by_type.values()) if parts_by_type else 0,
         gross_production_by_type={k: v * 60 for k, v in parts_by_type.items()},
-        rejects_by_type={k: v * 60 * 0.178 for k, v in parts_by_type.items()},
-        net_production_by_type={k: v * 60 * 0.822 for k, v in parts_by_type.items()},
+        rejects_by_type={k: v * 60 * 0.1514 for k, v in parts_by_type.items()},
+        net_production_by_type={k: v * 60 * 0.8486 for k, v in parts_by_type.items()},
         total_gross_production=sum(v * 60 for v in parts_by_type.values())
         if parts_by_type
         else 0,
-        total_rejects=sum(v * 60 * 0.178 for v in parts_by_type.values())
+        total_rejects=sum(v * 60 * 0.1514 for v in parts_by_type.values())
         if parts_by_type
         else 0,
-        total_net_production=sum(v * 60 * 0.822 for v in parts_by_type.values())
+        total_net_production=sum(v * 60 * 0.8486 for v in parts_by_type.values())
         if parts_by_type
         else 0,
     )
@@ -117,15 +119,15 @@ def create_mock_production_result(
         if assembly_by_type
         else 0,
         gross_production_by_type={k: v * 40 for k, v in assembly_by_type.items()},
-        rejects_by_type={k: v * 40 * 0.178 for k, v in assembly_by_type.items()},
-        net_production_by_type={k: v * 40 * 0.822 for k, v in assembly_by_type.items()},
+        rejects_by_type={k: v * 40 * 0.1514 for k, v in assembly_by_type.items()},
+        net_production_by_type={k: v * 40 * 0.8486 for k, v in assembly_by_type.items()},
         total_gross_production=sum(v * 40 for v in assembly_by_type.values())
         if assembly_by_type
         else 0,
-        total_rejects=sum(v * 40 * 0.178 for v in assembly_by_type.values())
+        total_rejects=sum(v * 40 * 0.1514 for v in assembly_by_type.values())
         if assembly_by_type
         else 0,
-        total_net_production=sum(v * 40 * 0.822 for v in assembly_by_type.values())
+        total_net_production=sum(v * 40 * 0.8486 for v in assembly_by_type.values())
         if assembly_by_type
         else 0,
     )
@@ -403,7 +405,7 @@ class TestEquipmentCosts:
     """Tests for equipment usage cost calculations."""
 
     def test_equipment_costs_basic(self):
-        """Test basic equipment cost calculation."""
+        """Test basic equipment cost calculation (per SCHEDULED hour)."""
         calculator = CostCalculator()
         production = create_mock_production_result(
             parts_by_type={"X'": 40.0},
@@ -412,19 +414,16 @@ class TestEquipmentCosts:
 
         costs = calculator.calculate_equipment_costs(production)
 
-        # Parts: 40 hours * $100 = $4000
-        # Assembly: 30 hours * $80 = $2400
-        # Total X = $6400
-        assert costs["X"] == 6400.0
+        # Equipment is charged per scheduled hour (Discovery #19): default rate
+        # is 8000/380 ~= $21.05/hr. Parts 40h + Assembly 30h = 70 scheduled hrs.
+        rate = 8000.0 / 380.0
+        assert costs["X"] == pytest.approx(70.0 * rate)
 
     def test_equipment_costs_custom_rates(self):
-        """Test equipment costs with custom rates."""
+        """Test equipment costs with a custom per-scheduled-hour rate."""
         config = ProsimConfig(
             equipment=EquipmentConfig(
-                rates=EquipmentRatesConfig(
-                    parts_department=50.0,
-                    assembly_department=40.0,
-                )
+                rates=EquipmentRatesConfig(per_scheduled_hour=30.0)
             )
         )
         calculator = CostCalculator(config)
@@ -435,9 +434,8 @@ class TestEquipmentCosts:
 
         costs = calculator.calculate_equipment_costs(production)
 
-        # Parts: 10 hours * $50 = $500
-        # Assembly: 10 hours * $40 = $400
-        assert costs["X"] == 900.0
+        # 20 scheduled hours * $30/hr = $600
+        assert costs["X"] == 600.0
 
 
 class TestCarryingCosts:
@@ -452,10 +450,10 @@ class TestCarryingCosts:
 
         costs = calculator.calculate_parts_carrying_costs(inventory)
 
-        # Default rate is $0.05 per part
-        assert costs["X"] == 50.0  # 1000 * 0.05
-        assert costs["Y"] == 25.0  # 500 * 0.05
-        assert costs["Z"] == 10.0  # 200 * 0.05
+        # Value-scaled per-type rates (Discovery #19): X' 0.05, Y' 0.09, Z' 0.13
+        assert costs["X"] == pytest.approx(50.0)  # 1000 * 0.05
+        assert costs["Y"] == pytest.approx(45.0)  # 500 * 0.09
+        assert costs["Z"] == pytest.approx(26.0)  # 200 * 0.13
 
     def test_products_carrying_costs(self):
         """Test products carrying cost calculation."""
@@ -466,10 +464,10 @@ class TestCarryingCosts:
 
         costs = calculator.calculate_products_carrying_costs(inventory)
 
-        # Default rate is $0.10 per product
-        assert costs["X"] == 10.0  # 100 * 0.10
-        assert costs["Y"] == 20.0  # 200 * 0.10
-        assert costs["Z"] == 15.0  # 150 * 0.10
+        # Value-scaled per-type rates (Discovery #19): X 0.10, Y 0.23, Z 0.42
+        assert costs["X"] == pytest.approx(10.0)  # 100 * 0.10
+        assert costs["Y"] == pytest.approx(46.0)  # 200 * 0.23
+        assert costs["Z"] == pytest.approx(63.0)  # 150 * 0.42
 
     def test_raw_materials_carrying_costs(self):
         """Test raw materials carrying cost calculation."""
@@ -487,8 +485,8 @@ class TestCarryingCosts:
             costs=CostsConfig(
                 carrying=CarryingCostRatesConfig(
                     raw_materials=0.02,
-                    parts=0.10,
-                    products=0.20,
+                    parts={"X'": 0.10, "Y'": 0.10, "Z'": 0.10},
+                    products={"X": 0.20, "Y": 0.20, "Z": 0.20},
                 )
             )
         )

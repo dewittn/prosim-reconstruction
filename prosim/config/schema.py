@@ -24,18 +24,30 @@ class ProductionRatesConfig(BaseModel):
         description="Products per productive hour by product type (verified)",
     )
     reject_rate: float = Field(
-        default=0.178,
+        default=0.1514,
         ge=0.0,
         le=1.0,
-        description="Fraction of production rejected (verified: ~17.8%)",
+        description=(
+            "Fraction of GROSS output rejected at the default $750 budget "
+            "(verified exact vs REPT14, Discovery #19). The old 0.178 was a "
+            "net-vs-gross artifact."
+        ),
     )
     bom: dict[str, dict[str, int]] = Field(
         default={"X": {"X'": 1}, "Y": {"Y'": 1}, "Z": {"Z'": 1}},
         description="Bill of materials - parts required per product (verified: 1:1)",
     )
     raw_materials_per_part: dict[str, float] = Field(
-        default={"X'": 1.0, "Y'": 1.0, "Z'": 1.0},
-        description="Raw material units consumed per part (estimated)",
+        default={"X'": 1.0, "Y'": 2.0, "Z'": 3.0},
+        description="Raw material units consumed per gross part by type (verified, Discovery #19)",
+    )
+    raw_materials_weighted_avg_unit_price: float = Field(
+        default=1.1416,
+        ge=0.0,
+        description=(
+            "Blended weighted-average RM unit price (verified vs REPT14, "
+            "Discovery #19); per-type RM prices remain unresolved"
+        ),
     )
     setup_time: dict[str, float] = Field(
         default={"parts_department": 2.0, "assembly_department": 2.0},
@@ -143,15 +155,23 @@ class MachineRepairConfig(BaseModel):
 class EquipmentRatesConfig(BaseModel):
     """Equipment usage rates."""
 
+    per_scheduled_hour: float = Field(
+        default=8000.0 / 380.0,  # ~= $21.05/hr
+        ge=0.0,
+        description=(
+            "Equipment usage cost per SCHEDULED hour (derived vs REPT14: "
+            "8000 / 380 total scheduled hours ~= $21.05, Discovery #19)"
+        ),
+    )
     parts_department: float = Field(
         default=100.0,
         ge=0.0,
-        description="Equipment usage cost per hour in parts dept (estimated)",
+        description="Legacy per-hour parts rate (SUPERSEDED by per_scheduled_hour)",
     )
     assembly_department: float = Field(
         default=80.0,
         ge=0.0,
-        description="Equipment usage cost per hour in assembly dept (estimated)",
+        description="Legacy per-hour assembly rate (SUPERSEDED by per_scheduled_hour)",
     )
 
 
@@ -173,22 +193,25 @@ class FixedCostsConfig(BaseModel):
 
 
 class CarryingCostRatesConfig(BaseModel):
-    """Inventory carrying cost rates."""
+    """Inventory carrying cost rates.
+
+    Parts and products carrying rates are VALUE-SCALED per type (verified vs
+    REPT14, Discovery #19), not flat. RM carrying remains a single estimated
+    rate (unverified).
+    """
 
     raw_materials: float = Field(
         default=0.01,
         ge=0.0,
-        description="Carrying cost per RM unit per week (estimated)",
+        description="Carrying cost per RM unit per week (estimated, unverified)",
     )
-    parts: float = Field(
-        default=0.05,
-        ge=0.0,
-        description="Carrying cost per part per week (estimated)",
+    parts: dict[str, float] = Field(
+        default={"X'": 0.05, "Y'": 0.09, "Z'": 0.13},
+        description="Carrying cost per part per week by type (verified, Discovery #19)",
     )
-    products: float = Field(
-        default=0.10,
-        ge=0.0,
-        description="Carrying cost per product per week (estimated)",
+    products: dict[str, float] = Field(
+        default={"X": 0.10, "Y": 0.23, "Z": 0.42},
+        description="Carrying cost per product per week by type (verified, Discovery #19)",
     )
 
 

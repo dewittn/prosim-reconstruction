@@ -96,10 +96,12 @@ To calculate actual **DECS→REPT accuracy** (not component accuracy), we would 
 |---------|--------|------------|--------|
 | Parts production rates (X'=60, Y'=50, Z'=40) | ✅ VERIFIED | 100% | REPT files, spreadsheet |
 | Assembly production rates (X=40, Y=30, Z=20) | ✅ VERIFIED | 100% | REPT files, spreadsheet |
-| Reject rate formula (logarithmic) | ✅ VERIFIED | 95% | Graph-Table 1 CSV |
+| Reject rate = 15.14% of GROSS at $750 (curve anchored on empirical point) | ✅ VERIFIED | 99% | REPT14 exact replay (Discovery #19); old 17.8% was a net-vs-gross artifact |
 | Reject rate floor (~1.5%) | ✅ VERIFIED | 90% | Week 16 spreadsheet |
+| Availability / productive hours (downtime below scheduled) | ⚠️ PARTIAL | 40% | Observed exactly in REPT14 (Discovery #19); no generative model — injectable input only |
 | Setup time (2 hours on part change) | ⚠️ PARTIAL | 70% | Estimated from patterns |
 | Bill of Materials (1:1 ratio) | ✅ VERIFIED | 100% | Case study docs |
+| Raw materials consumed (gross parts × {X'=1, Y'=2, Z'=3}) | ✅ VERIFIED | 95% | REPT14 replay: 10249 ≈ reported 10247 (Discovery #19) |
 
 ### Operator System
 
@@ -123,9 +125,11 @@ To calculate actual **DECS→REPT accuracy** (not component accuracy), we would 
 | Fixed expense ($1,500/week) | ✅ VERIFIED | 100% | week1.txt |
 | Machine repair cost ($400) | ✅ VERIFIED | 100% | week1.txt |
 | Labor rate ($10/hr) | ✅ VERIFIED | 100% | PPT materials |
-| Equipment usage rate | ⚠️ PARTIAL | 70% | Derived calculation |
+| Labor basis (scheduled hrs × $10 + overtime >40h at 1.5×) | ✅ VERIFIED | 99% | REPT14 replay: exact 4000 (2300/1700/0), Discovery #19 |
+| Raw material cost (units × ~$1.1416 weighted-avg unit price) | ✅ VERIFIED | 90% | REPT14 replay ≈ 11700 (Discovery #19); per-type RM prices unresolved |
+| Equipment usage (per SCHEDULED hour, ~$21.05 = 8000/380) | ✅ VERIFIED | 85% | REPT14 replay: exact 8000 total (Discovery #19); per-dept split unresolved |
 | Training cost ($1,000) | ❓ UNKNOWN | 50% | Estimated |
-| Carrying costs (parts/products) | ⚠️ PARTIAL | 60% | Estimated from patterns |
+| Carrying costs (value-scaled per type: parts 0.05/0.09/0.13, products 0.10/0.23/0.42) | ✅ VERIFIED | 95% | REPT14 replay exact per-type (Discovery #19); RM carrying rate still estimated |
 
 ### Logistics System
 
@@ -589,13 +593,15 @@ pytest tests/validation/test_against_original.py -v -k "reject"
 
 1. **Machine Repair Probability**: What is the exact formula? Does maintenance budget affect it?
 2. **XTC Float2**: What does this represent? Need XTC from game with training to determine.
-3. **Reject Rate Discrepancy**: Why does REPT14 show 17.8% when formula predicts 14.9% at $750?
+3. ~~**Reject Rate Discrepancy**: Why does REPT14 show 17.8% when formula predicts 14.9% at $750?~~ **RESOLVED (Discovery #19)**: the 17.8% was a net-vs-gross artifact. The report's "Production" column is NET good units; rejects are 15.14% of GROSS (0.1514/(1-0.1514) ≈ 0.178). The curve is now anchored on the empirical $750 → 15.14% point and reproduces all 9 operators exactly.
+4. **Availability / Downtime**: What generative model produces productive hours below scheduled (e.g. op6: 34.2 of 50)? Observed exactly in REPT14 but no formula yet — currently an injectable oracle input.
 
 ### Medium Priority (Edge Cases)
 
-4. **Hired Operator Stats**: How are quality tiers assigned to operators 10+? Random? Distribution?
-5. **Training Progression**: Exact formula for advancing training levels (weeks required per level?)
-6. **Equipment Usage Rate**: Derived as ~$20/hr but not directly verified
+5. **Hired Operator Stats**: How are quality tiers assigned to operators 10+? Random? Distribution?
+6. **Training Progression**: Exact formula for advancing training levels (weeks required per level?)
+7. **Equipment Usage per-department split**: Blended rate ($21.05/scheduled-hr) matches the REPT14 total exactly, but the parts-vs-assembly decomposition (implied ~$16.15/$24.62) is not yet verified.
+8. **Raw-material per-type prices**: Only the weighted-average unit price (~$1.1416) is derived; the individual X'/Y'/Z' RM prices remain unresolved.
 
 ### Low Priority (Minor Impact)
 

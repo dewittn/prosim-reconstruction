@@ -19,6 +19,7 @@ The simulation maintains state across weeks and tracks cumulative metrics.
 import random
 from dataclasses import dataclass, field
 
+from prosim.config.defaults import calculate_reject_rate
 from prosim.config.schema import ProsimConfig, get_default_config
 from prosim.engine.costs import (
     CostCalculationInput,
@@ -160,26 +161,39 @@ class Simulation:
         """
         updated_floor = machine_floor
 
-        for md in decisions.machine_decisions:
-            machine = updated_floor.get_machine(md.machine_id)
+        # DECS column 1 is the OPERATOR id, not the machine id (Discovery #19).
+        # Operators map to machine SLOTS by row position: rows 1-4 -> Parts
+        # machines, rows 5-9 -> Assembly machines. Assigning by position is what
+        # correctly places hired operators (e.g. 18, 26) whose ids do not match
+        # any machine slot; the old "operator id == machine id" lookup silently
+        # dropped them.
+        machine_slots = sorted(machine_floor.machines.keys())
+
+        for slot_index, md in enumerate(decisions.machine_decisions):
+            if slot_index >= len(machine_slots):
+                break
+            machine_id = machine_slots[slot_index]
+            machine = updated_floor.get_machine(machine_id)
             if machine is None:
                 continue
 
-            # Determine part type based on department
+            # Determine part type based on the machine's department
             part_type = part_type_from_code(md.part_type, machine.department)
 
-            # Apply assignment
+            # md.machine_id holds the DECS column-1 value, i.e. the operator id.
+            operator_id = md.machine_id
+
             if md.send_for_training:
-                # Clear assignment if being sent for training
+                # Clear scheduled hours if the operator is sent for training
                 updated_machine = machine.assign(
-                    operator_id=md.machine_id,  # Operator ID = machine ID convention
+                    operator_id=operator_id,
                     part_type=part_type,
                     scheduled_hours=0.0,
                     send_for_training=True,
                 )
             else:
                 updated_machine = machine.assign(
-                    operator_id=md.machine_id,
+                    operator_id=operator_id,
                     part_type=part_type,
                     scheduled_hours=md.scheduled_hours,
                     send_for_training=False,
@@ -221,16 +235,27 @@ class Simulation:
         self,
         machine_floor: MachineFloor,
         efficiency_results: dict[int, OperatorEfficiencyResult],
+        quality_budget: float | None = None,
     ) -> list[ProductionInput]:
         """Build production inputs from machine floor and efficiency results.
 
         Args:
             machine_floor: Machine floor with assignments
             efficiency_results: Map of operator_id to efficiency result
+            quality_budget: This week's quality-planning budget. When provided,
+                the reject fraction is taken from the verified logarithmic curve
+                (calculate_reject_rate) and applied to GROSS output, per
+                Discovery #19. When None, the engine's default reject rate
+                (config, correct at the $750 base budget) is used.
 
         Returns:
             List of ProductionInput for production calculations
         """
+        reject_rate = (
+            calculate_reject_rate(quality_budget)
+            if quality_budget is not None
+            else None
+        )
         inputs = []
         for machine in machine_floor.machines.values():
             efficiency_result = None
@@ -239,7 +264,11 @@ class Simulation:
                     machine.assignment.operator_id
                 )
             inputs.append(
-                ProductionInput(machine=machine, efficiency_result=efficiency_result)
+                ProductionInput(
+                    machine=machine,
+                    efficiency_result=efficiency_result,
+                    reject_rate=reject_rate,
+                )
             )
         return inputs
 
@@ -697,8 +726,10 @@ class Simulation:
             er.operator_id: er for er in scheduling_result.scheduled_operators
         }
 
-        # 7. Calculate production
-        production_inputs = self.build_production_inputs(machine_floor, efficiency_map)
+        # 7. Calculate production (reject rate from this week's quality budget)
+        production_inputs = self.build_production_inputs(
+            machine_floor, efficiency_map, quality_budget=decisions.quality_budget
+        )
         production_result = self.production_engine.calculate_production(
             production_inputs
         )

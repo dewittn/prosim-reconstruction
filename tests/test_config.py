@@ -24,7 +24,7 @@ class TestProsimConfig:
         config = ProsimConfig()
 
         # Check production defaults
-        assert config.production.reject_rate == 0.178
+        assert config.production.reject_rate == 0.1514
         assert config.production.parts_rates["X'"] == 60
         assert config.production.assembly_rates["X"] == 40
 
@@ -41,7 +41,7 @@ class TestProsimConfig:
         config = get_default_config()
 
         assert isinstance(config, ProsimConfig)
-        assert config.production.reject_rate == 0.178
+        assert config.production.reject_rate == 0.1514
 
     def test_from_dict_partial(self) -> None:
         """Create config from partial dictionary."""
@@ -85,7 +85,7 @@ class TestProsimConfig:
         assert "production" in data
         assert "logistics" in data
         assert "simulation" in data
-        assert data["production"]["reject_rate"] == 0.178
+        assert data["production"]["reject_rate"] == 0.1514
 
     def test_merge_overrides(self) -> None:
         """Merge overrides into config."""
@@ -98,7 +98,7 @@ class TestProsimConfig:
         merged = config.merge(overrides)
 
         # Original unchanged
-        assert config.production.reject_rate == 0.178
+        assert config.production.reject_rate == 0.1514
         assert config.simulation.random_seed is None
 
         # Merged has changes
@@ -153,7 +153,7 @@ class TestConfigFiles:
         # Load back
         loaded = ProsimConfig.from_file(json_path)
         assert loaded.simulation.random_seed == 12345
-        assert loaded.production.reject_rate == 0.178
+        assert loaded.production.reject_rate == 0.1514
 
     def test_load_nonexistent_file(self) -> None:
         """Raise FileNotFoundError for missing file."""
@@ -185,7 +185,7 @@ class TestLegacyConfig:
 
     def test_default_config_values(self) -> None:
         """Verify key DEFAULT_CONFIG values."""
-        assert DEFAULT_CONFIG["production"]["reject_rate"] == 0.178
+        assert DEFAULT_CONFIG["production"]["reject_rate"] == 0.1514
         assert DEFAULT_CONFIG["production"]["parts_rates"]["X'"] == 60
         assert DEFAULT_CONFIG["logistics"]["expedited_shipping_cost"] == 1200.0
         assert DEFAULT_CONFIG["workforce"]["costs"]["hiring_cost"] == 2700.0
@@ -220,16 +220,17 @@ class TestLegacyConfig:
 class TestDerivedCalculations:
     """Tests for derived calculation functions from forensic analysis.
 
-    The reject rate uses a logarithmic formula derived from Graph-Table 1:
-        reject_rate = 0.904 - 0.114 * ln(quality_budget)
-    This was verified against the original 2004 spreadsheet analysis.
+    The reject rate uses a logarithmic curve anchored on the verified empirical
+    point ($750 -> 15.14%, Discovery #19):
+        reject_rate = 0.1514 - 0.114 * ln(quality_budget / 750)
+    This was verified exactly against REPT14 (net-vs-gross corrected).
     """
 
     def test_calculate_reject_rate_base(self) -> None:
-        """Reject rate at base budget ($750) should be ~15.1% (logarithmic model)."""
+        """Reject rate at base budget ($750) is exactly 15.14% (verified vs REPT14)."""
         rate = calculate_reject_rate(750.0)
-        # Logarithmic formula: 0.904 - 0.114 * ln(750) = ~0.149
-        assert rate == pytest.approx(0.1493, abs=0.001)
+        # Curve is anchored on the empirical $750 point.
+        assert rate == pytest.approx(0.1514, abs=0.0001)
 
     def test_calculate_reject_rate_higher_budget(self) -> None:
         """Higher quality budget should reduce reject rate."""

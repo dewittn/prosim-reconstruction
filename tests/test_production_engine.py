@@ -231,9 +231,9 @@ class TestMachineProductionCalculations:
         assert result.setup_hours == 0.0
         assert result.productive_hours == 40.0
         assert result.gross_production == 2400.0
-        # 17.8% reject rate
-        assert result.rejects == pytest.approx(427.2, rel=0.01)
-        assert result.net_production == pytest.approx(1972.8, rel=0.01)
+        # 15.14% reject rate of gross (verified vs REPT14, Discovery #19)
+        assert result.rejects == pytest.approx(363.36, rel=0.01)
+        assert result.net_production == pytest.approx(2036.64, rel=0.01)
 
     def test_parts_production_with_efficiency(self):
         """Test parts production with reduced efficiency."""
@@ -506,8 +506,9 @@ class TestMaterialConsumption:
 
         rm_needed = engine.get_raw_materials_needed(parts_result)
 
-        # With default 1:1 ratio, should equal total gross production
-        assert rm_needed == 1800.0
+        # Per-type RM factors (Discovery #19): X' 1, Y' 2, Z' 3
+        # 1000*1 + 500*2 + 300*3 = 2900
+        assert rm_needed == 2900.0
 
     def test_get_raw_materials_needed_custom_rates(self):
         """Test raw materials needed with custom rates."""
@@ -643,7 +644,7 @@ class TestIntegration:
     """Integration tests for production engine."""
 
     def test_verified_reject_rate(self):
-        """Test that reject rate matches verified 17.8% from original data."""
+        """Reject rate matches the verified 15.14% of gross (Discovery #19)."""
         engine = ProductionEngine()
 
         # Simulate production similar to REPT14.DAT data
@@ -655,9 +656,9 @@ class TestIntegration:
 
         result = engine.calculate_machine_production(production_input)
 
-        # Verify ~17.8% reject rate
+        # Verify 15.14% reject fraction of gross (was a 17.8% net-vs-gross artifact)
         actual_reject_rate = result.rejects / result.gross_production
-        assert actual_reject_rate == pytest.approx(0.178, rel=0.01)
+        assert actual_reject_rate == pytest.approx(0.1514, rel=0.01)
 
     def test_production_formulas_match_case_study(self):
         """Test that production formulas match the case study documentation."""
@@ -679,8 +680,8 @@ class TestIntegration:
         # Manual calculation
         expected_productive = 40.0 * 0.90  # 36 hours
         expected_gross = expected_productive * 60  # 2160 parts
-        expected_rejects = expected_gross * 0.178  # 384.48 rejects
-        expected_net = expected_gross - expected_rejects  # 1775.52 net
+        expected_rejects = expected_gross * 0.1514  # 327.02 rejects
+        expected_net = expected_gross - expected_rejects  # 1832.98 net
 
         assert result.productive_hours == pytest.approx(expected_productive, rel=0.01)
         assert result.gross_production == pytest.approx(expected_gross, rel=0.01)
