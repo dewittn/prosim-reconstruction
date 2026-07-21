@@ -75,6 +75,7 @@
 | 16 | [Departments, Deterministic Production, Event Flags](#16-departments-deterministic-production-event-flags) | Jul 2026 | Critical - Corrects f3/f4 model; 11 operators; deterministic weekly output |
 | 17 | [Spreadsheet Prediction Accuracy Quantified](#17-spreadsheet-prediction-accuracy-quantified) | Jul 2026 | Important - 2004 model fidelity exact; DECS14↔REPT14 matched pair found |
 | 18 | [Packed Payload Interiors Resist Decoding — Binary Frontier Closed](#18-packed-payload-interiors-resist-decoding--binary-frontier-closed) | Jul 2026 | Closure - Exhaustive transform hunt; clean negatives documented |
+| 19 | [First End-to-End Replay: Core Exact, Engine Gaps Identified](#19-first-end-to-end-replay-core-exact-engine-gaps-identified) | Jul 2026 | **CRITICAL** - Production identity exact 9/9; concrete engine-fix list; shared scenario state found |
 
 ---
 
@@ -1121,6 +1122,62 @@ A systematic "transform hunt" on the XTC packed-payload interiors — using **kn
 
 ---
 
+## 19. First End-to-End Replay: Core Exact, Engine Gaps Identified
+
+**Date Discovered**: July 2026
+
+**Category**: Validation / Engine Audit
+
+### The Discovery
+
+The project's first end-to-end replay was run: Nelson's week-13 state was **fully back-derived from REPT14 itself**, his actual DECS14 decisions were fed through the reconstruction, and the output was diffed field-by-field against the actual historical report. **The core production identity reproduces all 9 operators' output exactly (0.00% error)** given true efficiency and productive hours. Run through the engine's own pathways, error is 8.90% (oracle efficiency) / 43.72% (native profiles) — and the diff localizes exactly which engine mechanics are wrong. Artifacts: `analysis/replay/r5_*`.
+
+### Structural findings (corrections to project understanding)
+
+1. **DECS column 1 is the OPERATOR id, not the machine id** — operators map to machine slots by position (rows 1–4 Parts, 5–9 Assembly). The engine's `apply_decisions_to_machines` misreads this (drops ops 18/26).
+2. **The report "Production" column is NET good units** (gross = production + rejects) — this flips reject arithmetic.
+3. **The flat 17.8% reject rate in the engine hot path is a net-vs-gross artifact.** True rate at $750 quality = **15.14%** of gross (mean 0.1515 across all 9 operators) — which matches Discovery #3's own curve. The unused `calculate_reject_rate()` in defaults.py is closer to correct than the hot path.
+4. **REPT12/13/14 share exact beginning inventories** — all three "different games" (Discovery #1) descend from **one instructor-distributed saved state**. They are divergent branches of a common scenario, not unrelated runs.
+5. **"Cumulative" columns are 2-week accounting-period totals** (period weeks 13–16, resets at 13), not game-lifetime totals — `cum14 = wk13 + wk14`, which is what makes week-13 state recovery exact.
+
+### Verified vs broken (from the diff)
+
+| Mechanic | Verdict |
+|---|---|
+| Production identity (hours × rate × efficiency, rejects at 15.14% of gross) | **EXACT — 9/9 operators, 0 units error** |
+| Week-13 state recoverability from REPT14 | **EXACT** (all balance identities close) |
+| Reject rate in engine hot path (17.8% flat) | **WRONG** — use 15.14% @ $750 applied to gross |
+| Availability/downtime (productive < scheduled hours) | **MISSING** — dominant production-error source (e.g. op6: 34.2 of 50 hrs) |
+| Labor cost | WRONG basis — real: scheduled hrs × $10 + overtime >40h at 1.5× (matches 4000 exactly) |
+| Raw-material cost | WRONG — real: gross parts × {X′:1, Y′:2, Z′:3} units × ~$1.14 weighted avg |
+| Equipment cost | WRONG — real ≈ $20–25 per *scheduled* hour (engine ~3–4× high) |
+| Carrying costs | WRONG — value-scaled per type (parts 0.05/0.09/0.13; products 0.10/0.23/0.42), engine flat |
+| Setup costs | Unreconstructable without week-13 assignments (state gap, not engine bug) |
+
+### Ranked engine fixes (by match improvement; NOT yet applied — verified-mechanics rule requires explicit approval)
+
+1. Reject rate → 15.14% @ $750 applied to gross
+2. Add availability/productive-hours model (distinct from scheduled × efficiency)
+3. Raw-material costing (per-type units + weighted valuation)
+4. Equipment rate/basis
+5. Labor: scheduled hours + overtime premium
+6. Value-scaled carrying rates
+7. DECS operator-id column mapping in `apply_decisions_to_machines`
+
+### Implications
+
+1. **The replay methodology works** — REPT-based state recovery is exact, making any future matched pair immediately usable
+2. **The engine has a concrete, prioritized punch list** derived from ground truth rather than inference
+3. **Discovery #1 revised**: the three REPT files are branches of one shared scenario — cross-file comparisons are better-grounded than previously thought (common ancestor state), and the "shared scenario" model strengthens the fixed-demand-scenario hypothesis
+4. After fixes 1–6, the reconstruction should reproduce the historical week's deterministic fields exactly — the strongest claim the project has ever been positioned to make
+
+### References
+
+- `analysis/replay/r5_replay.py`, `r5_week13_state.md`, `r5_diff.csv`, `r5_production_check.csv`, `r5_rept14_fields.csv`
+- Discovery #17 (the matched pair), #3 (reject curve — vindicated), #1 (revised)
+
+---
+
 ## Future Discoveries Needed
 
 ### High Priority
@@ -1160,6 +1217,7 @@ A systematic "transform hunt" on the XTC packed-payload interiors — using **kn
 | Jul 2026 | Added #16: Department tags, 11-identity correction, deterministic crew production signatures, reversible event flags, f3/f4 model corrected (supersedes #14 verdicts c/d). |
 | Jul 2026 | Added #17: Spreadsheet prediction accuracy quantified (mechanics exact, forecasts 89-93%); DECS14↔REPT14 matched pair identified; REPT14 roster corrected. |
 | Jul 2026 | Added #18: Transform hunt closed with documented clean negatives; #16 oscillation claim corrected (labeler bug, fixed in map_common.py). Binary frontier closed. |
+| Jul 2026 | Added #19: First end-to-end replay (DECS14→REPT14). Production identity exact 9/9; engine cost/reject/downtime gaps identified with ranked fix list; REPT12/13/14 revealed as branches of one shared instructor state. |
 
 ---
 

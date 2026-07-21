@@ -1,0 +1,30 @@
+WEEK-13 ENDING STATE (= week-14 beginning), derived from REPT14 itself
+======================================================================
+
+INVENTORIES (derived-exact: report beginning col = prior week ending)
+  Raw materials beginning : 0
+  Parts X' beginning      : 1139
+  Parts Y' beginning      : 492
+  Parts Z' beginning      : 1517
+  Products X beginning    : 1472
+  Products Y beginning    : 1032
+  Products Z beginning    : 1317
+
+CUMULATIVE COSTS THROUGH WEEK 13 (derived-exact: cum - weekly)
+  labor           : cum13_total =     3600.0   (cum14 7600.0 - wk14 4000.0)
+  setup           : cum13_total =       80.0   (cum14 280.0 - wk14 200.0)
+  repair          : cum13_total =      400.0   (cum14 400.0 - wk14 0.0)
+  raw_materials   : cum13_total =    12451.0   (cum14 24151.0 - wk14 11700.0)
+  purchased_parts : cum13_total =     8876.0   (cum14 12621.0 - wk14 3745.0)
+  equipment       : cum13_total =     8000.0   (cum14 16000.0 - wk14 8000.0)
+  parts_carry     : cum13_total =      298.0   (cum14 735.0 - wk14 437.0)
+  products_carry  : cum13_total =      938.0   (cum14 2496.0 - wk14 1558.0)
+  demand_penalty  : cum13_total =        0.0   (cum14 0.0 - wk14 0.0)
+  subtotal        : cum13_total =    34643.0   (cum14 64283.0 - wk14 29640.0)
+  TOTAL           : cum13_total =    44693.0
+
+WEEK-14 RECEIPTS (observed inputs set by week-<=13 ordering decisions)
+  Raw materials received  : 22000
+  Parts X' received       : 600
+  Parts Y' received       : 500
+  Parts Z' received       : 400
