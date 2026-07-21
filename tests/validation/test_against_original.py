@@ -1054,8 +1054,8 @@ class TestConfigurationValidation:
         """Verify reject rate is configurable (observed to vary by week)."""
         config = get_default_config()
 
-        # Default reject rate from case study
-        assert config.production.reject_rate == 0.178
+        # Default reject fraction of gross at $750 (verified vs REPT14, Discovery #19)
+        assert config.production.reject_rate == 0.1514
 
         # Should be configurable for calibration
         custom_config = config.model_copy(deep=True)
@@ -1164,8 +1164,8 @@ class TestSimulationVsOriginal:
         # Scheduled hours: 40, Trained operator (100% efficiency)
         # X' production rate: 60/hr
         # Expected: 40 * 1.0 * 60 = 2400 gross
-        # Rejects at 17.8%: 2400 * 0.178 = 427.2
-        # Net: 2400 - 427.2 = 1972.8
+        # Rejects at 15.14% of gross (Discovery #19): 2400 * 0.1514 = 363.36
+        # Net: 2400 - 363.36 = 2036.64
 
         machine = Machine(
             machine_id=1,
@@ -1192,8 +1192,8 @@ class TestSimulationVsOriginal:
 
         assert result.productive_hours == pytest.approx(40.0, rel=0.01)
         assert result.gross_production == pytest.approx(2400.0, rel=0.01)
-        assert result.rejects == pytest.approx(427.2, rel=0.01)
-        assert result.net_production == pytest.approx(1972.8, rel=0.01)
+        assert result.rejects == pytest.approx(363.36, rel=0.01)
+        assert result.net_production == pytest.approx(2036.64, rel=0.01)
 
     def test_cost_rate_parameters(self) -> None:
         """Verify cost rate parameters match case study documentation."""

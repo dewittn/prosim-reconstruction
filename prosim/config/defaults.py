@@ -44,10 +44,17 @@ ASSEMBLY_PRODUCTION_RATES: dict[str, int] = {
 # =============================================================================
 
 # The reject rate is NOT constant - it varies with quality budget!
-# VERIFIED: DECS14 specified $750 budget, REPT14 showed exactly 17.8% rejects.
+#
+# REJECT FRACTION IS OF GROSS OUTPUT (VERIFIED via Discovery #19, Jul 2026):
+# The reject rate is the fraction of GROSS production rejected; the report's
+# "Production" column is NET good units (gross = net + rejects). At the $750
+# budget in DECS14, the true reject fraction is 15.14% of gross, which
+# reproduces all 9 operators' REPT14 rejects/net exactly. The old 17.8%
+# constant was a net-vs-gross artifact (0.1514/(1-0.1514) ~= 0.178) and is
+# WRONG for the hot path.
 #
 # Empirical data from 2004 spreadsheet (Graph-Table 1) shows LOGARITHMIC relationship:
-#   Quality Budget $750  -> Reject Rate 15.14%
+#   Quality Budget $750  -> Reject Rate 15.14%   (verified exact vs REPT14, Discovery #19)
 #   Quality Budget $850  -> Reject Rate 13.02%
 #   Quality Budget $900  -> Reject Rate 12.10%
 #   Quality Budget $1000 -> Reject Rate 10.00%
@@ -57,33 +64,42 @@ ASSEMBLY_PRODUCTION_RATES: dict[str, int] = {
 #   Quality Budget $2500 -> Reject Rate ~1.6% (floor region)
 #
 # The relationship follows diminishing returns - each dollar buys less reduction.
-# Linear approximation is used below for simplicity, but true relationship is logarithmic.
 REJECT_RATE_CONFIG: dict[str, float] = {
-    "base_rate": 0.1514,  # Reject rate at $750 quality budget (from empirical data)
-    "base_budget": 750.0,  # Reference quality budget
+    "base_rate": 0.1514,  # Reject rate at $750 quality budget (verified exact, Discovery #19)
+    "base_budget": 750.0,  # Reference quality budget (curve is anchored here)
+    "log_coefficient": 0.114,  # Slope of the logarithmic curve (empirical fit)
     "reduction_per_dollar": 0.00029,  # Linear approximation (actual relationship is logarithmic)
     "minimum_rate": 0.015,  # Floor - can't reduce rejects below ~1.5% (verified from Week 16 data)
+    "maximum_rate": 0.50,  # Engineering guard (UNVERIFIED): reject fraction for a
+    # non-positive / near-zero quality budget, where the log curve diverges.
+    # The empirical data does not cover budgets below ~$100, so this ceiling is
+    # a stability guard, not a verified value.
 }
 
 
 def calculate_reject_rate(quality_budget: float, use_logarithmic: bool = True) -> float:
     """
-    Calculate reject rate based on quality budget.
+    Calculate reject rate (fraction of GROSS output) based on quality budget.
 
     The relationship is LOGARITHMIC (diminishing returns) based on empirical
     data from 2004 spreadsheet analysis. A linear approximation is available
     for simpler calculations.
 
-    Logarithmic formula (fitted to empirical data):
-        reject_rate = 0.904 - 0.114 * ln(quality_budget)
+    The logarithmic curve is anchored on the verified empirical point
+    ($750 -> 15.14%), so it returns exactly the base_rate at the base_budget:
+
+        reject_rate = base_rate - log_coefficient * ln(quality_budget / base_budget)
+
+    This is equivalent to the older intercept form (~ 0.906 - 0.114*ln(budget))
+    but pinned to the Discovery #19 anchor so replays match REPT14 exactly.
 
     Linear approximation:
         reject_rate = 0.1514 - ((quality_budget - 750) * 0.00029)
 
     Examples:
-        $750 budget  -> 15.1% rejects
-        $1000 budget -> 10.0% rejects
-        $2000 budget -> 4.0% rejects
+        $750 budget  -> 15.14% rejects (verified exact vs REPT14)
+        $1000 budget -> ~11.9% rejects
+        $2000 budget -> ~3.96% rejects
         $2500 budget -> ~1.5% rejects (floor)
 
     Args:
@@ -91,25 +107,38 @@ def calculate_reject_rate(quality_budget: float, use_logarithmic: bool = True) -
         use_logarithmic: If True, use logarithmic formula (default). If False, use linear.
 
     Returns:
-        Reject rate as a decimal (e.g., 0.10 for 10%)
+        Reject rate as a decimal fraction of gross (e.g., 0.10 for 10%)
     """
     import math
 
+    base_rate = REJECT_RATE_CONFIG["base_rate"]
+    base_budget = REJECT_RATE_CONFIG["base_budget"]
+    minimum_rate = REJECT_RATE_CONFIG["minimum_rate"]
+    maximum_rate = REJECT_RATE_CONFIG["maximum_rate"]
+
+    # The logarithmic curve diverges as budget -> 0; a non-positive budget has
+    # no verified reject rate, so fall back to the (unverified) ceiling guard.
+    if quality_budget <= 0:
+        return maximum_rate
+
     if use_logarithmic:
-        # Logarithmic fit from empirical data: rate = 0.904 - 0.114 * ln(budget)
-        rate = 0.904 - 0.114 * math.log(quality_budget)
+        # Logarithmic fit anchored on the verified ($750 -> 15.14%) empirical point.
+        rate = base_rate - REJECT_RATE_CONFIG["log_coefficient"] * math.log(
+            quality_budget / base_budget
+        )
     else:
         # Linear approximation
-        rate = REJECT_RATE_CONFIG["base_rate"] - (
-            (quality_budget - REJECT_RATE_CONFIG["base_budget"])
+        rate = base_rate - (
+            (quality_budget - base_budget)
             * REJECT_RATE_CONFIG["reduction_per_dollar"]
         )
 
-    return max(REJECT_RATE_CONFIG["minimum_rate"], rate)
+    return max(minimum_rate, min(maximum_rate, rate))
 
 
-# Legacy constant for backwards compatibility
-REJECT_RATE: float = 0.178  # At default $750 quality budget
+# Reject fraction of GROSS output at the default $750 quality budget (verified
+# exact vs REPT14, Discovery #19). Replaces the old net-vs-gross 0.178 artifact.
+REJECT_RATE: float = 0.1514
 
 # =============================================================================
 # BILL OF MATERIALS (verified)
@@ -121,12 +150,20 @@ BOM: dict[str, dict[str, int]] = {
     "Z": {"Z'": 1},
 }
 
-# Raw materials per part (estimated - needs calibration)
+# Raw materials consumed per GROSS part, by type (VERIFIED via Discovery #19).
+# RM units used = gross parts * per-type factor. In REPT14, gross X' (7625) * 1
+# + gross Y' (1312) * 2 = 10249 ~= reported RM used 10247 (rounding).
 RAW_MATERIALS_PER_PART: dict[str, float] = {
-    "X'": 1.0,  # RM units per part
-    "Y'": 1.0,
-    "Z'": 1.0,
+    "X'": 1.0,  # RM units per gross X' part
+    "Y'": 2.0,  # RM units per gross Y' part
+    "Z'": 3.0,  # RM units per gross Z' part
 }
+
+# Weighted-average raw-material unit price (VERIFIED via Discovery #19).
+# REPT14 wk14 RM cost 11700 / ~10249 units ~= $1.1416/unit. This is a blended
+# average over the full purchase-price history; the per-type RM prices remain
+# UNRESOLVED, so only the weighted-average figure is used.
+RAW_MATERIALS_WEIGHTED_AVG_UNIT_PRICE: float = 1.1416
 
 # =============================================================================
 # LEAD TIMES (verified from presentations)
@@ -301,9 +338,13 @@ WORKFORCE_COSTS: dict[str, float] = {
 # =============================================================================
 
 # From ProSim_intro.ppt: "9 operators needed: $10/hour"
+# LABOR BASIS (VERIFIED via Discovery #19): labor is charged on SCHEDULED hours
+# (not productive/efficiency-adjusted hours), plus an overtime premium of 0.5x
+# the regular rate on hours above 40. This reproduces REPT14's labor exactly:
+# per-operator scheduled*10 + max(0, sched-40)*5 sums to X=2300, Y=1700, total 4000.
 LABOR_RATES: dict[str, float] = {
     "regular_hourly": 10.0,  # $ per hour (verified from PPT)
-    "overtime_multiplier": 1.5,  # Time and a half above 40 hours (verified from PPT)
+    "overtime_multiplier": 1.5,  # Time and a half above 40 hours (verified: matches REPT14)
     "minimum_hours": 20.0,  # Minimum hours per operator per week (from PPT)
 }
 
@@ -358,22 +399,48 @@ MACHINE_REPAIR: dict[str, Any] = {
 }
 
 # =============================================================================
-# CARRYING COSTS (estimated - needs calibration)
+# CARRYING COSTS (VERIFIED per-type via Discovery #19)
 # =============================================================================
 
-CARRYING_COST_RATES: dict[str, float] = {
-    "raw_materials": 0.01,  # per unit per week
-    "parts": 0.05,  # per part per week
-    "products": 0.10,  # per product per week
+# Carrying cost is VALUE-SCALED per type, not flat. Verified against REPT14
+# ending inventories (each rate * ending inventory reproduces the reported
+# per-type carrying cost exactly):
+#   parts:    X' 3348*0.05=167, Y' 223*0.09=20, Z' 1917*0.13=249
+#   products: X 3999*0.10=400,  Y 2630*0.23=605, Z 1317*0.42=553
+PARTS_CARRYING_RATES: dict[str, float] = {
+    "X'": 0.05,  # per X' part per week
+    "Y'": 0.09,  # per Y' part per week
+    "Z'": 0.13,  # per Z' part per week
+}
+
+PRODUCTS_CARRYING_RATES: dict[str, float] = {
+    "X": 0.10,  # per X product per week
+    "Y": 0.23,  # per Y product per week
+    "Z": 0.42,  # per Z product per week
+}
+
+CARRYING_COST_RATES: dict[str, Any] = {
+    "raw_materials": 0.01,  # per unit per week (RM carrying UNVERIFIED; see Discovery #19)
+    "parts": PARTS_CARRYING_RATES,  # per-type, verified
+    "products": PRODUCTS_CARRYING_RATES,  # per-type, verified
 }
 
 # =============================================================================
-# EQUIPMENT USAGE RATES (estimated - needs derivation)
+# EQUIPMENT USAGE RATES (derived via Discovery #19)
 # =============================================================================
 
+# Equipment usage is charged per SCHEDULED hour (not productive hour). Derived
+# from REPT14: equipment cost 8000 / total scheduled hours 380 ~= $21.05/hr.
+# The per-department split (parts vs assembly) does not reduce cleanly to round
+# rates, so a single blended per-scheduled-hour rate is used (PARTIAL: derived
+# from one week; the parts/assembly decomposition remains unresolved).
+EQUIPMENT_USAGE_COST_PER_SCHEDULED_HOUR: float = 8000.0 / 380.0  # ~= $21.05/hr
+
+# Legacy per-hour rates (SUPERSEDED: were applied to productive hours, ~3-4x too
+# high, e.g. REPT14 would have overcharged equipment). Kept for reference only.
 EQUIPMENT_RATES: dict[str, float] = {
-    "parts_department": 100.0,  # $ per hour
-    "assembly_department": 80.0,  # $ per hour
+    "parts_department": 100.0,  # $ per hour (legacy, unused)
+    "assembly_department": 80.0,  # $ per hour (legacy, unused)
 }
 
 # =============================================================================

@@ -206,14 +206,14 @@ class TestRawMaterialConsumption:
     """Tests for raw material consumption calculations."""
 
     def test_calculate_consumption_standard_bom(self):
-        """Test raw material consumption with default 1:1 BOM."""
+        """Test raw material consumption with per-type factors (Discovery #19)."""
         manager = InventoryManager()
 
         gross_production = {"X'": 100.0, "Y'": 200.0, "Z'": 150.0}
         consumed = manager.calculate_raw_material_consumption(gross_production)
 
-        # With default 1:1 ratio, total should equal sum of production
-        assert consumed == 450.0
+        # Per-type RM factors X' 1, Y' 2, Z' 3: 100*1 + 200*2 + 150*3 = 950
+        assert consumed == 950.0
 
     def test_calculate_consumption_custom_rates(self):
         """Test raw material consumption with custom rates."""
@@ -239,14 +239,15 @@ class TestRawMaterialConsumption:
         # Start with 500 RM
         inventory = Inventory(raw_materials=RawMaterialsInventory(beginning=500.0))
 
-        gross_production = {"X'": 100.0, "Y'": 200.0}  # Needs 300 RM
+        # Per-type factors X' 1, Y' 2: needs 100*1 + 200*2 = 500 RM
+        gross_production = {"X'": 100.0, "Y'": 200.0}
 
         new_inv, result = manager.consume_raw_materials(inventory, gross_production)
 
-        assert result.raw_materials_consumed == 300.0
+        assert result.raw_materials_consumed == 500.0
         assert result.raw_materials_shortage == 0.0
-        assert new_inv.raw_materials.used_in_production == 300.0
-        assert new_inv.raw_materials.ending == 200.0
+        assert new_inv.raw_materials.used_in_production == 500.0
+        assert new_inv.raw_materials.ending == 0.0
 
     def test_consume_raw_materials_insufficient(self):
         """Test consuming raw materials when insufficient available."""
@@ -255,12 +256,13 @@ class TestRawMaterialConsumption:
         # Start with only 200 RM
         inventory = Inventory(raw_materials=RawMaterialsInventory(beginning=200.0))
 
-        gross_production = {"X'": 100.0, "Y'": 200.0}  # Needs 300 RM
+        # Per-type factors X' 1, Y' 2: needs 100*1 + 200*2 = 500 RM
+        gross_production = {"X'": 100.0, "Y'": 200.0}
 
         new_inv, result = manager.consume_raw_materials(inventory, gross_production)
 
         assert result.raw_materials_consumed == 200.0  # Only what's available
-        assert result.raw_materials_shortage == 100.0
+        assert result.raw_materials_shortage == 300.0
         assert new_inv.raw_materials.used_in_production == 200.0
         assert new_inv.raw_materials.ending == 0.0
 
@@ -611,12 +613,12 @@ class TestIntegration:
         # Consume raw materials
         inventory, rm_result = manager.consume_raw_materials(inventory, gross_parts)
 
-        # RM consumed: 200 + 250 + 180 = 630
-        assert rm_result.raw_materials_consumed == 630.0
+        # Per-type RM factors X' 1, Y' 2, Z' 3: 200*1 + 250*2 + 180*3 = 1240
+        assert rm_result.raw_materials_consumed == 1240.0
         assert rm_result.raw_materials_shortage == 0.0
 
-        # Add net parts production (after 17.8% reject)
-        reject_rate = 0.178
+        # Add net parts production (after 15.14% reject of gross)
+        reject_rate = 0.1514
         net_parts = {k: v * (1 - reject_rate) for k, v in gross_parts.items()}
         inventory = manager.add_parts_production(inventory, net_parts)
 
@@ -637,9 +639,9 @@ class TestIntegration:
         # Verify final state
         ending = manager.get_ending_inventory(inventory)
 
-        # Raw materials: 1000 + 500 - 630 = 870
-        assert ending["raw_materials"] == 870.0
+        # Raw materials: 1000 + 500 - 1240 = 260
+        assert ending["raw_materials"] == 260.0
 
         # Check that we can advance the week
         new_week_inv = inventory.advance_week()
-        assert new_week_inv.raw_materials.beginning == 870.0
+        assert new_week_inv.raw_materials.beginning == 260.0

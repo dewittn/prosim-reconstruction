@@ -81,10 +81,23 @@ class ProductionInput:
     """Input for production calculations.
 
     Combines machine assignments with operator efficiency results.
+
+    Optional overrides support forensic replays and quality-budget-driven runs:
+    - availability_hours: observed productive/available hours BEFORE efficiency
+      is applied (models machine/operator downtime). If provided, it replaces
+      scheduled hours as the base for production. Default None -> no downtime
+      (base = scheduled hours), which preserves prior behavior.
+      PARTIAL: the generative downtime model is UNKNOWN (Discovery #19); this
+      hook only lets a caller inject observed availability.
+    - reject_rate: fraction of GROSS output rejected for this machine. If
+      provided (e.g. derived from the week's quality budget via
+      calculate_reject_rate), it overrides the config default reject_rate.
     """
 
     machine: Machine
     efficiency_result: OperatorEfficiencyResult | None = None
+    availability_hours: float | None = None
+    reject_rate: float | None = None
 
 
 class ProductionEngine:
@@ -194,17 +207,27 @@ class ProductionEngine:
         # Calculate setup time
         setup_hours = self.calculate_setup_time(machine, part_type)
 
-        # Calculate productive hours
-        # Productive hours = (scheduled - setup) * efficiency
-        available_hours = max(0.0, scheduled_hours - setup_hours)
+        # Base hours for production: observed availability if injected (models
+        # downtime), otherwise scheduled hours (no downtime). Setup eats into
+        # the available hours in either case.
+        base_hours = (
+            production_input.availability_hours
+            if production_input.availability_hours is not None
+            else scheduled_hours
+        )
+        available_hours = max(0.0, base_hours - setup_hours)
         productive_hours = available_hours * efficiency_result.efficiency
 
         # Calculate gross production
         production_rate = self.get_production_rate(part_type or "", machine.department)
         gross_production = productive_hours * production_rate
 
-        # Apply reject rate
-        reject_rate = self.config.production.reject_rate
+        # Apply reject rate to GROSS output; net = gross - rejects.
+        reject_rate = (
+            production_input.reject_rate
+            if production_input.reject_rate is not None
+            else self.config.production.reject_rate
+        )
         rejects = gross_production * reject_rate
         net_production = gross_production - rejects
 

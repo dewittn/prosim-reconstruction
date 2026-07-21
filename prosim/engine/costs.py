@@ -161,13 +161,31 @@ class CostCalculator:
         """
         self.config = config or get_default_config()
 
+    def _labor_for_hours(self, scheduled_hours: float) -> float:
+        """Labor cost for one operator's SCHEDULED hours, with overtime premium.
+
+        Labor is charged on scheduled hours (not productive/efficiency-adjusted
+        hours), plus an overtime premium of (multiplier - 1) x rate on hours
+        above the regular-hours threshold. Verified vs REPT14 (Discovery #19):
+        e.g. 50 scheduled hrs -> 50*10 + 10*5 = 550.
+        """
+        rate = self.config.costs.labor.regular_hourly
+        regular_hours = self.config.simulation.regular_hours
+        overtime_multiplier = self.config.costs.labor.overtime_multiplier
+
+        base = scheduled_hours * rate
+        overtime_hours = max(0.0, scheduled_hours - regular_hours)
+        overtime_premium = overtime_hours * rate * (overtime_multiplier - 1.0)
+        return base + overtime_premium
+
     def calculate_labor_costs(
         self,
         production_result: ProductionResult,
     ) -> dict[str, float]:
         """Calculate labor costs by product type.
 
-        Labor cost = productive hours * hourly rate
+        Labor cost = scheduled hours * hourly rate + overtime premium on hours
+        above the regular-hours threshold (verified vs REPT14, Discovery #19).
 
         Args:
             production_result: Production results for the week
@@ -175,7 +193,6 @@ class CostCalculator:
         Returns:
             Labor costs by product type
         """
-        labor_rate = self.config.costs.labor.regular_hourly
         costs: dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
 
         # Parts department contributes to parts' products
@@ -184,12 +201,16 @@ class CostCalculator:
                 # Map part type to product type (X' -> X, etc.)
                 product_type = result.part_type.replace("'", "")
                 if product_type in costs:
-                    costs[product_type] += result.productive_hours * labor_rate
+                    costs[product_type] += self._labor_for_hours(
+                        result.scheduled_hours
+                    )
 
         # Assembly department contributes directly
         for result in production_result.assembly_department.machine_results:
             if result.part_type and result.part_type in costs:
-                costs[result.part_type] += result.productive_hours * labor_rate
+                costs[result.part_type] += self._labor_for_hours(
+                    result.scheduled_hours
+                )
 
         return costs
 
@@ -245,19 +266,28 @@ class CostCalculator:
     def calculate_raw_material_costs(
         self,
         production_result: ProductionResult,
-        rm_cost_per_unit: float = 1.0,
+        rm_cost_per_unit: float | None = None,
     ) -> dict[str, float]:
         """Calculate raw material costs by product type.
 
-        Based on gross production (materials consumed regardless of rejects).
+        RM units consumed = gross parts * per-type factor {X':1, Y':2, Z':3};
+        cost = units * weighted-average RM unit price (verified vs REPT14,
+        Discovery #19). Based on gross production (materials consumed regardless
+        of rejects).
 
         Args:
             production_result: Production results for the week
-            rm_cost_per_unit: Cost per raw material unit
+            rm_cost_per_unit: Weighted-average RM unit price. Defaults to the
+                config value (raw_materials_weighted_avg_unit_price).
 
         Returns:
             Raw material costs by product type
         """
+        if rm_cost_per_unit is None:
+            rm_cost_per_unit = (
+                self.config.production.raw_materials_weighted_avg_unit_price
+            )
+
         costs: dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         rm_per_part = self.config.production.raw_materials_per_part
 
@@ -267,8 +297,8 @@ class CostCalculator:
         ) in production_result.parts_department.gross_production_by_type.items():
             product_type = part_type.replace("'", "")
             if product_type in costs:
-                rate = rm_per_part.get(part_type, 1.0)
-                costs[product_type] += gross_qty * rate * rm_cost_per_unit
+                units_per_part = rm_per_part.get(part_type, 1.0)
+                costs[product_type] += gross_qty * units_per_part * rm_cost_per_unit
 
         return costs
 
@@ -312,23 +342,21 @@ class CostCalculator:
             Equipment costs by product type
         """
         costs: dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
-        rates = self.config.equipment.rates
+        # Equipment is charged per SCHEDULED hour (verified vs REPT14,
+        # Discovery #19), not per productive/efficiency-adjusted hour.
+        rate = self.config.equipment.rates.per_scheduled_hour
 
         # Parts department
         for result in production_result.parts_department.machine_results:
             if result.part_type:
                 product_type = result.part_type.replace("'", "")
                 if product_type in costs:
-                    costs[product_type] += (
-                        result.productive_hours * rates.parts_department
-                    )
+                    costs[product_type] += result.scheduled_hours * rate
 
         # Assembly department
         for result in production_result.assembly_department.machine_results:
             if result.part_type and result.part_type in costs:
-                costs[result.part_type] += (
-                    result.productive_hours * rates.assembly_department
-                )
+                costs[result.part_type] += result.scheduled_hours * rate
 
         return costs
 
@@ -344,11 +372,12 @@ class CostCalculator:
         Returns:
             Parts carrying costs by product type
         """
-        rate = self.config.costs.carrying.parts
+        # Value-scaled per-type rates (verified vs REPT14, Discovery #19).
+        rates = self.config.costs.carrying.parts
         return {
-            "X": inventory.parts.x_prime.ending * rate,
-            "Y": inventory.parts.y_prime.ending * rate,
-            "Z": inventory.parts.z_prime.ending * rate,
+            "X": inventory.parts.x_prime.ending * rates["X'"],
+            "Y": inventory.parts.y_prime.ending * rates["Y'"],
+            "Z": inventory.parts.z_prime.ending * rates["Z'"],
         }
 
     def calculate_products_carrying_costs(
@@ -363,11 +392,12 @@ class CostCalculator:
         Returns:
             Products carrying costs by product type
         """
-        rate = self.config.costs.carrying.products
+        # Value-scaled per-type rates (verified vs REPT14, Discovery #19).
+        rates = self.config.costs.carrying.products
         return {
-            "X": inventory.products.x.ending * rate,
-            "Y": inventory.products.y.ending * rate,
-            "Z": inventory.products.z.ending * rate,
+            "X": inventory.products.x.ending * rates["X"],
+            "Y": inventory.products.y.ending * rates["Y"],
+            "Z": inventory.products.z.ending * rates["Z"],
         }
 
     def calculate_demand_penalty(
