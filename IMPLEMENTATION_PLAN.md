@@ -1200,6 +1200,48 @@ The authentic PROSIM report format provides:
 
 ---
 
+### 2026-07 - First End-to-End Replay & Engine Corrections (Discovery #19)
+_Status: Complete_
+
+Ran the project's first end-to-end replay experiment: back-derived Nelson's week-13
+company state directly from REPT14.DAT's own 2-week cumulative columns, replayed his
+actual DECS14.DAT decisions through the reconstruction, and diffed the output
+field-by-field against the real historical report (`analysis/replay/r5_*`,
+`tests/test_replay_rept14.py`).
+
+**Result**: the core production identity (hours × rate × efficiency, rejects applied
+to gross output) reproduces all 9 operators' output exactly (0.00% error). The diff
+also localized several engine mechanics that were wrong relative to ground truth.
+
+**Engine corrections applied** (commit `429913b`, per Discovery #19's ranked fix list):
+- Reject rate: hot path now uses 15.14% of GROSS output at $750 (logarithmic curve
+  anchored on that empirical point), replacing the old flat 17.8%-of-net artifact
+- Labor cost: scheduled hours × $10 + overtime premium (>40h at 1.5x), not productive hours
+- Raw-material cost: gross parts × per-type factors (X'=1, Y'=2, Z'=3) at a
+  weighted-average unit price (~$1.1416), replacing a flat per-part rate
+- Equipment cost: ~$21.05 per SCHEDULED hour (8000/380 in REPT14), replacing
+  ~$100/$80-per-productive-hour department rates that were 3-4x too high
+- Carrying costs: value-scaled per type (parts 0.05/0.09/0.13; products
+  0.10/0.23/0.42), replacing a flat rate
+- DECS decision-file parsing: column 1 is the OPERATOR id (not machine id);
+  `apply_decisions_to_machines` now maps operators to machine slots by row
+  position (rows 1-4 Parts, 5-9 Assembly) instead of dropping ops 18/26
+
+After these corrections, run through the engine's own pathways (not the oracle
+production identity), replay error dropped from 43.72% to 8.90%, with the remaining
+gap attributed to the still-unmodeled availability/productive-hours mechanic
+(Discovery #19, "MISSING" in the verified-vs-broken table).
+
+**Test suite**: 422 tests passing.
+
+**Documentation**: Followed with a consistency sweep across `docs/verification_guide.md`,
+`docs/algorithms.md`, `docs/calibration_report.md`, `docs/forensic_verification_status.md`,
+`docs/key_discoveries.md` (update banner on #1), and `docs/history.md` to remove the
+now-superseded 17.8%-reject-rate, flat-carrying-cost, and $100/hr-equipment claims and
+the "cannot do end-to-end validation" framing.
+
+---
+
 ## References
 
 - [LGIRA Archive Entry](https://www.lgira.mesmernet.org/items/show/2717) - Original 1968 PROSIM catalog
@@ -1211,4 +1253,4 @@ The authentic PROSIM report format provides:
 ---
 
 *Plan created: December 2025*
-*Last updated: December 2025*
+*Last updated: July 2026*

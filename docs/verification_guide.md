@@ -64,12 +64,18 @@ these delimit shipping-period blocks within the operator log.
 
 ### 1. Verify Reject Rate Formula
 
-**Formula:** `reject_rate = 0.178 - ((quality_budget - 750) * 0.00029)`
+> **Corrected Jul 2026 per Discovery #19**: the report's `output` (parts[4]) column is
+> NET good units, not gross. Rejects are a fraction of GROSS production
+> (gross = net + rejects), and that fraction is **15.14% at $750 quality budget**,
+> not 17.8%. The old 17.8% figure was `rejects / net` (0.1514/(1-0.1514) ≈ 0.178),
+> a net-vs-gross artifact — see `prosim/config/defaults.py:REJECT_RATE_CONFIG`.
+
+**Formula:** `reject_rate = 0.1514 - log_coefficient * ln(quality_budget / 750)` (logarithmic, anchored at $750 → 15.14% of gross; see Section 6 below)
 
 **Procedure:**
 ```python
 # From DECS14.DAT, line 1: quality_budget = 750
-# From REPT14.DAT, operator lines: calculate reject rate
+# From REPT14.DAT, operator lines: calculate reject rate against GROSS output
 
 with open('REPT14.DAT') as f:
     lines = f.readlines()
@@ -77,14 +83,15 @@ with open('REPT14.DAT') as f:
 for line in lines[14:23]:  # Operator lines
     parts = line.split()
     if len(parts) >= 6:
-        output = float(parts[4])
+        net_output = float(parts[4])  # "Production" column is NET
         rejects = float(parts[5])
-        if output > 0:
-            rate = rejects / output
-            print(f"Reject rate: {rate:.1%}")  # Should show ~17.8%
+        gross_output = net_output + rejects
+        if gross_output > 0:
+            rate = rejects / gross_output
+            print(f"Reject rate (of gross): {rate:.2%}")  # Should show ~15.14%
 ```
 
-**Expected Result:** At $750 quality budget, reject rate = 17.8%
+**Expected Result:** At $750 quality budget, reject rate = 15.14% of GROSS output (equivalently ~17.8% of NET output — same underlying data, different denominator).
 
 ### 2. Verify Training Matrix Against XTC
 
@@ -231,7 +238,9 @@ for m, op, part, sched, prod_hrs, output, rejects in week1_operators:
 **Key Observations:**
 - Proficiency range (51-70%) matches XTC proficiency floats (55-68%)
 - Operator 3 is an "expert" with >100% proficiency
-- Reject rates consistently 17.8% (at $750 quality budget)
+- Reject rates consistently ~17.8% of NET output (`rejects / output` above) — equivalent
+  to 15.14% of GROSS output, the value the quality-budget formula actually predicts.
+  Corrected Jul 2026 per Discovery #19; see Section 1's note above.
 
 ### 6. Verify Reject Rate Formula (Logarithmic)
 
@@ -251,23 +260,27 @@ The reject rate follows a **logarithmic relationship** with diminishing returns:
 | $2,000 | 4.00% |
 | $2,500 | ~1.6% (floor) |
 
-**Logarithmic Formula (fitted):**
+**Logarithmic Formula (anchored, corrected Jul 2026 per Discovery #19):**
 ```python
 import math
 
 def calculate_reject_rate(quality_budget):
-    # Logarithmic fit: rate = 0.904 - 0.114 * ln(budget)
-    rate = 0.904 - 0.114 * math.log(quality_budget)
+    # The old intercept form (rate = 0.904 - 0.114 * ln(budget)) was a loose
+    # fit that predicted 14.9% at $750, not the verified 15.14%. The curve is
+    # now anchored on the empirical Discovery #19 point so it returns the
+    # exact base_rate at base_budget:
+    base_rate, base_budget, log_coefficient = 0.1514, 750.0, 0.114
+    rate = base_rate - log_coefficient * math.log(quality_budget / base_budget)
     return max(0.015, rate)  # Floor at ~1.5%
 
 # Verification:
-calculate_reject_rate(750)   # = 0.149 (14.9%) ✓
-calculate_reject_rate(1000)  # = 0.116 (11.6%) ~10% ✓
-calculate_reject_rate(2000)  # = 0.038 (3.8%)  ~4% ✓
-calculate_reject_rate(2500)  # = 0.015 (1.5%)  floor ✓
+calculate_reject_rate(750)   # = 0.1514 (15.14%) ✓ exact vs REPT14, Discovery #19
+calculate_reject_rate(1000)  # = 0.1186 (11.86%)
+calculate_reject_rate(2000)  # = 0.0396 (3.96%)
+calculate_reject_rate(2500)  # = 0.015 (1.5%)  floor (formula gives 1.41%, clamped)
 ```
 
-**Key Insight:** Each dollar of quality budget provides diminishing returns. The first $250 (750→1000) reduces rejects by ~5%, but the next $1000 (1000→2000) only reduces by ~6%.
+**Key Insight:** Each dollar of quality budget provides diminishing returns. The first $250 (750→1000) reduces rejects by ~3.3 points, but the next $1000 (1000→2000) only reduces by ~7.9 points.
 
 ### 7. Verify Game Efficiency Formula
 

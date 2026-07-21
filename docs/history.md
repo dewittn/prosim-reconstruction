@@ -119,7 +119,9 @@ Unable to see the simulation's internal algorithms, the student systematically:
 2. Identified patterns in production rates, costs, and efficiency
 3. Built a predictive Excel spreadsheet
 4. Validated predictions against actual simulation results
-5. Achieved approximately **97% accuracy** in predicting simulation outcomes
+5. Achieved approximately **97% accuracy** in predicting simulation outcomes (see the
+   Accuracy Analysis note below — Jul 2026 re-scoring found the underlying mechanics
+   are exact and the "97%" best matches the game's own cumulative efficiency score)
 
 This spreadsheet, **ProsimTable.xls**, became one of the most detailed surviving records of how PROSIM actually functioned.
 
@@ -144,16 +146,27 @@ The final spreadsheet also referenced data from classmates (Andy, Shorty), sugge
 
 #### Accuracy Analysis
 
-The 97% accuracy claim was verified through comparison of spreadsheet predictions against actual REPT output:
+> **Corrected Jul 2026 per Discoveries #17 and #19**: this section's "97% verified"
+> framing has been sharpened by the project's first quantitative re-scoring against
+> actual game results. Forward *forecast* accuracy (what the spreadsheet predicted
+> before seeing the outcome) was 89% per-operator / 93% on net output — the error
+> came from coarse efficiency estimates, not wrong mechanics. Separately, the
+> production *identity* itself (`gross = productive_hours × rate × efficiency`)
+> reproduces game output exactly (100%) when given correct inputs. The remembered
+> "97%" is best explained as the cumulative in-game efficiency score (0.949 at the
+> last saved snapshot, trending toward ~0.97 in later weeks), not a literal
+> forecast-accuracy metric — see `docs/key_discoveries.md` #17. The reject-rate row
+> below is also corrected: 17.8% was `rejects / net_output`; the quality-budget-driven
+> rate the spreadsheet models is 15.14% of GROSS output at $750 (Discovery #19).
 
 | Metric | Predicted | Actual | Match |
 |--------|-----------|--------|-------|
 | Standard production rates (X'=60, Y'=50, Z'=40) | ✓ | ✓ | Exact |
-| Reject rate | ~17-18% | 17.8% | Exact |
+| Reject rate (of gross output) | ~15% | 15.14% | Exact (corrected Jul 2026; the ~17-18%/17.8% pair previously shown here was the same data on a NET-output basis) |
 | Inventory flow calculations | ✓ | ✓ | Exact |
 | Cost category breakdowns | ✓ | ✓ | Exact |
 
-**Sources of the ~3% variance:**
+**Sources of the remaining forecast variance (89-93%, not mechanics error):**
 1. **Machine repairs** - Random events ($400 in some weeks, $0 in others)
 2. **Operator efficiency curves** - Untrained workers showed variable productive hours
 3. **Rounding differences** - Simulation used different decimal precision

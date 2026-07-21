@@ -85,6 +85,24 @@
 
 **Category**: Data Integrity
 
+> **UPDATE (Jul 2026)**: Two of this discovery's conclusions have since been revised.
+> **Discovery #17** found that DECS14.DAT is confirmed to be the actual decisions
+> submission that produced REPT14.DAT — so a matched pair DOES exist for week 14,
+> partially easing point 1 below. **Discovery #19** went further: it back-derived
+> the full week-13 company state directly from REPT14 itself (REPT14's "cumulative"
+> columns are 2-week accounting-period totals, `cum14 = wk13 + wk14`, making the
+> prior state exactly solvable) and used it to run the project's first true
+> end-to-end replay — the core production identity reproduced all 9 operators'
+> output exactly. Discovery #19 also revised the "different games" framing itself:
+> REPT12/13/14 share exact beginning inventories and are better understood as
+> divergent **branches of one instructor-distributed saved state**, not fully
+> unrelated runs. The original evidence below (decreasing cumulative costs, distinct
+> operator assignments) still correctly shows these are not sequential weeks of a
+> single game — that part stands — but "end-to-end validation is impossible" (point 1)
+> and "cannot do end-to-end validation" no longer hold. See Discoveries #17 and #19
+> for the full account; this entry is left otherwise unchanged for the historical
+> record.
+
 ### The Discovery
 
 REPT12.DAT, REPT13.DAT, and REPT14.DAT are **NOT sequential weeks from the same game**. They are from **different game runs** by different players.
@@ -1218,6 +1236,7 @@ The project's first end-to-end replay was run: Nelson's week-13 state was **full
 | Jul 2026 | Added #17: Spreadsheet prediction accuracy quantified (mechanics exact, forecasts 89-93%); DECS14↔REPT14 matched pair identified; REPT14 roster corrected. |
 | Jul 2026 | Added #18: Transform hunt closed with documented clean negatives; #16 oscillation claim corrected (labeler bug, fixed in map_common.py). Binary frontier closed. |
 | Jul 2026 | Added #19: First end-to-end replay (DECS14→REPT14). Production identity exact 9/9; engine cost/reject/downtime gaps identified with ranked fix list; REPT12/13/14 revealed as branches of one shared instructor state. |
+| Jul 2026 | Engine corrections from #19's ranked fix list applied (commit `429913b`); 422 tests pass. Documentation consistency pass: added update banner to #1 (end-to-end validation achieved, shared-ancestor-state revision); corrected stale 17.8%-reject-rate, flat-carrying, and $100/hr-equipment claims across `verification_guide.md`, `algorithms.md`, `calibration_report.md`, `forensic_verification_status.md`, and `history.md`. |
 
 ---
 

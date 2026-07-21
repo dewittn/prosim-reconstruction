@@ -138,7 +138,7 @@ class ProductionEngine:
         gross_production = productive_hours * production_rate
 
         # Step 5: Apply reject rate
-        reject_rate = self.config.production.reject_rate  # Default: 17.8%
+        reject_rate = self.config.production.reject_rate  # Default: 15.14% of gross (corrected Jul 2026 per Discovery #19; old 17.8% was a net-vs-gross artifact)
         rejects = gross_production * reject_rate
         net_production = gross_production - rejects
 
@@ -568,9 +568,9 @@ The `ProsimConfig` class contains nested configuration sections:
 production:
   parts_rates: {X': 60, Y': 50, Z': 40}
   assembly_rates: {X: 40, Y: 30, Z: 20}
-  reject_rate: 0.178
+  reject_rate: 0.1514  # of GROSS output at $750 quality budget (corrected Jul 2026 per Discovery #19; old 0.178 was a net-vs-gross artifact)
   bom: {X: {X': 1}, Y: {Y': 1}, Z: {Z': 1}}
-  raw_materials_per_part: {X': 1.0, Y': 1.0, Z': 1.0}
+  raw_materials_per_part: {X': 1.0, Y': 2.0, Z': 3.0}  # corrected Jul 2026 per Discovery #19 (was uniform 1.0/1.0/1.0)
   setup_time: {parts_department: 2.0, assembly_department: 2.0}
 
 logistics:
@@ -596,6 +596,10 @@ equipment:
   repair:
     probability_per_machine_per_week: 0.10
     cost_per_repair: 400.0
+  # Legacy per-productive-hour rates below are SUPERSEDED (corrected Jul 2026 per
+  # Discovery #19): equipment is actually billed per SCHEDULED hour at a blended
+  # rate of ~$21.05/hr (8000/380 in REPT14); these were 3-4x too high. Kept for
+  # reference only — see `EQUIPMENT_USAGE_COST_PER_SCHEDULED_HOUR` in defaults.py.
   rates:
     parts_department: 100.0
     assembly_department: 80.0
@@ -603,13 +607,17 @@ equipment:
 costs:
   fixed:
     fixed_expense_per_week: 1500.0
+  # Carrying costs are VALUE-SCALED per type, not flat (corrected Jul 2026 per
+  # Discovery #19) — verified exactly against REPT14 ending inventories:
   carrying:
-    raw_materials: 0.01
-    parts: 0.05
-    products: 0.10
+    raw_materials: 0.01  # still UNVERIFIED/estimated; evidence suggests ~0.03
+    parts: {X': 0.05, Y': 0.09, Z': 0.13}
+    products: {X: 0.10, Y: 0.23, Z: 0.42}
   labor:
     regular_hourly: 10.0
     overtime_multiplier: 1.5
+    # Basis corrected Jul 2026 per Discovery #19: charged on SCHEDULED hours
+    # (not productive/efficiency-adjusted hours), plus 1.5x premium above 40h/week
 
 demand:
   forecast_std_dev_weeks_out: {4: 300, 3: 300, 2: 200, 1: 100, 0: 0}
@@ -630,7 +638,11 @@ Parameters are marked as **verified** or **estimated**:
 | Parameter | Status | Source |
 |-----------|--------|--------|
 | Production rates | Verified | Case study, REPT files |
-| Reject rate formula | Verified | 17.8% at $750, floor ~1.5% at $2,500 |
+| Reject rate formula | Verified | 15.14% of gross at $750, floor ~1.5% at $2,500 (corrected Jul 2026 per Discovery #19; old 17.8% was a net-vs-gross artifact) |
+| Raw materials per part (X'=1, Y'=2, Z'=3) | Verified | REPT14 replay, Discovery #19 |
+| Labor basis (scheduled hrs + overtime >40h @1.5x) | Verified | REPT14 replay exact ($4,000), Discovery #19 |
+| Equipment usage (~$21.05/scheduled hr) | Verified | REPT14 replay exact ($8,000 total), Discovery #19; per-dept split unresolved |
+| Carrying costs (value-scaled: parts 0.05/0.09/0.13, products 0.10/0.23/0.42) | Verified | REPT14 replay exact per-type, Discovery #19; RM carrying rate still estimated |
 | Lead times | Verified | Course materials |
 | Hiring cost ($2,700) | Verified | week1.txt |
 | Layoff cost ($200) | Verified | week1.txt |
@@ -639,7 +651,6 @@ Parameters are marked as **verified** or **estimated**:
 | Repair cost ($400) | Verified | week1.txt |
 | Labor rate ($10/hr) | Verified | PPT materials |
 | Setup time (2 hrs) | Estimated | - |
-| Carrying costs | Estimated | - |
 | Training cost ($1,000) | Estimated | - |
 | Machine repair probability | Estimated | 10-15% |
 | Operator efficiency ranges | Estimated | Observed ranges |
@@ -863,7 +874,7 @@ See [calibration_report.md](calibration_report.md) for detailed calibration find
 
 Key findings:
 - Production rates match documentation exactly
-- Reject rate varies 1.5% - 17.8% (influenced by quality budget, floor at ~1.5%)
+- Reject rate (of gross output) varies 1.5% - 15.14% (influenced by quality budget, floor at ~1.5%; corrected Jul 2026 per Discovery #19 — old 17.8% was a net-vs-gross artifact)
 - Operator efficiency ranges: trained 95-120%, untrained 20-67%
 - All verified cost constants match original files
 - Fixed operator profiles: Operators 1-9 have consistent ceilings across game instances
