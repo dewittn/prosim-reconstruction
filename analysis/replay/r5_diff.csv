@@ -1,0 +1,10 @@
+field,real,engine_native,engine_oracle_sched,err_native,err_oracle_sched,category
+prod_op3_X'_net,2550,2656,2470,106,-80,production
+prod_op5_Y'_net,1113,1994,1078,881,-35,production
+prod_op2_X'_net,1770,2554,1805,784,35,production
+prod_op7_X'_net,2150,2211,2083,61,-67,production
+prod_op4_X_net,1101,2120,1111,1019,10,production
+prod_op6_Y_net,807,1237,1143,430,336,production
+prod_op1_X_net,1426,2016,1381,590,-45,production
+prod_op26_Y_net,590,1455,890,865,300,production
+prod_op18_Y_net,200,582,334,382,134,production
