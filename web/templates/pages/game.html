@@ -7,7 +7,7 @@
     <h1>{{ game.company_name or "Your Company" }}</h1>
     <p>
         Game ID: {{ game.game_id }} |
-        Week {{ game.current_week }} of {{ game.max_weeks }}
+        <span class="week-badge">Week {{ game.current_week }} of {{ game.max_weeks }}</span>
         {% if game.is_complete %}
         <span class="status complete">Complete</span>
         {% elif game.is_active %}

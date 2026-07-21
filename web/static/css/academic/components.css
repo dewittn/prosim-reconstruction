@@ -74,6 +74,30 @@ a[role="button"]:focus-visible {
   outline-offset: 2px;
 }
 
+/* Gold accent button — distinct from primary navy */
+button.btn-gold,
+button[type="submit"].btn-gold,
+a[role="button"].btn-gold {
+  background: var(--acad-gold);
+  color: #ffffff;
+  box-shadow: var(--acad-shadow-sm);
+}
+
+button.btn-gold:hover,
+button[type="submit"].btn-gold:hover,
+a[role="button"].btn-gold:hover {
+  background: var(--acad-gold-light);
+  box-shadow: var(--acad-shadow-md);
+  color: #ffffff;
+}
+
+button.btn-gold:active,
+button[type="submit"].btn-gold:active,
+a[role="button"].btn-gold:active {
+  transform: translateY(1px);
+  box-shadow: var(--acad-shadow-sm);
+}
+
 /* Disabled */
 button:disabled,
 input:disabled {
@@ -414,6 +438,62 @@ table tbody tr:nth-child(even):hover {
   content: "\2713";
   font-size: 0.75rem;
   font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+   Week Badge — Pill with Calendar Icon Styling
+   --------------------------------------------------------------------------- */
+.week-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--acad-gold-pale);
+  border: 1px solid rgba(200, 150, 62, 0.25);
+  padding: 0.375rem 0.875rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--acad-navy);
+}
+
+/* ---------------------------------------------------------------------------
+   Instructor Badge — Gold Uppercase Tag
+   --------------------------------------------------------------------------- */
+.instructor-badge {
+  display: inline-block;
+  background: var(--acad-gold-pale);
+  color: var(--acad-gold);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+}
+
+/* ---------------------------------------------------------------------------
+   Report Styles — About Card & Display Area
+   --------------------------------------------------------------------------- */
+main section.report-about {
+  background: var(--acad-bg-alt);
+  border-color: var(--acad-border-light);
+}
+
+main section.report-display {
+  background: var(--acad-bg-alt);
+}
+
+/* Week Navigation — Report Header */
+.week-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+}
+
+.week-nav a {
+  font-size: 0.9375rem;
+  font-weight: 500;
 }
 
 /* ---------------------------------------------------------------------------

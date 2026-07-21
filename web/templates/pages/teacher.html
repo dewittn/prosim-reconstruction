@@ -4,11 +4,11 @@
 
 {% block content %}
 <header>
-    <h1>Teacher Mode</h1>
+    <h1>Teacher Mode <span class="instructor-badge">Instructor</span></h1>
     <p>
         {{ game.company_name }} |
         Game ID: {{ game.game_id }} |
-        Week {{ game.current_week }} of {{ game.max_weeks }}
+        <span class="week-badge">Week {{ game.current_week }} of {{ game.max_weeks }}</span>
         {% if game.is_complete %}
         <span class="status complete">Complete</span>
         {% elif game.is_active %}
@@ -48,7 +48,7 @@
                 </select>
             </div>
         </div>
-        <button type="submit" {% if game.is_complete %}disabled{% endif %}>
+        <button type="submit" class="btn-gold" {% if game.is_complete %}disabled{% endif %}>
             Advance Weeks
         </button>
         <span id="advance-spinner" class="htmx-indicator"> Processing...</span>
@@ -93,7 +93,7 @@
                 </select>
             </div>
         </div>
-        <button type="submit">Add Competitor</button>
+        <button type="submit" class="btn-gold">Add Competitor</button>
         <span id="competitor-spinner" class="htmx-indicator"> Adding...</span>
     </form>
 

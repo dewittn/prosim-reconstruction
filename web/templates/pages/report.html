@@ -6,9 +6,21 @@
 <header>
     <h1>Week {{ week }} Report</h1>
     <p>{{ game.company_name }}</p>
+    <div class="week-nav">
+        {% if week > 1 %}
+        <a href="/game/{{ game.session_id }}/reports/{{ week - 1 }}">&larr; Week {{ week - 1 }}</a>
+        {% else %}
+        <span></span>
+        {% endif %}
+        {% if week < game.current_week - 1 %}
+        <a href="/game/{{ game.session_id }}/reports/{{ week + 1 }}">Week {{ week + 1 }} &rarr;</a>
+        {% else %}
+        <span></span>
+        {% endif %}
+    </div>
 </header>
 
-<section>
+<section class="report-about">
     <details open>
         <summary>About This Report Format</summary>
         <p>
@@ -19,8 +31,8 @@
     </details>
 </section>
 
-<section>
-    <pre style="font-family: 'Courier New', Courier, monospace; font-size: 12px; line-height: 1.4; background: #f5f5f5; padding: 1rem; overflow-x: auto; border: 1px solid #ddd;">{{ report_text|safe }}</pre>
+<section class="report-display">
+    <pre>{{ report_text|safe }}</pre>
 </section>
 
 <section>

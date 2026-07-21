@@ -4,9 +4,11 @@
 
         <ul>
             {% set path = request.url.path %}
-            <li><a href="/"{% if path == '/' %} aria-current="page"{% endif %}>Games</a></li>
-            <li><a href="/new"{% if path == '/new' %} aria-current="page"{% endif %}>New Game</a></li>
+            <li><a href="/"{% if path == '/' or path == '/new' %} aria-current="page"{% endif %}>Home</a></li>
             <li><a href="/help"{% if path == '/help' %} aria-current="page"{% endif %}>Help</a></li>
+            {% if game is defined and game %}
+            <li><a href="/game/{{ game.session_id }}/decisions"{% if '/decisions' in path %} aria-current="page"{% endif %}>Decisions</a></li>
+            {% endif %}
         </ul>
     </nav>
 </header>
